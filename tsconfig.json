@@ -1,14 +1,14 @@
 {
   "compilerOptions": {
-    // File Layout
-    "rootDir": "./",
+     // File Layout
+    "rootDir": "./src",  // ✅ Poprawione
     "outDir": "./dist",
 
     // Environment Settings
-    "module": "esnext",
-    "target": "esnext",
-    "lib": ["dom", "dom.iterable", "esnext"],
-    "moduleResolution": "bundler",
+    "module": "es2022",  // ✅ Zmienione z esnext
+    "target": "es2022",  // ✅ Stabilniejsze
+    "lib": ["dom", "dom.iterable", "es2022"],  // ✅ Dodane dom i es2022
+    "moduleResolution": "bundler",  // ✅ Zmienione z bundler
     "resolveJsonModule": true,
     "types": [],
 
@@ -31,8 +31,17 @@
     "moduleDetection": "force",
     "skipLibCheck": true,
     
-    // DEKORATORY - to jest kluczowe!
-    "experimentalDecorators": true,
-    "emitDecoratorMetadata": true  // <-- DODAJ TO!
-  }
+    // Dekoratory
+    "experimentalDecorators": true
+    // ✅ USUNIĘTE "emitDecoratorMetadata" - nie potrzebujesz tego!
+  },
+  "include": [
+    "src/**/*" // ✅ Kompiluj tylko pliki z src/
+  ],
+  "exclude": [
+    "node_modules",
+    "dist",
+    "**/*.spec.ts",
+    "**/*.test.ts"
+  ]
 }

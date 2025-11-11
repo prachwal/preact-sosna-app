@@ -1,0 +1,5 @@
+node_modules/
+qdrant_storage/
+.git/
+dist/
+*.log

@@ -139,3 +139,6 @@ dist
 vite.config.js.timestamp-*
 vite.config.ts.timestamp-*
 .vite/
+
+qdrant_data/
+qdrant_storage/
