@@ -1,0 +1,68 @@
+// ==========================================
+// VARIABLES
+// ==========================================
+
+// Colors
+$color-text-primary: #333;
+$color-text-secondary: #555;
+$color-text-muted: #666;
+$color-text-light: #495057;
+$color-text-dark: #212529;
+$color-border: #ddd;
+$color-border-light: #eee;
+$color-border-accent: #dee2e6;
+$color-background-primary: #f9f9f9;
+$color-background-secondary: #f8f9fa;
+$color-background-hover: #f5f5f5;
+$color-background-white: white;
+$color-primary: #007bff;
+$color-primary-hover: #0056b3;
+$color-success: #28a745;
+$color-success-hover: #218838;
+$color-info: #17a2b8;
+$color-info-hover: #138496;
+$color-secondary: #6c757d;
+$color-secondary-hover: #5a6268;
+$color-error: red;
+$color-overlay: rgba(0, 0, 0, 0.5);
+$color-shadow: rgba(0, 0, 0, 0.1);
+
+// Spacing
+$spacing-xs: 3px;
+$spacing-sm: 4px;
+$spacing-md: 5px;
+$spacing-lg: 8px;
+$spacing-xl: 10px;
+$spacing-xxl: 12px;
+$spacing-xxxl: 15px;
+$spacing-xxxxl: 16px;
+$spacing-xxxxxl: 20px;
+$spacing-xxxxxxl: 30px;
+
+// Layout
+$max-width-app: 1400px;
+$modal-width: 1200px;
+$modal-height: 600px;
+$table-min-width: 600px;
+
+// Breakpoints
+$breakpoint-tablet: 768px;
+$breakpoint-mobile: 480px;
+
+// Font sizes
+$font-size-xs: 12px;
+$font-size-sm: 13px;
+$font-size-base: 14px;
+$font-size-lg: 24px;
+
+// Transitions
+$transition-fast: 0.2s;
+
+// Shadows
+$shadow-sm: 0 1px 3px $color-shadow;
+$shadow-lg: 0 4px 6px $color-shadow;
+
+// Z-index
+$z-index-modal: 1000;
+$z-index-sticky: 1;
+$z-index-hover: 10;

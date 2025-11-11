@@ -142,3 +142,4 @@ vite.config.ts.timestamp-*
 
 qdrant_data/
 qdrant_storage/
+polish_model_cache/

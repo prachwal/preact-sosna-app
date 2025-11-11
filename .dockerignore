@@ -1,5 +1,6 @@
 node_modules/
 qdrant_storage/
+polish_model_cache/
 .git/
 dist/
 *.log

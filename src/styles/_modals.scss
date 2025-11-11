@@ -1,0 +1,226 @@
+// ==========================================
+// MODAL COMPONENTS
+// ==========================================
+
+@use 'variables' as *;
+
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: $color-overlay;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: $z-index-modal;
+}
+
+.modal-content {
+  background: $color-background-white;
+  border-radius: $spacing-sm;
+  padding: $spacing-xxxxxl;
+  max-width: 95vw;
+  max-height: 95vh;
+  width: $modal-width;
+  height: auto;
+  box-shadow: $shadow-lg;
+  overflow-y: auto;
+
+  @media (max-width: $breakpoint-tablet) {
+    width: 95vw;
+    padding: $spacing-xxxl;
+    max-height: 90vh;
+  }
+
+  .modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: $spacing-xxxxxl;
+    border-bottom: 1px solid $color-border;
+    padding-bottom: $spacing-xl;
+
+    h3 {
+      margin: 0;
+      color: $color-text-primary;
+    }
+
+    .close-modal-btn {
+      background: none;
+      border: none;
+      font-size: $font-size-lg;
+      cursor: pointer;
+      color: $color-text-muted;
+
+      &:hover {
+        color: $color-text-primary;
+      }
+    }
+  }
+
+  .point-payload-top {
+    margin-bottom: $spacing-xxxxxl;
+
+    .detail-section {
+      h4 {
+        margin: 0 0 $spacing-xl 0;
+        color: $color-text-secondary;
+        border-bottom: 1px solid $color-border-light;
+        padding-bottom: $spacing-md;
+      }
+
+      .detail-content {
+        background-color: $color-background-secondary;
+        padding: $spacing-xxxl;
+        border-radius: $spacing-sm;
+        font-family: monospace;
+        white-space: pre-wrap;
+        word-break: break-all;
+        overflow-y: auto;
+        font-size: $font-size-base;
+        line-height: 1.4;
+        max-height: 300px;
+      }
+    }
+  }
+
+  .point-details {
+    .point-details-full {
+      width: 100%;
+
+      .detail-section {
+        h4 {
+          margin: 0 0 $spacing-xl 0;
+          color: $color-text-secondary;
+          border-bottom: 1px solid $color-border-light;
+          padding-bottom: $spacing-md;
+        }
+
+        .detail-content {
+          background-color: $color-background-secondary;
+          padding: $spacing-xxxl;
+          border-radius: $spacing-sm;
+          font-family: monospace;
+          white-space: pre-wrap;
+          word-break: break-all;
+          overflow-y: auto;
+          font-size: $font-size-base;
+          line-height: 1.4;
+          min-height: 0;
+
+          &.vector-content {
+            font-size: $font-size-xs;
+          }
+        }
+      }
+    }
+  }
+
+  .modal-footer-dots {
+    margin-top: $spacing-xxxxxl;
+    padding-top: $spacing-xxxxxl;
+    border-top: 1px solid $color-border-light;
+    display: flex;
+    justify-content: center;
+
+    .dots-container {
+      display: flex;
+      gap: $spacing-md;
+      align-items: center;
+
+      .dot {
+        width: 8px;
+        height: 8px;
+        border-radius: 50%;
+        background-color: $color-border;
+        cursor: pointer;
+        transition: background-color 0.2s ease;
+
+        &.active {
+          background-color: $color-primary;
+        }
+
+        &:hover {
+          background-color: $color-primary-hover;
+        }
+      }
+    }
+  }
+}
+
+// Progress Modal Styles
+.progress-modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.7);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+
+.progress-modal {
+  background: white;
+  border-radius: 8px;
+  padding: 2rem;
+  max-width: 500px;
+  width: 90%;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+
+  .progress-modal-header {
+    text-align: center;
+    margin-bottom: 2rem;
+
+    h3 {
+      margin: 0;
+      color: #333;
+      font-size: 1.5rem;
+    }
+  }
+
+  .progress-modal-content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1rem;
+
+    .progress-stage {
+      font-size: 1.1rem;
+      color: #666;
+      text-align: center;
+      min-height: 1.5rem;
+    }
+
+    .progress-bar-container {
+      width: 100%;
+      height: 20px;
+      background-color: #e0e0e0;
+      border-radius: 10px;
+      overflow: hidden;
+      margin: 1rem 0;
+
+      .progress-bar {
+        height: 100%;
+        background: linear-gradient(90deg, #4CAF50, #45a049);
+        border-radius: 10px;
+        transition: width 0.3s ease;
+      }
+    }
+
+    .progress-percentage {
+      font-size: 1.2rem;
+      font-weight: bold;
+      color: #333;
+    }
+
+    .progress-details {
+      font-size: 0.9rem;
+      color: #666;
+    }
+  }
+}

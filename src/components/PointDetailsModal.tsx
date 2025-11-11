@@ -1,0 +1,76 @@
+import { h } from 'preact';
+import type { Point } from '../types/types';
+import VectorVisualization from './VectorVisualization';
+
+interface PointDetailsModalProps {
+  point: Point;
+  onClose: () => void;
+}
+
+function PointDetailsModal({ point, onClose }: PointDetailsModalProps) {
+  const renderPayload = (payload: Record<string, any>) => {
+    if (!payload || Object.keys(payload).length === 0) {
+      return <span className="no-data">No payload data</span>;
+    }
+
+    return (
+      <div className="payload-structured">
+        {Object.entries(payload).map(([key, value], index) => (
+          <div key={index} className="payload-item">
+            <div className="payload-key">{key}:</div>
+            <div className="payload-value">
+              {typeof value === 'object' ?
+                JSON.stringify(value, null, 2) :
+                String(value)
+              }
+            </div>
+          </div>
+        ))}
+      </div>
+    );
+  };
+
+  return (
+    <div className="modal-overlay" onClick={onClose}>
+      <div className="modal-content" onClick={(e) => e.stopPropagation()}>
+        <div className="modal-header">
+          <h3>Point Details - ID: {point.id}</h3>
+          <button className="close-modal-btn" onClick={onClose}>×</button>
+        </div>
+
+        {/* Payload at the top */}
+        <div className="point-payload-top">
+          <div className="detail-section">
+            <h4>Payload</h4>
+            <div className="detail-content">
+              {point.payload ? renderPayload(point.payload) : 'No payload data'}
+            </div>
+          </div>
+        </div>
+
+        {/* Vector visualization below */}
+        <div className="point-details">
+          <div className="point-details-full">
+            <div className="detail-section">
+              <h4>Vector Visualization</h4>
+              <div className="detail-content">
+                {point.vector ? <VectorVisualization vector={point.vector} /> : 'No vector data'}
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Dots at the bottom */}
+        <div className="modal-footer-dots">
+          <div className="dots-container">
+            <span className="dot active"></span>
+            <span className="dot"></span>
+            <span className="dot"></span>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+export default PointDetailsModal;

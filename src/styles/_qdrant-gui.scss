@@ -1,0 +1,548 @@
+// ==========================================
+// QDRANT GUI COMPONENTS
+// ==========================================
+
+@use 'variables' as *;
+
+.qdrant-gui {
+  border: 1px solid $color-border;
+  border-radius: $spacing-sm;
+  padding: $spacing-xxxxxl;
+  background-color: $color-background-primary;
+  width: 100%;
+  box-sizing: border-box;
+
+  @media (max-width: $breakpoint-tablet) {
+    padding: $spacing-xxxl;
+  }
+
+  h2 {
+    color: $color-text-secondary;
+    margin-bottom: $spacing-xxxl;
+  }
+
+  // Collections List
+  .collections-list {
+    list-style: none;
+    padding: 0;
+
+    li {
+      background: $color-background-white;
+      margin: $spacing-md 0;
+      padding: $spacing-xxxl;
+      border-radius: $spacing-sm;
+      box-shadow: $shadow-sm;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      width: 100%;
+      box-sizing: border-box;
+
+      @media (max-width: $breakpoint-tablet) {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: $spacing-xl;
+      }
+
+      .collection-info {
+        flex: 1;
+        word-wrap: break-word;
+      }
+
+      .collection-actions {
+        display: flex;
+        gap: $spacing-xl;
+
+        @media (max-width: $breakpoint-mobile) {
+          flex-direction: column;
+          width: 100%;
+          gap: $spacing-md;
+
+          button {
+            width: 100%;
+          }
+        }
+      }
+
+      .browse-btn {
+        padding: $spacing-lg $spacing-xxl;
+        background-color: $color-success;
+        color: $color-background-white;
+        border: none;
+        border-radius: $spacing-sm;
+        cursor: pointer;
+        transition: background-color $transition-fast;
+        white-space: nowrap;
+
+        &:hover:not(:disabled) {
+          background-color: $color-success-hover;
+        }
+
+        &:disabled {
+          background-color: $color-secondary;
+          cursor: not-allowed;
+        }
+      }
+
+      .export-btn {
+        padding: $spacing-lg $spacing-xxl;
+        background-color: $color-primary;
+        color: $color-background-white;
+        border: none;
+        border-radius: $spacing-sm;
+        cursor: pointer;
+        transition: background-color $transition-fast;
+        white-space: nowrap;
+
+        &:hover:not(:disabled) {
+          background-color: $color-primary-hover;
+        }
+
+        &:disabled {
+          background-color: $color-secondary;
+          cursor: not-allowed;
+        }
+      }
+
+      .delete-btn {
+        padding: $spacing-lg $spacing-xxl;
+        background-color: $color-error;
+        color: $color-background-white;
+        border: none;
+        border-radius: $spacing-sm;
+        cursor: pointer;
+        transition: background-color $transition-fast;
+        white-space: nowrap;
+
+        &:hover:not(:disabled) {
+          background-color: #cc0000;
+        }
+
+        &:disabled {
+          background-color: $color-secondary;
+          cursor: not-allowed;
+        }
+      }
+    }
+  }
+
+  // Collections Header
+  .collections-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: $spacing-xxxxxl;
+
+    @media (max-width: $breakpoint-tablet) {
+      flex-direction: column;
+      align-items: flex-start;
+      gap: $spacing-xl;
+    }
+
+    h2 {
+      margin: 0;
+    }
+
+    .create-collection-btn {
+      padding: $spacing-lg $spacing-xxl;
+      background-color: $color-info;
+      color: $color-background-white;
+      border: none;
+      border-radius: $spacing-sm;
+      cursor: pointer;
+      transition: background-color $transition-fast;
+      white-space: nowrap;
+
+      &:hover {
+        background-color: $color-info-hover;
+      }
+    }
+  }
+
+  // Create Collection Form
+  .create-collection-form {
+    background: $color-background-white;
+    padding: $spacing-xxxxxl;
+    border-radius: $spacing-sm;
+    box-shadow: $shadow-sm;
+    margin-bottom: $spacing-xxxxxl;
+    border: 1px solid $color-border;
+
+    .form-group {
+      margin-bottom: $spacing-xxxl;
+
+      label {
+        display: block;
+        margin-bottom: $spacing-lg;
+        font-weight: 500;
+        color: $color-text-primary;
+      }
+
+      input {
+        width: 100%;
+        padding: $spacing-lg;
+        border: 1px solid $color-border;
+        border-radius: $spacing-sm;
+        font-size: $font-size-base;
+        transition: border-color $transition-fast;
+
+        &:focus {
+          outline: none;
+          border-color: $color-primary;
+          box-shadow: 0 0 0 2px rgba($color-primary, 0.2);
+        }
+
+        &[type="number"] {
+          max-width: 200px;
+        }
+      }
+    }
+
+    .form-actions {
+      display: flex;
+      gap: $spacing-lg;
+
+      button {
+        padding: $spacing-lg $spacing-xxl;
+        border: none;
+        border-radius: $spacing-sm;
+        cursor: pointer;
+        transition: background-color $transition-fast;
+        font-size: $font-size-base;
+
+        &[type="submit"] {
+          background-color: $color-success;
+          color: $color-background-white;
+
+          &:hover:not(:disabled) {
+            background-color: $color-success-hover;
+          }
+
+          &:disabled {
+            background-color: $color-secondary;
+            cursor: not-allowed;
+          }
+        }
+
+        &[type="button"] {
+          background-color: $color-secondary;
+          color: $color-background-white;
+
+          &:hover {
+            background-color: $color-secondary-hover;
+          }
+        }
+      }
+    }
+  }
+
+  // Upload File Form
+  .upload-file-form {
+    background: $color-background-white;
+    padding: $spacing-xxxxxl;
+    border-radius: $spacing-sm;
+    box-shadow: $shadow-sm;
+    margin-bottom: $spacing-xxxxxl;
+    border: 1px solid $color-border;
+
+    h3 {
+      margin: 0 0 $spacing-xxxxxl 0;
+      color: $color-text-secondary;
+      font-size: $font-size-lg;
+    }
+
+    .form-group {
+      margin-bottom: $spacing-xxxl;
+
+      label {
+        display: block;
+        margin-bottom: $spacing-lg;
+        font-weight: 500;
+        color: $color-text-primary;
+      }
+
+      input {
+        width: 100%;
+        padding: $spacing-lg;
+        border: 1px solid $color-border;
+        border-radius: $spacing-sm;
+        font-size: $font-size-base;
+        transition: border-color $transition-fast;
+
+        &:focus {
+          outline: none;
+          border-color: $color-primary;
+          box-shadow: 0 0 0 2px rgba($color-primary, 0.2);
+        }
+
+        &[type="file"] {
+          padding: $spacing-md;
+        }
+
+        &[type="number"] {
+          max-width: 200px;
+        }
+      }
+
+      select {
+        width: 100%;
+        padding: $spacing-lg;
+        border: 1px solid $color-border;
+        border-radius: $spacing-sm;
+        font-size: $font-size-base;
+        background-color: $color-background-white;
+        transition: border-color $transition-fast;
+
+        &:focus {
+          outline: none;
+          border-color: $color-primary;
+          box-shadow: 0 0 0 2px rgba($color-primary, 0.2);
+        }
+      }
+
+      small {
+        display: block;
+        margin-top: $spacing-sm;
+        color: $color-text-muted;
+        font-size: $font-size-sm;
+      }
+    }
+
+    .form-row {
+      display: flex;
+      gap: $spacing-xxxxxl;
+
+      @media (max-width: $breakpoint-tablet) {
+        flex-direction: column;
+        gap: $spacing-xxxl;
+      }
+
+      .form-group {
+        flex: 1;
+      }
+    }
+
+    .file-info {
+      margin-top: $spacing-lg;
+      padding: $spacing-lg;
+      background-color: $color-background-secondary;
+      border-radius: $spacing-sm;
+      font-size: $font-size-sm;
+      color: $color-text-primary;
+    }
+
+    .form-actions {
+      display: flex;
+      gap: $spacing-lg;
+
+      button {
+        padding: $spacing-lg $spacing-xxl;
+        border: none;
+        border-radius: $spacing-sm;
+        cursor: pointer;
+        transition: background-color $transition-fast;
+        font-size: $font-size-base;
+
+        &[type="submit"] {
+          background-color: $color-primary;
+          color: $color-background-white;
+
+          &:hover:not(:disabled) {
+            background-color: $color-primary-hover;
+          }
+
+          &:disabled {
+            background-color: $color-secondary;
+            cursor: not-allowed;
+          }
+        }
+
+        &[type="button"] {
+          background-color: $color-secondary;
+          color: $color-background-white;
+
+          &:hover {
+            background-color: $color-secondary-hover;
+          }
+        }
+      }
+    }
+  }
+
+  // Header Actions
+  .header-actions {
+    display: flex;
+    gap: $spacing-lg;
+
+    @media (max-width: $breakpoint-tablet) {
+      flex-direction: column;
+      width: 100%;
+    }
+  }
+
+  .upload-file-btn {
+    padding: $spacing-lg $spacing-xxl;
+    background-color: $color-primary;
+    color: $color-background-white;
+    border: none;
+    border-radius: $spacing-sm;
+    cursor: pointer;
+    transition: background-color $transition-fast;
+    font-size: $font-size-base;
+
+    &:hover {
+      background-color: $color-primary-hover;
+    }
+  }
+
+  // Points Viewer
+  .points-viewer {
+    margin-top: $spacing-xxxxxl;
+    border: 1px solid $color-border;
+    border-radius: $spacing-sm;
+    padding: $spacing-xxxxxl;
+    background-color: $color-background-secondary;
+    width: 100%;
+    box-sizing: border-box;
+
+    @media (max-width: $breakpoint-tablet) {
+      padding: $spacing-xxxl;
+    }
+
+    h3 {
+      margin-bottom: $spacing-xxxl;
+      color: $color-text-primary;
+    }
+
+    .points-table {
+      margin-bottom: $spacing-xxxl;
+      overflow-x: auto;
+
+      table {
+        width: 100%;
+        min-width: $table-min-width;
+        border-collapse: collapse;
+        background: $color-background-white;
+
+        @media (max-width: $breakpoint-tablet) {
+          font-size: $font-size-base;
+        }
+
+        th, td {
+          padding: $spacing-xxl;
+          text-align: left;
+          border-bottom: 1px solid $color-border;
+          vertical-align: top;
+
+          @media (max-width: $breakpoint-tablet) {
+            padding: $spacing-lg $spacing-lg;
+          }
+        }
+
+        th {
+          background-color: $color-background-secondary;
+          font-weight: bold;
+          position: sticky;
+          top: 0;
+          z-index: $z-index-sticky;
+        }
+
+        tr:hover {
+          background-color: $color-background-hover;
+        }
+
+        .vector-cell {
+          font-family: monospace;
+          font-size: $font-size-xs;
+          max-width: 300px;
+          word-break: break-all;
+        }
+
+        .payload-cell {
+          max-width: 400px;
+          word-break: break-word;
+        }
+
+        .actions-cell {
+          width: 100px;
+          text-align: center;
+
+          .view-details-btn {
+            padding: $spacing-sm $spacing-lg;
+            background-color: $color-info;
+            color: $color-background-white;
+            border: none;
+            border-radius: $spacing-xs;
+            cursor: pointer;
+            font-size: $font-size-xs;
+            transition: background-color $transition-fast;
+
+            &:hover {
+              background-color: $color-info-hover;
+            }
+          }
+        }
+      }
+    }
+
+    .close-btn {
+      padding: $spacing-lg $spacing-xxxxl;
+      background-color: $color-secondary;
+      color: $color-background-white;
+      border: none;
+      border-radius: $spacing-sm;
+      cursor: pointer;
+
+      &:hover {
+        background-color: $color-secondary-hover;
+      }
+    }
+  }
+
+  // Pagination
+  .pagination {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: $spacing-xxxl;
+    margin-top: $spacing-xxxxxl;
+    padding: $spacing-xxxl;
+    background-color: $color-background-secondary;
+    border-radius: $spacing-sm;
+
+    .pagination-btn {
+      padding: $spacing-lg $spacing-xxxxl;
+      background-color: $color-primary;
+      color: $color-background-white;
+      border: none;
+      border-radius: $spacing-sm;
+      cursor: pointer;
+      transition: background-color $transition-fast;
+
+      &:hover:not(:disabled) {
+        background-color: $color-primary-hover;
+      }
+
+      &:disabled {
+        background-color: $color-secondary;
+        cursor: not-allowed;
+      }
+    }
+
+    .pagination-info {
+      font-weight: bold;
+      color: $color-text-light;
+    }
+  }
+
+  // Status messages
+  .loading {
+    text-align: center;
+    color: $color-text-muted;
+  }
+
+  .error {
+    color: $color-error;
+    text-align: center;
+  }
+}

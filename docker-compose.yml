@@ -14,3 +14,32 @@ services:
       - ./qdrant_storage:/qdrant/storage
     container_name: qdrant
     restart: unless-stopped
+
+  polish-bert-api:
+    image: python:3.11-slim
+    ports:
+      - "8082:8080"
+    volumes:
+      - ./polish_model_cache:/app/model
+      - ./polish_bert_api.py:/app/polish_bert_api.py
+      - ./polish_requirements.txt:/app/requirements.txt
+    working_dir: /app
+    command: >
+      bash -c "
+        apt-get update && apt-get install -y curl &&
+        pip install torch torchvision torchaudio --index-url https://download.pytorch.org/whl/cpu &&
+        pip install -r requirements.txt &&
+        python polish_bert_api.py
+      "
+    environment:
+      - PYTHONUNBUFFERED=1
+      - TRANSFORMERS_CACHE=/app/model
+      - HF_HUB_DISABLE_TELEMETRY=1
+      - HF_HUB_DISABLE_PROGRESS_BARS=1
+    container_name: polish-bert-api
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8080/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 10
