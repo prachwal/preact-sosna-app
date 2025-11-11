@@ -1,4 +1,5 @@
 import type { Collection, Point } from '../types/types';
+import { chunkingService } from './chunkingService';
 
 export const fetchCollections = async (): Promise<Collection[]> => {
   console.log('Fetching collections from Qdrant...');
@@ -24,7 +25,7 @@ export const browseCollection = async (collectionName: string): Promise<Point[]>
       'Content-Type': 'application/json',
     },
     body: JSON.stringify({
-      limit: 20, // Show first 20 points for browsing
+      limit: 1000, // Show up to 1000 points for browsing
       with_payload: true,
       with_vectors: true,
     }),
@@ -173,8 +174,9 @@ export const uploadAndProcessFile = async (
 
   onProgress?.(10, 100, 'Chunking text...');
 
-  // Chunk the text (we'll implement this on the client side for now)
-  const chunks = await chunkText(text, chunkSize, chunkOverlap);
+  // Chunk the text using the proper ChunkingService with specified parameters
+  const chunkedDocument = await chunkingService.chunkText(text, chunkSize, chunkOverlap);
+  const chunks = chunkedDocument.chunks;
   console.log(`Created ${chunks.length} chunks`);
   chunks.forEach((chunk, index) => {
     console.log(`Chunk ${index + 1}: "${chunk.substring(0, 100).replace(/\n/g, '\\n')}..." (length: ${chunk.length}, trimmed length: ${chunk.trim().length})`);
@@ -322,45 +324,3 @@ export const uploadAndProcessFile = async (
     collectionName,
   };
 };
-
-// Simple text chunking function (client-side implementation)
-async function chunkText(
-  text: string,
-  chunkSize: number,
-  chunkOverlap: number
-): Promise<string[]> {
-  const chunks: string[] = [];
-  let start = 0;
-
-  while (start < text.length) {
-    let end = start + chunkSize;
-
-    // If we're not at the end, try to find a good breaking point
-    if (end < text.length) {
-      // Look for sentence endings within the last 100 characters
-      const searchStart = Math.max(start, end - 100);
-      const sentenceEndings = ['. ', '! ', '? ', '\n\n', '\n'];
-      let bestBreak = end;
-
-      for (const ending of sentenceEndings) {
-        const lastIndex = text.lastIndexOf(ending, end);
-        if (lastIndex >= searchStart && lastIndex > bestBreak - 50) {
-          bestBreak = lastIndex + ending.length;
-          break;
-        }
-      }
-
-      end = bestBreak;
-    }
-
-    const chunk = text.slice(start, end).trim();
-    if (chunk.length > 0) {
-      chunks.push(chunk);
-    }
-
-    // Move start position with overlap
-    start = Math.max(start + 1, end - chunkOverlap);
-  }
-
-  return chunks;
-}

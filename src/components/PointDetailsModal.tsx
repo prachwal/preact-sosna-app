@@ -1,13 +1,36 @@
 import { h } from 'preact';
+import { useEffect } from 'preact/hooks';
 import type { Point } from '../types/types';
 import VectorVisualization from './VectorVisualization';
 
 interface PointDetailsModalProps {
   point: Point;
   onClose: () => void;
+  onPrevious?: () => void;
+  onNext?: () => void;
+  hasPrevious?: boolean;
+  hasNext?: boolean;
 }
 
-function PointDetailsModal({ point, onClose }: PointDetailsModalProps) {
+function PointDetailsModal({ point, onClose, onPrevious, onNext, hasPrevious, hasNext }: PointDetailsModalProps) {
+  // Keyboard navigation
+  useEffect(() => {
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (event.key === 'ArrowLeft' && onPrevious && hasPrevious) {
+        event.preventDefault();
+        onPrevious();
+      } else if (event.key === 'ArrowRight' && onNext && hasNext) {
+        event.preventDefault();
+        onNext();
+      } else if (event.key === 'Escape') {
+        event.preventDefault();
+        onClose();
+      }
+    };
+
+    document.addEventListener('keydown', handleKeyDown);
+    return () => document.removeEventListener('keydown', handleKeyDown);
+  }, [onPrevious, onNext, hasPrevious, hasNext, onClose]);
   const renderPayload = (payload: Record<string, any>) => {
     if (!payload || Object.keys(payload).length === 0) {
       return <span className="no-data">No payload data</span>;
@@ -34,6 +57,24 @@ function PointDetailsModal({ point, onClose }: PointDetailsModalProps) {
     <div className="modal-overlay" onClick={onClose}>
       <div className="modal-content" onClick={(e) => e.stopPropagation()}>
         <div className="modal-header">
+          <div className="modal-navigation">
+            <button
+              className="nav-btn prev-btn"
+              onClick={onPrevious}
+              disabled={!hasPrevious}
+              title="Previous chunk"
+            >
+              ‹
+            </button>
+            <button
+              className="nav-btn next-btn"
+              onClick={onNext}
+              disabled={!hasNext}
+              title="Next chunk"
+            >
+              ›
+            </button>
+          </div>
           <h3>Point Details - ID: {point.id}</h3>
           <button className="close-modal-btn" onClick={onClose}>×</button>
         </div>

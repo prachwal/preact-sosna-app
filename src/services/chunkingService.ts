@@ -21,11 +21,18 @@ export class ChunkingService {
     });
   }
 
-  async chunkText(text: string): Promise<ChunkedDocument> {
+  async chunkText(text: string, chunkSize?: number, chunkOverlap?: number): Promise<ChunkedDocument> {
     console.log('Starting text chunking...');
     console.log(`Original text length: ${text.length} characters`);
 
-    const chunks = await this.textSplitter.splitText(text);
+    // Create a new splitter with the provided parameters or use defaults
+    const splitter = new RecursiveCharacterTextSplitter({
+      chunkSize: chunkSize ?? this.textSplitter.chunkSize,
+      chunkOverlap: chunkOverlap ?? this.textSplitter.chunkOverlap,
+      separators: ['\n\n', '\n', ' ', ''],
+    });
+
+    const chunks = await splitter.splitText(text);
 
     console.log(`Created ${chunks.length} chunks`);
 
@@ -34,8 +41,8 @@ export class ChunkingService {
       metadata: {
         totalChunks: chunks.length,
         originalLength: text.length,
-        chunkSize: this.textSplitter.chunkSize,
-        chunkOverlap: this.textSplitter.chunkOverlap,
+        chunkSize: splitter.chunkSize,
+        chunkOverlap: splitter.chunkOverlap,
       },
     };
   }

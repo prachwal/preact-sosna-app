@@ -143,3 +143,4 @@ vite.config.ts.timestamp-*
 qdrant_data/
 qdrant_storage/
 polish_model_cache/
+transcript_OmIK2RgXt_U_clean.txt
