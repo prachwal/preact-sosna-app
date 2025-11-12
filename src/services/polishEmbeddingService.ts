@@ -3,14 +3,17 @@ import type {
   EmbeddingServiceConfig,
   Logger
 } from './interfaces';
+import { configProvider } from './ConfigurationProvider';
 
 export class PolishEmbeddingService implements EmbeddingService {
   private readonly baseUrl: string;
   private readonly logger: Logger;
 
-  constructor(config: EmbeddingServiceConfig & { logger?: Logger }) {
-    this.baseUrl = config.url;
-    this.logger = config.logger || { info: console.log, warn: console.warn, error: console.error, debug: console.debug };
+  constructor(config?: EmbeddingServiceConfig & { logger?: Logger }) {
+    // Use config if provided, otherwise use ConfigurationProvider
+    const embeddingUrl = config?.url || configProvider.getEmbeddingUrl();
+    this.baseUrl = embeddingUrl;
+    this.logger = config?.logger || { info: console.log, warn: console.warn, error: console.error, debug: console.debug };
   }
 
   async embedTexts(texts: string[]): Promise<number[][]> {

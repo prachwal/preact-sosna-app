@@ -7,14 +7,17 @@ import type {
   SearchResult,
   SearchOptions
 } from './interfaces';
+import { configProvider } from './ConfigurationProvider';
 
 export class QdrantDatabase implements VectorDatabase {
   private readonly baseUrl: string;
   private readonly logger: Logger;
 
-  constructor(config: VectorDatabaseConfig & { logger?: Logger }) {
-    this.baseUrl = config.url;
-    this.logger = config.logger || { info: console.log, warn: console.warn, error: console.error, debug: console.debug };
+  constructor(config?: VectorDatabaseConfig & { logger?: Logger }) {
+    // Use config if provided, otherwise use ConfigurationProvider
+    const qdrantUrl = config?.url || configProvider.getQdrantUrl();
+    this.baseUrl = qdrantUrl;
+    this.logger = config?.logger || { info: console.log, warn: console.warn, error: console.error, debug: console.debug };
   }
 
   async fetchCollections(): Promise<Collection[]> {

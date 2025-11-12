@@ -26,6 +26,7 @@ interface CollectionListProps {
   onUpload: (file: File, collectionName: string, chunkSize: number, chunkOverlap: number) => void;
   onCloseUploadModal: () => void;
   onCloseBrowsing: () => void;
+  onOpenSettings: () => void;
 }
 
 function CollectionList({
@@ -47,6 +48,7 @@ function CollectionList({
   onUpload,
   onCloseUploadModal,
   onCloseBrowsing,
+  onOpenSettings,
 }: CollectionListProps) {
   const [showCreateForm, setShowCreateForm] = useState(false);
   const [newCollectionName, setNewCollectionName] = useState('');
@@ -91,6 +93,13 @@ function CollectionList({
       <div className="collections-header">
         <h2>Qdrant Collections</h2>
         <div className="header-actions">
+          <button
+            className="settings-btn"
+            onClick={onOpenSettings}
+            title="Application Settings"
+          >
+            ⚙️ Settings
+          </button>
           <button
             className="create-collection-btn"
             onClick={() => setShowCreateForm(!showCreateForm)}

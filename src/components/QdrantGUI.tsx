@@ -4,6 +4,7 @@ import CollectionList from './CollectionList';
 import PointsViewer from './PointsViewer';
 import PointDetailsModal from './PointDetailsModal';
 import SearchComponent from './SearchComponent';
+import SettingsModal from './SettingsModal';
 import { useCollections } from '../hooks/useCollections';
 
 function QdrantGUI() {
@@ -44,6 +45,8 @@ function QdrantGUI() {
 
   // Navigation state
   const [currentPointIndex, setCurrentPointIndex] = useState<number>(-1);
+  // Settings modal state
+  const [showSettings, setShowSettings] = useState(false);
 
   // Navigation functions
   const navigateToPoint = (point: Point | null) => {
@@ -108,6 +111,7 @@ function QdrantGUI() {
         onUpload={uploadFile}
         onCloseUploadModal={closeUploadModal}
         onCloseBrowsing={closePointsViewer}
+        onOpenSettings={() => setShowSettings(true)}
       />
 
       <SearchComponent
@@ -144,6 +148,11 @@ function QdrantGUI() {
           totalChunks={points.length}
         />
       )}
+
+      <SettingsModal
+        isOpen={showSettings}
+        onClose={() => setShowSettings(false)}
+      />
     </div>
   );
 }

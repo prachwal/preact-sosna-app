@@ -410,6 +410,21 @@
     }
   }
 
+  .settings-btn {
+    padding: $spacing-lg $spacing-xxl;
+    background-color: $color-secondary;
+    color: $color-background-white;
+    border: none;
+    border-radius: $spacing-sm;
+    cursor: pointer;
+    transition: background-color $transition-fast;
+    font-size: $font-size-base;
+
+    &:hover {
+      background-color: $color-secondary-hover;
+    }
+  }
+
   // Points Viewer
   .points-viewer {
     margin-top: $spacing-xxxxxl;
@@ -785,4 +800,163 @@
 @keyframes spin {
   0% { transform: rotate(0deg); }
   100% { transform: rotate(360deg); }
+}
+
+// Settings Modal
+.settings-modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.7);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+
+.settings-modal {
+  background: $color-background-white;
+  border-radius: $spacing-sm;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+  max-width: 600px;
+  width: 90%;
+  max-height: 90vh;
+  overflow-y: auto;
+
+  .settings-modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: $spacing-xxxxxl;
+    border-bottom: 1px solid $color-border;
+    background-color: $color-background-primary;
+
+    h3 {
+      margin: 0;
+      color: $color-text-primary;
+    }
+
+    .close-button {
+      background: none;
+      border: none;
+      font-size: 24px;
+      cursor: pointer;
+      color: $color-text-muted;
+      padding: $spacing-sm;
+      border-radius: $spacing-sm;
+
+      &:hover {
+        background-color: $color-background-hover;
+        color: $color-text-primary;
+      }
+    }
+  }
+
+  .settings-modal-content {
+    padding: $spacing-xxxxxl;
+
+    .settings-section {
+      margin-bottom: $spacing-xxxxxl;
+
+      &:last-child {
+        margin-bottom: $spacing-xxxxl;
+      }
+
+      h4 {
+        margin: 0 0 $spacing-xl 0;
+        color: $color-text-primary;
+        border-bottom: 1px solid $color-border-light;
+        padding-bottom: $spacing-md;
+      }
+
+      .form-group {
+        margin-bottom: $spacing-xl;
+
+        label {
+          display: block;
+          margin-bottom: $spacing-sm;
+          font-weight: 500;
+          color: $color-text-primary;
+        }
+
+        .settings-input {
+          width: 100%;
+          padding: $spacing-lg;
+          border: 1px solid $color-border;
+          border-radius: $spacing-sm;
+          font-size: $font-size-base;
+          transition: border-color $transition-fast;
+
+          &:focus {
+            outline: none;
+            border-color: $color-primary;
+            box-shadow: 0 0 0 2px rgba($color-primary, 0.2);
+          }
+        }
+
+        small {
+          display: block;
+          margin-top: $spacing-xs;
+          color: $color-text-muted;
+          font-size: 0.9em;
+        }
+      }
+    }
+
+    .settings-info {
+      background-color: $color-background-primary;
+      padding: $spacing-xl;
+      border-radius: $spacing-sm;
+      border-left: 4px solid $color-info;
+
+      p {
+        margin: 0;
+        color: $color-text-secondary;
+        font-size: 0.95em;
+      }
+    }
+  }
+
+  .settings-modal-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: $spacing-lg;
+    padding: $spacing-xxxxxl;
+    border-top: 1px solid $color-border;
+    background-color: $color-background-primary;
+
+    .btn {
+      padding: $spacing-lg $spacing-xxxxl;
+      border: none;
+      border-radius: $spacing-sm;
+      cursor: pointer;
+      font-size: $font-size-base;
+      transition: background-color $transition-fast;
+
+      &.btn-secondary {
+        background-color: $color-secondary;
+        color: $color-background-white;
+
+        &:hover:not(:disabled) {
+          background-color: $color-secondary-hover;
+        }
+      }
+
+      &.btn-primary {
+        background-color: $color-primary;
+        color: $color-background-white;
+
+        &:hover:not(:disabled) {
+          background-color: $color-primary-hover;
+        }
+      }
+
+      &:disabled {
+        opacity: 0.6;
+        cursor: not-allowed;
+      }
+    }
+  }
 }
