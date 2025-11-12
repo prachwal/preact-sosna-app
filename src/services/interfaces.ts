@@ -104,3 +104,33 @@ export interface LoggerConfig {
   level?: 'debug' | 'info' | 'warn' | 'error';
   prefix?: string;
 }
+
+// AI Service Interface - defines operations for AI/LLM providers
+export interface AIService {
+  generateResponse(prompt: string, options?: AIOptions): Promise<AIResponse>;
+  generateStreamingResponse(prompt: string, options?: AIOptions, onChunk?: (chunk: string) => void): Promise<AIResponse>;
+}
+
+// AI Service configuration and types
+export interface AIOptions {
+  model?: string;
+  temperature?: number;
+  maxTokens?: number;
+  systemPrompt?: string;
+}
+
+export interface AIResponse {
+  content: string;
+  model: string;
+  usage?: {
+    promptTokens: number;
+    completionTokens: number;
+    totalTokens: number;
+  };
+}
+
+export interface AIServiceConfig {
+  apiKey: string;
+  baseUrl?: string;
+  defaultModel?: string;
+}

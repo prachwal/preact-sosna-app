@@ -3,6 +3,7 @@
 // ==========================================
 
 @use 'variables' as *;
+@use 'sass:color';
 
 .qdrant-gui {
   border: 1px solid $color-border;
@@ -95,7 +96,7 @@
         white-space: nowrap;
 
         &:hover {
-          background-color: darken($color-error, 10%);
+          background-color: color.adjust($color-error, $lightness: -10%);
         }
       }
 

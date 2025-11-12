@@ -2,31 +2,39 @@ import type {
   VectorDatabase,
   EmbeddingService,
   DocumentProcessor,
+  AIService,
   UploadResult,
   ProgressCallback,
   VectorDatabaseConfig,
   EmbeddingServiceConfig,
   DocumentProcessorConfig,
+  AIServiceConfig,
   Logger,
   LoggerConfig,
   SearchResult,
-  SearchOptions
+  SearchOptions,
+  AIResponse,
+  AIOptions
 } from './interfaces';
 import { QdrantDatabase } from './qdrantDatabase';
 import { PolishEmbeddingService } from './polishEmbeddingService';
 import { TextDocumentProcessor } from './textDocumentProcessor';
+import { OpenRouterService } from './openRouterService';
 import { ConsoleLogger } from './consoleLogger';
+import { configProvider } from './ConfigurationProvider';
 
 export class QdrantApi {
   private vectorDatabase: VectorDatabase;
   private embeddingService: EmbeddingService;
   private documentProcessor: DocumentProcessor;
+  private aiService: AIService;
   private logger: Logger;
 
   constructor(
     vectorDb?: VectorDatabase,
     embeddingSvc?: EmbeddingService,
     docProcessor?: DocumentProcessor,
+    aiSvc?: AIService,
     logger?: Logger
   ) {
     // Use provided dependencies or create defaults
@@ -34,6 +42,10 @@ export class QdrantApi {
     this.vectorDatabase = vectorDb || new QdrantDatabase({ url: 'http://localhost:6333', logger: this.logger });
     this.embeddingService = embeddingSvc || new PolishEmbeddingService({ url: 'http://localhost:8082', logger: this.logger });
     this.documentProcessor = docProcessor || new TextDocumentProcessor({ logger: this.logger });
+    this.aiService = aiSvc || new OpenRouterService({ 
+      apiKey: configProvider.getOpenRouterToken(), 
+      logger: this.logger 
+    });
   }
 
   // Static factory method for easy configuration
@@ -41,14 +53,16 @@ export class QdrantApi {
     vectorDbConfig?: VectorDatabaseConfig,
     embeddingConfig?: EmbeddingServiceConfig,
     docProcessorConfig?: DocumentProcessorConfig,
+    aiConfig?: AIServiceConfig,
     loggerConfig?: LoggerConfig
   ): QdrantApi {
     const logger = loggerConfig ? new ConsoleLogger(loggerConfig) : new ConsoleLogger({ prefix: 'QdrantApi' });
     const vectorDb = vectorDbConfig ? new QdrantDatabase({ ...vectorDbConfig, logger }) : undefined;
     const embeddingSvc = embeddingConfig ? new PolishEmbeddingService({ ...embeddingConfig, logger }) : undefined;
     const docProcessor = docProcessorConfig ? new TextDocumentProcessor({ ...docProcessorConfig, logger }) : undefined;
+    const aiSvc = aiConfig ? new OpenRouterService({ ...aiConfig, logger }) : undefined;
 
-    return new QdrantApi(vectorDb, embeddingSvc, docProcessor, logger);
+    return new QdrantApi(vectorDb, embeddingSvc, docProcessor, aiSvc, logger);
   }
 
   // Delegate methods to the vector database
@@ -209,6 +223,19 @@ export class QdrantApi {
       vectorsCreated: points.length,
       collectionName,
     };
+  }
+
+  // AI Service methods
+  async generateResponse(prompt: string, options?: AIOptions): Promise<AIResponse> {
+    return this.aiService.generateResponse(prompt, options);
+  }
+
+  async generateStreamingResponse(
+    prompt: string,
+    options?: AIOptions,
+    onChunk?: (chunk: string) => void
+  ): Promise<AIResponse> {
+    return this.aiService.generateStreamingResponse(prompt, options, onChunk);
   }
 }
 

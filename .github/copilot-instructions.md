@@ -11,6 +11,7 @@
 **Key Files:**
 - `src/services/qdrantApi.ts` - Main orchestrator with factory methods
 - `src/services/ConfigurationProvider.ts` - Singleton config with localStorage
+- `src/services/openRouterService.ts` - AI service implementation (easily replaceable)
 - `src/hooks/useCollections.ts` - State management hook (400+ lines)
 - `src/services/interfaces.ts` - All service contracts and data types
 
@@ -42,18 +43,26 @@ docker-compose up --build  # Full stack deployment
 // Use ConfigurationProvider for URLs instead of hardcoding
 const qdrantDb = new QdrantDatabase({ logger });
 const embeddingSvc = new PolishEmbeddingService({ logger });
+const aiSvc = new OpenRouterService({ apiKey: configProvider.getOpenRouterToken(), logger });
 
 // Or use QdrantApi factory
-const api = QdrantApi.create(vectorConfig, embeddingConfig);
+const api = QdrantApi.create(vectorConfig, embeddingConfig, aiConfig);
 ```
 
-**Progress Callbacks:**
+**AI Service Usage:**
 ```typescript
-await api.uploadAndProcessFile(file, collectionName, chunkSize, overlap,
-  (current, total, stage) => {
-    // Update UI with progress
-    setProgress({ current, total, stage });
-  }
+// Generate response
+const response = await api.generateResponse("Explain vector databases", {
+  model: "anthropic/claude-3-haiku",
+  temperature: 0.7,
+  maxTokens: 1000
+});
+
+// Streaming response
+const streamingResponse = await api.generateStreamingResponse(
+  "Tell me a story",
+  { model: "anthropic/claude-3-haiku" },
+  (chunk) => console.log("Received:", chunk)
 );
 ```
 

@@ -2,6 +2,8 @@
 // VARIABLES
 // ==========================================
 
+@use 'sass:color';
+
 // Colors
 $color-text-primary: #333;
 $color-text-secondary: #555;
@@ -26,7 +28,7 @@ $color-secondary-hover: #5a6268;
 $color-error: red;
 $color-overlay: rgba(0, 0, 0, 0.5);
 $color-shadow: rgba(0, 0, 0, 0.1);
-$color-error-hover: darken($color-error, 10%);
+$color-error-hover: color.adjust($color-error, $lightness: -10%);
 
 // Spacing
 $spacing-xs: 3px;
