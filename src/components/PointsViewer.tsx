@@ -1,5 +1,6 @@
 import { h } from 'preact';
-import { useState, useEffect } from 'preact/hooks';
+import { useState, useEffect, useRef } from 'preact/hooks';
+import { useVirtualizer } from '@tanstack/react-virtual';
 import type { Point } from '../types/types';
 
 interface PointsViewerProps {
@@ -13,6 +14,15 @@ interface PointsViewerProps {
 function PointsViewer({ collectionName, points, loading, onClose, onViewDetails }: PointsViewerProps) {
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 10;
+
+  // Virtual scrolling setup
+  const parentRef = useRef<HTMLDivElement>(null);
+  const virtualizer = useVirtualizer({
+    count: points.length,
+    getScrollElement: () => parentRef.current,
+    estimateSize: () => 50, // Estimated row height
+    overscan: 5,
+  });
 
   // Render payload in structured format for table
   const renderPayloadForTable = (payload: Record<string, any>) => {
@@ -68,61 +78,54 @@ function PointsViewer({ collectionName, points, loading, onClose, onViewDetails 
         <p>No points found in this collection.</p>
       ) : (
         <div>
-          <div className="points-table">
-            <table>
-              <thead>
+          <div className="points-table-container" ref={parentRef} style={{ height: '400px', overflow: 'auto' }}>
+            <table className="points-table">
+              <thead style={{ position: 'sticky', top: 0, background: 'var(--bg-color)', zIndex: 1 }}>
                 <tr>
                   <th>ID</th>
                   <th>Payload</th>
                   <th>Actions</th>
                 </tr>
               </thead>
-              <tbody>
-                {points
-                  .slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage)
-                  .map((point, index) => (
-                  <tr key={(currentPage - 1) * itemsPerPage + index}>
-                    <td>{point.id}</td>
-                    <td className="payload-cell">
-                      {point.payload ?
-                        renderPayloadForTable(point.payload) :
-                        'No payload'
-                      }
-                    </td>
-                    <td className="actions-cell">
-                      <button
-                        className="view-details-btn"
-                        onClick={() => onViewDetails(point)}
-                      >
-                        View Details
-                      </button>
-                    </td>
-                  </tr>
-                ))}
+              <tbody style={{ height: `${virtualizer.getTotalSize()}px`, position: 'relative' }}>
+                {virtualizer.getVirtualItems().map((virtualItem) => {
+                  const point = points[virtualItem.index];
+                  return (
+                    <tr
+                      key={point.id}
+                      style={{
+                        position: 'absolute',
+                        top: 0,
+                        left: 0,
+                        width: '100%',
+                        height: `${virtualItem.size}px`,
+                        transform: `translateY(${virtualItem.start}px)`,
+                      }}
+                    >
+                      <td>{point.id}</td>
+                      <td className="payload-cell">
+                        {point.payload ?
+                          renderPayloadForTable(point.payload) :
+                          'No payload'
+                        }
+                      </td>
+                      <td className="actions-cell">
+                        <button
+                          className="view-details-btn"
+                          onClick={() => onViewDetails(point)}
+                        >
+                          View Details
+                        </button>
+                      </td>
+                    </tr>
+                  );
+                })}
               </tbody>
             </table>
           </div>
-          {points.length > itemsPerPage && (
-            <div className="pagination">
-              <button
-                className="pagination-btn"
-                onClick={() => setCurrentPage(prev => Math.max(1, prev - 1))}
-                disabled={currentPage === 1}
-              >
-                Previous
-              </button>
-              <span className="pagination-info">
-                Page {currentPage} of {Math.ceil(points.length / itemsPerPage)}
-              </span>
-              <button
-                className="pagination-btn"
-                onClick={() => setCurrentPage(prev => Math.min(Math.ceil(points.length / itemsPerPage), prev + 1))}
-                disabled={currentPage === Math.ceil(points.length / itemsPerPage)}
-              >
-                Next
-              </button>
-            </div>
-          )}
+          <div className="points-count">
+            Total points: {points.length}
+          </div>
         </div>
       )}
       <button

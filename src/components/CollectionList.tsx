@@ -2,6 +2,7 @@ import { h } from 'preact';
 import { useState } from 'preact/hooks';
 import type { Collection } from '../types/types';
 import ProgressModal from './ProgressModal';
+import { CollectionSkeleton } from './SkeletonComponents';
 
 interface CollectionListProps {
   collections: Collection[];
@@ -226,7 +227,7 @@ function CollectionList({
         </form>
       )}
 
-      {loading && <p className="loading">Loading collections...</p>}
+      {loading && <CollectionSkeleton />}
       {error && <p className="error">Error: {error}</p>}
       {!loading && !error && (
         <ul className="collections-list">

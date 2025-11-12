@@ -3,7 +3,7 @@ import type { ModelInfo } from '../services/interfaces';
 
 interface ModelListProps {
   models: ModelInfo[];
-  currentModel?: string;
+  currentModel?: string | undefined;
   onSelectModel: (model: ModelInfo) => void;
   conciseMode: boolean;
   showDebugInfo: boolean;

@@ -7,6 +7,7 @@ import type {
   ModelInfo,
   ToolCall
 } from './interfaces';
+import { withRetry } from '../utils/retry';
 
 export class OpenRouterService implements AIService {
   private apiKey: string;
@@ -47,16 +48,19 @@ export class OpenRouterService implements AIService {
       requestBody.tool_choice = 'auto';
     }
 
-    const response = await fetch(`${this.baseUrl}/chat/completions`, {
-      method: 'POST',
-      headers: {
-        'Authorization': `Bearer ${this.apiKey}`,
-        'Content-Type': 'application/json',
-        'HTTP-Referer': window.location.origin,
-        'X-Title': 'Preact Qdrant GUI',
-      },
-      body: JSON.stringify(requestBody),
-    });
+    const response = await withRetry(
+      () => fetch(`${this.baseUrl}/chat/completions`, {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${this.apiKey}`,
+          'Content-Type': 'application/json',
+          'HTTP-Referer': window.location.origin,
+          'X-Title': 'Preact Qdrant GUI',
+        },
+        body: JSON.stringify(requestBody),
+      }),
+      { maxAttempts: 3 }
+    );
 
     if (!response.ok) {
       const errorText = await response.text();
@@ -98,16 +102,19 @@ export class OpenRouterService implements AIService {
       stream: true,
     };
 
-    const response = await fetch(`${this.baseUrl}/chat/completions`, {
-      method: 'POST',
-      headers: {
-        'Authorization': `Bearer ${this.apiKey}`,
-        'Content-Type': 'application/json',
-        'HTTP-Referer': window.location.origin,
-        'X-Title': 'Preact Qdrant GUI',
-      },
-      body: JSON.stringify(requestBody),
-    });
+    const response = await withRetry(
+      () => fetch(`${this.baseUrl}/chat/completions`, {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${this.apiKey}`,
+          'Content-Type': 'application/json',
+          'HTTP-Referer': window.location.origin,
+          'X-Title': 'Preact Qdrant GUI',
+        },
+        body: JSON.stringify(requestBody),
+      }),
+      { maxAttempts: 3 }
+    );
 
     if (!response.ok) {
       const errorText = await response.text();

@@ -172,11 +172,16 @@ export class QdrantApi {
     collectionName: string,
     chunkSize: number = 1000,
     chunkOverlap: number = 200,
-    onProgress?: ProgressCallback
+    onProgress?: ProgressCallback,
+    timeoutMs: number = 300000 // 5 minutes default timeout
   ): Promise<UploadResult> {
     this.logger.info(`Starting file upload and processing for collection: ${collectionName}`);
 
-    onProgress?.(0, 100, 'Reading file...');
+    // Create AbortController for timeout
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), timeoutMs);
+
+    try {
 
     // Process the document into chunks
     const chunkedDocument = await this.documentProcessor.processFile(
@@ -202,7 +207,7 @@ export class QdrantApi {
 
     // Process chunks and create vectors
     this.logger.info('Starting vectorization of all chunks...');
-    const points: any[] = [];
+    const points: Point[] = [];
 
     for (let i = 0; i < chunks.length; i++) {
       const chunk = chunks[i];
@@ -211,7 +216,7 @@ export class QdrantApi {
 
       try {
         // Skip empty chunks or chunks that are too short
-        if (!chunk || !chunk.trim() || chunk.trim().length < 10) {
+        if (!chunk || typeof chunk !== 'string' || !chunk.trim() || chunk.trim().length < 10) {
           this.logger.debug(
             `Skipping chunk ${i + 1} - too short or empty (length: ${
               chunk?.length || 0
@@ -235,7 +240,15 @@ export class QdrantApi {
         );
 
         const embeddings = await this.embeddingService.embedTexts([cleanChunk]);
+        if (!embeddings || embeddings.length === 0) {
+          this.logger.warn(`No embedding returned for chunk ${i + 1}, skipping`);
+          continue;
+        }
         const vector = embeddings[0];
+        if (!vector || !Array.isArray(vector)) {
+          this.logger.warn(`Invalid vector for chunk ${i + 1}, skipping`);
+          continue;
+        }
 
         // Create point data
         const pointData = {
@@ -245,8 +258,8 @@ export class QdrantApi {
             text: cleanChunk,
             chunkIndex: i,
             totalChunks: chunks.length,
-            fileName: file.name,
-            fileSize: file.size,
+            fileName: file?.name ?? 'unknown',
+            fileSize: file?.size ?? 0,
             timestamp: new Date().toISOString(),
             collectionName: collectionName,
           },
@@ -266,12 +279,12 @@ export class QdrantApi {
     );
 
     // Log sample point structure for debugging
-    if (points.length > 0) {
+    if (points.length > 0 && points[0]) {
       this.logger.debug('Sample point structure:', {
         id: points[0].id,
-        vectorLength: points[0].vector.length,
-        payloadKeys: Object.keys(points[0].payload),
-        firstFewVectorValues: points[0].vector.slice(0, 5),
+        vectorLength: points[0].vector?.length ?? 0,
+        payloadKeys: points[0].payload ? Object.keys(points[0].payload) : [],
+        firstFewVectorValues: points[0].vector?.slice(0, 5) ?? [],
       });
     }
 
@@ -288,6 +301,9 @@ export class QdrantApi {
       vectorsCreated: points.length,
       collectionName,
     };
+    } finally {
+      clearTimeout(timeoutId);
+    }
   }
 
   // AI Service methods
@@ -304,14 +320,14 @@ export class QdrantApi {
   }
 
   async validateToken(): Promise<boolean> {
-    console.log('[DEBUG] QdrantApi.validateToken called');
-    console.log('[DEBUG] Current config token:', configProvider.getOpenRouterToken());
-    console.log('[DEBUG] aiService type:', this.aiService.constructor.name);
+    this.logger.debug('QdrantApi.validateToken called');
+    this.logger.debug('Current config token:', configProvider.getOpenRouterToken() ? '[REDACTED]' : 'not set');
+    this.logger.debug('aiService type:', this.aiService.constructor.name);
 
     // Update the token in the AI service before validation
     const currentToken = configProvider.getOpenRouterToken();
     if (this.aiService instanceof OpenRouterService) {
-      console.log('[DEBUG] Updating token in OpenRouterService');
+      this.logger.debug('Updating token in OpenRouterService');
       (this.aiService as any).updateToken(currentToken);
     }
 

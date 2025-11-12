@@ -1,6 +1,9 @@
 import { h } from 'preact';
-import { useState } from 'preact/hooks';
+import { useState, useEffect, useRef } from 'preact/hooks';
 import type { SearchResult, SearchOptions } from '../services/interfaces';
+import { useDebouncedValue } from '../hooks/useDebouncedValue';
+import { useVirtualizer } from '@tanstack/react-virtual';
+import { SearchResultSkeleton } from './SkeletonComponents';
 
 interface SearchComponentProps {
   collections: Array<{ name: string; vectors_count: number }>;
@@ -27,6 +30,24 @@ function SearchComponent({
   onPerformSearch,
   onClearResults,
 }: SearchComponentProps) {
+  // Debounce search query to avoid too many API calls while typing
+  const debouncedSearchQuery = useDebouncedValue(searchQuery, 300);
+
+  // Virtual scrolling for search results
+  const resultsRef = useRef<HTMLDivElement>(null);
+  const resultsVirtualizer = useVirtualizer({
+    count: searchResults.length,
+    getScrollElement: () => resultsRef.current,
+    estimateSize: () => 120, // Estimated result item height
+    overscan: 3,
+  });
+
+  // Auto-search when debounced query changes
+  useEffect(() => {
+    if (selectedCollection && debouncedSearchQuery.trim() && !searching) {
+      onPerformSearch(selectedCollection);
+    }
+  }, [debouncedSearchQuery, selectedCollection, onPerformSearch, searching]);
 
   const handleSearch = () => {
     if (selectedCollection && searchQuery.trim()) {
@@ -140,51 +161,69 @@ function SearchComponent({
             <h3>Search Results ({searchResults.length})</h3>
           </div>
 
-          <div className="results-list">
-            {searchResults.map((result, index) => (
-              <div key={result.id} className="result-item">
-                <div className="result-header">
-                  <span className="result-rank">#{index + 1}</span>
-                  <span className="result-score">
-                    Similarity: {(result.score * 100).toFixed(1)}%
-                  </span>
-                </div>
+          <div className="results-container" ref={resultsRef} style={{ height: '400px', overflow: 'auto' }}>
+            <div className="results-list" style={{ height: `${resultsVirtualizer.getTotalSize()}px`, position: 'relative' }}>
+              {resultsVirtualizer.getVirtualItems().map((virtualItem) => {
+                const result = searchResults[virtualItem.index];
+                if (!result) return null;
+                return (
+                  <div
+                    key={result.id}
+                    className="result-item"
+                    style={{
+                      position: 'absolute',
+                      top: 0,
+                      left: 0,
+                      width: '100%',
+                      height: `${virtualItem.size}px`,
+                      transform: `translateY(${virtualItem.start}px)`,
+                    }}
+                  >
+                    <div className="result-header">
+                      <span className="result-rank">#{virtualItem.index + 1}</span>
+                      <span className="result-score">
+                        Similarity: {(result.score * 100).toFixed(1)}%
+                      </span>
+                    </div>
 
-                <div className="result-content">
-                  <div className="result-text">
-                    {result.payload?.text || 'No text content'}
-                  </div>
+                    <div className="result-content">
+                      <div className="result-text">
+                        {result.payload?.text || 'No text content'}
+                      </div>
 
-                  {result.payload && (
-                    <div className="result-metadata">
-                      {result.payload.fileName && (
-                        <span className="metadata-item">
-                          📄 {result.payload.fileName}
-                        </span>
-                      )}
-                      {result.payload.chunkIndex !== undefined && (
-                        <span className="metadata-item">
-                          📍 Chunk {result.payload.chunkIndex + 1}
-                        </span>
-                      )}
-                      {result.payload.timestamp && (
-                        <span className="metadata-item">
-                          🕒 {new Date(result.payload.timestamp).toLocaleDateString()}
-                        </span>
+                      {result.payload && (
+                        <div className="result-metadata">
+                          {result.payload.fileName && (
+                            <span className="metadata-item">
+                              📄 {result.payload.fileName}
+                            </span>
+                          )}
+                          {result.payload.chunkIndex !== undefined && (
+                            <span className="metadata-item">
+                              📍 Chunk {result.payload.chunkIndex + 1}
+                            </span>
+                          )}
+                          {result.payload.timestamp && (
+                            <span className="metadata-item">
+                              🕒 {new Date(result.payload.timestamp).toLocaleDateString()}
+                            </span>
+                          )}
+                        </div>
                       )}
                     </div>
-                  )}
-                </div>
-              </div>
-            ))}
+                  </div>
+                );
+              })}
+            </div>
           </div>
         </div>
       )}
 
       {searching && (
         <div className="search-loading">
-          <div className="loading-spinner"></div>
-          <p>Searching...</p>
+          <SearchResultSkeleton />
+          <SearchResultSkeleton />
+          <SearchResultSkeleton />
         </div>
       )}
     </div>

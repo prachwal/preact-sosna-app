@@ -3,6 +3,7 @@ import type { Collection, Point } from '../types/types';
 import type { SearchResult, SearchOptions } from '../services/interfaces';
 import { qdrantApi } from '../services/qdrantApi';
 import { configProvider } from '../services/ConfigurationProvider';
+import { showErrorToast, showSuccessToast, showInfoToast } from '../utils/toast';
 
 export interface UseCollectionsReturn {
   // State
@@ -105,7 +106,7 @@ export function useCollections(): UseCollectionsReturn {
       setPoints(points);
     } catch (err) {
       console.error('Browse failed:', err);
-      alert(`Browse failed: ${err instanceof Error ? err.message : 'Unknown error'}`);
+      showErrorToast(`Browse failed: ${err instanceof Error ? err.message : 'Unknown error'}`);
     } finally {
       setPointsLoading(false);
     }
@@ -116,9 +117,10 @@ export function useCollections(): UseCollectionsReturn {
     setExporting(collectionName);
     try {
       await qdrantApi.exportCollection(collectionName);
+      showSuccessToast(`Collection "${collectionName}" exported successfully`);
     } catch (err) {
       console.error('Export failed:', err);
-      alert(`Export failed: ${err instanceof Error ? err.message : 'Unknown error'}`);
+      showErrorToast(`Export failed: ${err instanceof Error ? err.message : 'Unknown error'}`);
     } finally {
       setExporting(null);
       console.log('Export process finished for:', collectionName);
@@ -132,9 +134,10 @@ export function useCollections(): UseCollectionsReturn {
       await qdrantApi.createCollection(collectionName, vectorSize);
       // Refresh collections list
       await fetchCollectionsData();
+      showSuccessToast(`Collection "${collectionName}" created successfully`);
     } catch (err) {
       console.error('Create collection failed:', err);
-      alert(`Create collection failed: ${err instanceof Error ? err.message : 'Unknown error'}`);
+      showErrorToast(`Create collection failed: ${err instanceof Error ? err.message : 'Unknown error'}`);
     } finally {
       setCreating(null);
     }
@@ -152,9 +155,10 @@ export function useCollections(): UseCollectionsReturn {
         setBrowsing(null);
         setPoints([]);
       }
+      showSuccessToast(`Collection "${collectionName}" deleted successfully`);
     } catch (err) {
       console.error('Delete collection failed:', err);
-      alert(`Delete collection failed: ${err instanceof Error ? err.message : 'Unknown error'}`);
+      showErrorToast(`Delete collection failed: ${err instanceof Error ? err.message : 'Unknown error'}`);
     } finally {
       setDeleting(null);
     }
@@ -189,9 +193,10 @@ export function useCollections(): UseCollectionsReturn {
       );
       // Refresh collections list to show updated counts
       await fetchCollectionsData();
+      showSuccessToast(`File "${file.name}" uploaded successfully to "${collectionName}"`);
     } catch (err) {
       console.error('Upload failed:', err);
-      alert(`Upload failed: ${err instanceof Error ? err.message : 'Unknown error'}`);
+      showErrorToast(`Upload failed: ${err instanceof Error ? err.message : 'Unknown error'}`);
     } finally {
       setUploading(null);
     }
@@ -227,7 +232,7 @@ export function useCollections(): UseCollectionsReturn {
       console.log(`Search completed. Found ${results.length} results`);
     } catch (err) {
       console.error('Search failed:', err);
-      alert(`Search failed: ${err instanceof Error ? err.message : 'Unknown error'}`);
+      showErrorToast(`Search failed: ${err instanceof Error ? err.message : 'Unknown error'}`);
       setSearchResults([]);
     } finally {
       setSearching(false);

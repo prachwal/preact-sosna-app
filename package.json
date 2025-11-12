@@ -16,6 +16,7 @@
   "type": "module",
   "dependencies": {
     "@langchain/textsplitters": "^1.0.0",
+    "@tanstack/react-virtual": "^3.13.12",
     "@types/dompurify": "^3.0.5",
     "dompurify": "^3.3.0",
     "highlight.js": "^11.9.0",

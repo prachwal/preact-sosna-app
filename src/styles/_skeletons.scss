@@ -1,0 +1,110 @@
+// ==========================================
+// SKELETON COMPONENTS
+// ==========================================
+
+@use 'variables' as *;
+@use 'sass:color';
+
+.collection-skeleton,
+.search-result-skeleton,
+.chat-message-skeleton {
+  .skeleton-text {
+    background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+    background-size: 200% 100%;
+    animation: skeleton-loading 1.5s infinite;
+    border-radius: $spacing-xs;
+    display: block;
+    margin-bottom: $spacing-sm;
+
+    &.skeleton-title {
+      height: 24px;
+      width: 60%;
+    }
+
+    &.skeleton-subtitle {
+      height: 16px;
+      width: 40%;
+    }
+
+    &.skeleton-name {
+      height: 18px;
+      width: 70%;
+    }
+
+    &.skeleton-count {
+      height: 14px;
+      width: 30%;
+    }
+
+    &.skeleton-rank {
+      height: 16px;
+      width: 40px;
+    }
+
+    &.skeleton-score {
+      height: 16px;
+      width: 80px;
+    }
+
+    &.skeleton-line {
+      height: 16px;
+      width: 100%;
+
+      &.short {
+        width: 60%;
+      }
+    }
+
+    &.skeleton-meta {
+      height: 14px;
+      width: 50%;
+      margin-right: $spacing-md;
+    }
+  }
+
+  .skeleton-avatar {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+    background-size: 200% 100%;
+    animation: skeleton-loading 1.5s infinite;
+    margin-right: $spacing-md;
+  }
+
+  .skeleton-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: $spacing-md;
+  }
+
+  .skeleton-content {
+    flex: 1;
+  }
+
+  .skeleton-metadata {
+    display: flex;
+    margin-top: $spacing-sm;
+  }
+
+  .skeleton-item {
+    padding: $spacing-lg;
+    border: 1px solid var(--pcs-color-border);
+    border-radius: $spacing-sm;
+    margin-bottom: $spacing-md;
+
+    &:last-child {
+      margin-bottom: 0;
+    }
+  }
+}
+
+@keyframes skeleton-loading {
+  0% {
+    background-position: -200% 0;
+  }
+  100% {
+    background-position: 200% 0;
+  }
+}

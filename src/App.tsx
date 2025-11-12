@@ -1,5 +1,7 @@
 import { useState, useEffect } from 'preact/hooks';
 import QdrantGUI from './components/QdrantGUI';
+import { ErrorBoundary } from './components/ErrorBoundary';
+import { ToastContainer } from './utils/toast';
 import './App.scss';
 
 // Theme detection and management
@@ -94,7 +96,10 @@ function App() {
           {getThemeIcon()}
         </button>
       </header>
-      <QdrantGUI />
+      <ErrorBoundary>
+        <QdrantGUI />
+      </ErrorBoundary>
+      <ToastContainer />
     </div>
   );
 }
