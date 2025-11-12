@@ -5,6 +5,8 @@ import PointsViewer from './PointsViewer';
 import PointDetailsModal from './PointDetailsModal';
 import SearchComponent from './SearchComponent';
 import SettingsModal from './SettingsModal';
+import ModelSelectionTabs from './ModelSelectionTabs';
+import ChatInterface from './ChatInterface';
 import { useCollections } from '../hooks/useCollections';
 
 function QdrantGUI() {
@@ -24,6 +26,7 @@ function QdrantGUI() {
     points,
     pointsLoading,
     selectedPoint,
+    selectedCollection,
     browseCollection,
     exportCollection,
     createCollection,
@@ -32,6 +35,7 @@ function QdrantGUI() {
     closeUploadModal,
     setSelectedPoint,
     closePointsViewer,
+    selectCollection,
     // Search properties
     searchQuery,
     searchResults,
@@ -47,6 +51,8 @@ function QdrantGUI() {
   const [currentPointIndex, setCurrentPointIndex] = useState<number>(-1);
   // Settings modal state
   const [showSettings, setShowSettings] = useState(false);
+  // Tab state
+  const [activeTab, setActiveTab] = useState<'search' | 'chat'>('search');
 
   // Navigation functions
   const navigateToPoint = (point: Point | null) => {
@@ -112,19 +118,33 @@ function QdrantGUI() {
         onCloseUploadModal={closeUploadModal}
         onCloseBrowsing={closePointsViewer}
         onOpenSettings={() => setShowSettings(true)}
+        selectedCollection={selectedCollection}
+        onSelectCollection={selectCollection}
       />
 
-      <SearchComponent
-        collections={collections}
-        searchQuery={searchQuery}
-        searchResults={searchResults}
-        searching={searching}
-        searchOptions={searchOptions}
-        onSearchQueryChange={setSearchQuery}
-        onSearchOptionsChange={setSearchOptions}
-        onPerformSearch={performSearch}
-        onClearResults={clearSearchResults}
+      <ModelSelectionTabs
+        activeTab={activeTab}
+        onTabChange={setActiveTab}
       />
+
+      {activeTab === 'search' && (
+        <SearchComponent
+          collections={collections}
+          searchQuery={searchQuery}
+          searchResults={searchResults}
+          searching={searching}
+          searchOptions={searchOptions}
+          selectedCollection={selectedCollection}
+          onSearchQueryChange={setSearchQuery}
+          onSearchOptionsChange={setSearchOptions}
+          onPerformSearch={performSearch}
+          onClearResults={clearSearchResults}
+        />
+      )}
+
+      {activeTab === 'chat' && (
+        <ChatInterface providerName="OpenRouter" />
+      )}
 
       {browsing && (
         <PointsViewer

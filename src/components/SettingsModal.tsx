@@ -4,14 +4,36 @@ import { configProvider, type AppConfig } from '../services/ConfigurationProvide
 import ModelSelectionModal from './ModelSelectionModal';
 import type { ModelInfo } from '../services/interfaces';
 import { qdrantApi } from '../services/qdrantApi';
+import { formPersistenceService, type FormState } from '../services/formPersistenceService';
 
 interface SettingsModalProps {
   isOpen: boolean;
   onClose: () => void;
 }
 
+interface SettingsFormState extends FormState {
+  qdrantUrl: string;
+  embeddingUrl: string;
+  openRouterToken: string;
+  selectedModel: string;
+  selectedProvider: string;
+}
+
 function SettingsModal({ isOpen, onClose }: SettingsModalProps) {
-  const [config, setConfig] = useState<AppConfig>(configProvider.getConfig());
+  const formId = 'application_settings';
+
+  const defaultFormState: SettingsFormState = {
+    qdrantUrl: 'http://localhost:6333',
+    embeddingUrl: 'http://localhost:8082',
+    openRouterToken: '',
+    selectedModel: '',
+    selectedProvider: '',
+  };
+
+  const [formState, setFormState] = useState<SettingsFormState>(() =>
+    formPersistenceService.loadFormState(formId, defaultFormState)
+  );
+
   const [isSaving, setIsSaving] = useState(false);
   const [isValidatingToken, setIsValidatingToken] = useState(false);
   const [tokenValid, setTokenValid] = useState<boolean | null>(null);
@@ -19,15 +41,37 @@ function SettingsModal({ isOpen, onClose }: SettingsModalProps) {
   const [availableModels, setAvailableModels] = useState<ModelInfo[]>([]);
   const [isLoadingModels, setIsLoadingModels] = useState(false);
 
+  // Extract state variables for easier access
+  const {
+    qdrantUrl,
+    embeddingUrl,
+    openRouterToken,
+    selectedModel,
+    selectedProvider
+  } = formState;
+
+  // Save form state whenever it changes
+  useEffect(() => {
+    formPersistenceService.saveFormState(formId, formState);
+  }, [formId, formState]);
+
   useEffect(() => {
     if (isOpen) {
-      setConfig(configProvider.getConfig());
+      // Sync with current config when modal opens
+      const currentConfig = configProvider.getConfig();
+      setFormState({
+        qdrantUrl: currentConfig.qdrantUrl,
+        embeddingUrl: currentConfig.embeddingUrl,
+        openRouterToken: currentConfig.openRouterToken,
+        selectedModel: currentConfig.selectedModel || '',
+        selectedProvider: currentConfig.selectedProvider || '',
+      });
       setTokenValid(null); // Reset validation state when modal opens
     }
   }, [isOpen]);
 
   const validateToken = async () => {
-    if (!config.openRouterToken.trim()) {
+    if (!openRouterToken.trim()) {
       setTokenValid(false);
       return;
     }
@@ -58,7 +102,7 @@ function SettingsModal({ isOpen, onClose }: SettingsModalProps) {
   };
 
   const handleModelSelect = (model: ModelInfo) => {
-    setConfig(prev => ({
+    setFormState(prev => ({
       ...prev,
       selectedModel: model.id,
       selectedProvider: model.provider,
@@ -70,23 +114,31 @@ function SettingsModal({ isOpen, onClose }: SettingsModalProps) {
     setShowModelSelection(true);
   };
 
-  const handleSave = async () => {
+    const handleSave = async () => {
     setIsSaving(true);
     try {
-      configProvider.updateConfig(config);
-      // Small delay to show saving state
-      setTimeout(() => {
-        setIsSaving(false);
-        onClose();
-      }, 500);
+      // Update the global configuration
+      configProvider.updateConfig({
+        qdrantUrl: formState.qdrantUrl,
+        embeddingUrl: formState.embeddingUrl,
+        openRouterToken: formState.openRouterToken,
+        selectedModel: formState.selectedModel,
+        selectedProvider: formState.selectedProvider,
+      });
+
+      // Save to persistent storage
+      await formPersistenceService.saveFormState(formId, formState);
+
+      onClose();
     } catch (error) {
       console.error('Failed to save settings:', error);
+    } finally {
       setIsSaving(false);
     }
   };
 
-  const handleInputChange = (field: keyof AppConfig, value: string) => {
-    setConfig(prev => ({
+  const handleInputChange = (field: keyof SettingsFormState, value: string) => {
+    setFormState(prev => ({
       ...prev,
       [field]: value
     }));
@@ -110,7 +162,7 @@ function SettingsModal({ isOpen, onClose }: SettingsModalProps) {
               <input
                 id="qdrantUrl"
                 type="url"
-                value={config.qdrantUrl}
+                value={formState.qdrantUrl}
                 onChange={(e) => handleInputChange('qdrantUrl', (e.target as HTMLInputElement).value)}
                 placeholder="http://localhost:6333"
                 className="settings-input"
@@ -126,7 +178,7 @@ function SettingsModal({ isOpen, onClose }: SettingsModalProps) {
               <input
                 id="embeddingUrl"
                 type="url"
-                value={config.embeddingUrl}
+                value={formState.embeddingUrl}
                 onChange={(e) => handleInputChange('embeddingUrl', (e.target as HTMLInputElement).value)}
                 placeholder="http://localhost:8082"
                 className="settings-input"
@@ -143,7 +195,7 @@ function SettingsModal({ isOpen, onClose }: SettingsModalProps) {
                 <input
                   id="openRouterToken"
                   type="password"
-                  value={config.openRouterToken}
+                  value={formState.openRouterToken}
                   onChange={(e) => {
                     handleInputChange('openRouterToken', (e.target as HTMLInputElement).value);
                     setTokenValid(null); // Reset validation when token changes
@@ -154,7 +206,7 @@ function SettingsModal({ isOpen, onClose }: SettingsModalProps) {
                 <button
                   type="button"
                   onClick={validateToken}
-                  disabled={isValidatingToken || !config.openRouterToken.trim()}
+                  disabled={isValidatingToken || !formState.openRouterToken.trim()}
                   className={`validate-token-btn ${tokenValid === true ? 'valid' : tokenValid === false ? 'invalid' : ''}`}
                 >
                   {isValidatingToken ? '...' : tokenValid === true ? '✓' : tokenValid === false ? '✗' : 'Validate'}
@@ -170,10 +222,10 @@ function SettingsModal({ isOpen, onClose }: SettingsModalProps) {
               <div className="model-selection-group">
                 <div className="current-model-display">
                   <span className="current-model">
-                    {config.selectedModel || 'No model selected'}
+                    {formState.selectedModel || 'No model selected'}
                   </span>
                   <span className="current-provider">
-                    ({config.selectedProvider || 'unknown provider'})
+                    ({formState.selectedProvider || 'unknown provider'})
                   </span>
                 </div>
                 <button
@@ -215,7 +267,7 @@ function SettingsModal({ isOpen, onClose }: SettingsModalProps) {
           isOpen={showModelSelection}
           onClose={() => setShowModelSelection(false)}
           onSelectModel={handleModelSelect}
-          currentModel={config.selectedModel || ''}
+          currentModel={formState.selectedModel || ''}
           models={availableModels}
           providerName="OpenRouter"
         />

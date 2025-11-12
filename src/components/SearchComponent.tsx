@@ -8,6 +8,7 @@ interface SearchComponentProps {
   searchResults: SearchResult[];
   searching: boolean;
   searchOptions: SearchOptions;
+  selectedCollection?: string;
   onSearchQueryChange: (query: string) => void;
   onSearchOptionsChange: (options: SearchOptions) => void;
   onPerformSearch: (collectionName: string) => void;
@@ -20,12 +21,12 @@ function SearchComponent({
   searchResults,
   searching,
   searchOptions,
+  selectedCollection = '',
   onSearchQueryChange,
   onSearchOptionsChange,
   onPerformSearch,
   onClearResults,
 }: SearchComponentProps) {
-  const [selectedCollection, setSelectedCollection] = useState('');
 
   const handleSearch = () => {
     if (selectedCollection && searchQuery.trim()) {
@@ -44,16 +45,21 @@ function SearchComponent({
       <div className="search-header">
         <h2>Semantic Search</h2>
         <p>Search through your document collections using natural language</p>
+        {selectedCollection && (
+          <p className="selected-collection-info">
+            <strong>Selected collection:</strong> {selectedCollection}
+          </p>
+        )}
       </div>
 
       <div className="search-controls">
         <div className="search-input-group">
           <select
             value={selectedCollection}
-            onChange={(e) => setSelectedCollection((e.target as HTMLSelectElement).value)}
             className="search-collection-select"
+            disabled
           >
-            <option value="">Select collection...</option>
+            <option value="">No collection selected</option>
             {collections.map((collection) => (
               <option key={collection.name} value={collection.name}>
                 {collection.name} ({collection.vectors_count} vectors)

@@ -2,6 +2,7 @@ import { useState, useEffect } from 'preact/hooks';
 import type { Collection, Point } from '../types/types';
 import type { SearchResult, SearchOptions } from '../services/interfaces';
 import { qdrantApi } from '../services/qdrantApi';
+import { configProvider } from '../services/ConfigurationProvider';
 
 export interface UseCollectionsReturn {
   // State
@@ -23,6 +24,7 @@ export interface UseCollectionsReturn {
   points: Point[];
   pointsLoading: boolean;
   selectedPoint: Point | null;
+  selectedCollection: string;
   // Search state
   searchQuery: string;
   searchResults: SearchResult[];
@@ -44,6 +46,7 @@ export interface UseCollectionsReturn {
   closeUploadModal: () => void;
   setSelectedPoint: (point: Point | null) => void;
   closePointsViewer: () => void;
+  selectCollection: (collectionName: string) => void;
   // Search actions
   setSearchQuery: (query: string) => void;
   setSearchOptions: (options: SearchOptions) => void;
@@ -70,6 +73,7 @@ export function useCollections(): UseCollectionsReturn {
   const [points, setPoints] = useState<Point[]>([]);
   const [pointsLoading, setPointsLoading] = useState(false);
   const [selectedPoint, setSelectedPoint] = useState<Point | null>(null);
+  const [selectedCollection, setSelectedCollection] = useState<string>(configProvider.getSelectedCollection());
   // Search state
   const [searchQuery, setSearchQuery] = useState('');
   const [searchResults, setSearchResults] = useState<SearchResult[]>([]);
@@ -193,6 +197,11 @@ export function useCollections(): UseCollectionsReturn {
     }
   };
 
+  const selectCollection = (collectionName: string) => {
+    setSelectedCollection(collectionName);
+    configProvider.setSelectedCollection(collectionName);
+  };
+
   const closePointsViewer = () => {
     setBrowsing(null);
     setPoints([]);
@@ -250,6 +259,7 @@ export function useCollections(): UseCollectionsReturn {
     points,
     pointsLoading,
     selectedPoint,
+    selectedCollection,
     // Search state
     searchQuery,
     searchResults,
@@ -266,6 +276,7 @@ export function useCollections(): UseCollectionsReturn {
     closeUploadModal,
     setSelectedPoint,
     closePointsViewer,
+    selectCollection,
     // Search actions
     setSearchQuery,
     setSearchOptions,

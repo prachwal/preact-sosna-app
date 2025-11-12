@@ -5,6 +5,11 @@
 @use 'variables' as *;
 @use 'sass:color';
 
+// Import component-specific styles
+@use 'model-selection-modal' as *;
+@use 'chat-interface' as *;
+@use 'tooltips' as *;
+
 .qdrant-gui {
   border: 1px solid $color-border;
   border-radius: $spacing-sm;
@@ -137,6 +142,35 @@
         &:disabled {
           background-color: $color-secondary;
           cursor: not-allowed;
+        }
+      }
+
+      .select-btn {
+        padding: $spacing-lg $spacing-xxl;
+        background-color: $color-info;
+        color: $color-background-white;
+        border: none;
+        border-radius: $spacing-sm;
+        cursor: pointer;
+        transition: all $transition-fast;
+        white-space: nowrap;
+
+        &:hover:not(:disabled) {
+          background-color: color.adjust($color-info, $lightness: -10%);
+        }
+
+        &:disabled {
+          background-color: $color-secondary;
+          cursor: not-allowed;
+        }
+
+        &.selected {
+          background-color: $color-success;
+          font-weight: bold;
+
+          &:hover:not(:disabled) {
+            background-color: color.adjust($color-success, $lightness: -10%);
+          }
         }
       }
     }
@@ -804,18 +838,18 @@
 }
 
 // Settings Modal Styles
+
 .settings-modal-overlay {
   position: fixed;
   top: 0;
   left: 0;
   right: 0;
   bottom: 0;
-  background-color: rgba(0, 0, 0, 0.5);
+  background-color: rgba(0, 0, 0, 0.7);
   display: flex;
   align-items: center;
   justify-content: center;
   z-index: 1000;
-  padding: $spacing-lg;
 }
 
 .settings-modal {
@@ -1055,496 +1089,6 @@
   }
 }
 
-// Model Selection Modal Styles
-.model-selection-modal-overlay {
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background-color: rgba(0, 0, 0, 0.5);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  z-index: 1001; // Higher than settings modal
-  padding: $spacing-lg;
-}
-
-.model-selection-modal {
-  background: $color-background-white;
-  border-radius: $spacing-sm;
-  box-shadow: $shadow-lg;
-  max-width: 800px;
-  width: 100%;
-  max-height: 90vh;
-  overflow: hidden;
-  display: flex;
-  flex-direction: column;
-
-  @media (max-width: $breakpoint-tablet) {
-    max-width: 95vw;
-    margin: $spacing-lg;
-  }
-}
-
-.model-selection-modal-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: $spacing-xl;
-  border-bottom: 1px solid $color-border;
-  background: $color-background-primary;
-
-  h3 {
-    margin: 0;
-    color: $color-text-primary;
-  }
-
-  .close-button {
-    background: none;
-    border: none;
-    font-size: 24px;
-    cursor: pointer;
-    color: $color-text-secondary;
-    padding: $spacing-xs;
-    border-radius: $spacing-xs;
-
-    &:hover {
-      background: $color-background-secondary;
-    }
-  }
-}
-
-.model-selection-modal-content {
-  flex: 1;
-  overflow-y: auto;
-  padding: $spacing-xl;
-}
-
-.model-filters {
-  margin-bottom: $spacing-xl;
-
-  .search-group {
-    margin-bottom: $spacing-lg;
-
-    .search-input-group {
-      display: flex;
-      gap: $spacing-sm;
-
-      .model-search-input {
-        flex: 1;
-        padding: $spacing-md;
-        border: 1px solid $color-border;
-        border-radius: $spacing-xs;
-        font-size: 14px;
-
-        &:focus {
-          outline: none;
-          border-color: $color-primary;
-          box-shadow: 0 0 0 2px rgba($color-primary, 0.1);
-        }
-      }
-
-      .search-field-select {
-        padding: $spacing-md;
-        border: 1px solid $color-border;
-        border-radius: $spacing-xs;
-        background: $color-background-white;
-        font-size: 14px;
-        min-width: 120px;
-
-        &:focus {
-          outline: none;
-          border-color: $color-primary;
-        }
-      }
-    }
-  }
-
-  .sort-group {
-    margin-bottom: $spacing-lg;
-
-    label {
-      display: block;
-      margin-bottom: $spacing-sm;
-      font-weight: 500;
-      color: $color-text-primary;
-      font-size: 14px;
-    }
-
-    .sort-controls {
-      display: flex;
-      gap: $spacing-sm;
-
-      .sort-select {
-        flex: 1;
-        padding: $spacing-md;
-        border: 1px solid $color-border;
-        border-radius: $spacing-xs;
-        background: $color-background-white;
-        font-size: 14px;
-
-        &:focus {
-          outline: none;
-          border-color: $color-primary;
-        }
-      }
-
-      .sort-order-btn {
-        padding: $spacing-md;
-        border: 1px solid $color-border;
-        border-radius: $spacing-xs;
-        background: $color-background-white;
-        cursor: pointer;
-        font-size: 14px;
-        min-width: 40px;
-
-        &:hover {
-          background: $color-background-secondary;
-        }
-      }
-    }
-  }
-
-  .range-filters {
-    margin-bottom: $spacing-lg;
-
-    .range-group {
-      display: inline-block;
-      margin-right: $spacing-xl;
-      margin-bottom: $spacing-md;
-
-      label {
-        display: block;
-        margin-bottom: $spacing-sm;
-        font-weight: 500;
-        color: $color-text-primary;
-        font-size: 14px;
-      }
-
-      .range-inputs {
-        display: flex;
-        align-items: center;
-        gap: $spacing-sm;
-
-        .range-input {
-          padding: $spacing-sm;
-          border: 1px solid $color-border;
-          border-radius: $spacing-xs;
-          width: 80px;
-          font-size: 14px;
-
-          &:focus {
-            outline: none;
-            border-color: $color-primary;
-          }
-        }
-
-        span {
-          color: $color-text-muted;
-          font-weight: 500;
-        }
-      }
-    }
-  }
-
-  .category-filters {
-    .category-filters-row {
-      display: flex;
-      justify-content: space-between;
-      align-items: flex-start;
-      gap: $spacing-lg;
-    }
-
-    .categories-section {
-      flex: 1;
-
-      label {
-        display: block;
-        margin-bottom: $spacing-sm;
-        font-weight: 500;
-        color: $color-text-primary;
-        font-size: 14px;
-      }
-
-      .category-buttons {
-        display: flex;
-        flex-wrap: wrap;
-        gap: $spacing-sm;
-
-        .category-filter {
-          padding: $spacing-sm $spacing-md;
-          border: 1px solid $color-border;
-          border-radius: $spacing-xs;
-          background: $color-background-white;
-          color: $color-text-primary;
-          cursor: pointer;
-          font-size: 14px;
-          transition: all 0.2s ease;
-          white-space: nowrap;
-
-          &:hover {
-            border-color: $color-primary;
-            background: rgba($color-primary, 0.05);
-          }
-
-          &.active {
-            border-color: $color-primary;
-            background: $color-primary;
-            color: white;
-          }
-        }
-      }
-    }
-
-    .view-options {
-      flex-shrink: 0;
-      margin-top: 22px; // Align with the label height
-
-      .view-options-label {
-        display: flex;
-        align-items: center;
-        gap: $spacing-sm;
-        font-weight: 500;
-        color: $color-text-primary;
-        font-size: 14px;
-        cursor: pointer;
-
-        input[type="checkbox"] {
-          margin: 0;
-          width: 16px;
-          height: 16px;
-          accent-color: $color-primary;
-        }
-      }
-    }
-  }
-}
-
-.models-list {
-  display: flex;
-  flex-direction: column;
-  gap: $spacing-md;
-}
-
-.model-item {
-  padding: $spacing-lg;
-  border: 1px solid $color-border;
-  border-radius: $spacing-sm;
-  cursor: pointer;
-  transition: all 0.2s ease;
-  background: $color-background-white;
-
-  &:hover {
-    border-color: $color-primary;
-    box-shadow: $shadow-sm;
-  }
-
-  &.selected {
-    border-color: $color-success;
-    background: rgba($color-success, 0.05);
-  }
-
-  .model-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: $spacing-sm;
-
-    h4 {
-      margin: 0;
-      color: $color-text-primary;
-      font-size: 16px;
-    }
-
-    .current-badge {
-      background: $color-success;
-      color: white;
-      padding: $spacing-xs $spacing-sm;
-      border-radius: $spacing-sm;
-      font-size: 10px;
-      font-weight: 500;
-    }
-  }
-
-  .model-description {
-    color: $color-text-secondary;
-    margin-bottom: $spacing-md;
-    line-height: 1.4;
-  }
-
-  .model-details {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    font-size: 12px;
-    color: $color-text-muted;
-
-    .context-length {
-      font-weight: 500;
-    }
-
-    .pricing {
-      color: $color-text-secondary;
-    }
-  }
-
-  .model-tags {
-    margin-top: $spacing-sm;
-    display: flex;
-    flex-wrap: wrap;
-    gap: $spacing-xs;
-
-    .model-tag {
-      background: $color-background-secondary;
-      color: $color-text-secondary;
-      padding: $spacing-xs $spacing-sm;
-      border-radius: $spacing-sm;
-      font-size: 10px;
-      font-weight: 500;
-    }
-  }
-}
-
-.view-options {
-  margin-bottom: $spacing-lg;
-  padding: $spacing-md;
-  background: $color-background-secondary;
-  border-radius: $spacing-sm;
-  display: flex;
-  gap: $spacing-lg;
-
-  .view-options-label {
-    display: flex;
-    align-items: center;
-    gap: $spacing-sm;
-    font-weight: 500;
-    color: $color-text-primary;
-    font-size: 14px;
-    cursor: pointer;
-
-    input[type="checkbox"] {
-      margin: 0;
-      width: 16px;
-      height: 16px;
-      accent-color: $color-primary;
-    }
-  }
-}
-
-.pagination-controls {
-  margin-top: $spacing-xl;
-  padding: $spacing-lg;
-  border-top: 1px solid $color-border;
-  background: $color-background-secondary;
-  border-radius: $spacing-sm;
-
-  .pagination-info {
-    text-align: center;
-    color: $color-text-secondary;
-    font-size: 14px;
-    margin-bottom: $spacing-md;
-    font-weight: 500;
-  }
-
-  .pagination-buttons {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: $spacing-sm;
-    margin-bottom: $spacing-md;
-
-    .pagination-btn {
-      padding: $spacing-sm $spacing-md;
-      border: 1px solid $color-border;
-      border-radius: $spacing-xs;
-      background: $color-background-white;
-      color: $color-text-primary;
-      cursor: pointer;
-      font-size: 14px;
-      transition: all 0.2s ease;
-
-      &:hover:not(:disabled) {
-        border-color: $color-primary;
-        background: rgba($color-primary, 0.05);
-      }
-
-      &:disabled {
-        opacity: 0.5;
-        cursor: not-allowed;
-      }
-    }
-
-    .page-numbers {
-      display: flex;
-      gap: $spacing-xs;
-      margin: 0 $spacing-md;
-
-      .page-number {
-        padding: $spacing-sm $spacing-md;
-        border: 1px solid $color-border;
-        border-radius: $spacing-xs;
-        background: $color-background-white;
-        color: $color-text-primary;
-        cursor: pointer;
-        font-size: 14px;
-        min-width: 36px;
-        transition: all 0.2s ease;
-
-        &:hover {
-          border-color: $color-primary;
-          background: rgba($color-primary, 0.05);
-        }
-
-        &.active {
-          border-color: $color-primary;
-          background: $color-primary;
-          color: white;
-          font-weight: 500;
-        }
-      }
-    }
-  }
-
-  .page-size-selector {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: $spacing-sm;
-    font-size: 14px;
-    color: $color-text-secondary;
-
-    label {
-      font-weight: 500;
-      color: $color-text-primary;
-    }
-
-    .page-size-select {
-      padding: $spacing-xs $spacing-sm;
-      border: 1px solid $color-border;
-      border-radius: $spacing-xs;
-      background: $color-background-white;
-      font-size: 14px;
-      min-width: 60px;
-
-      &:focus {
-        outline: none;
-        border-color: $color-primary;
-      }
-    }
-  }
-}
-
-.no-models {
-  text-align: center;
-  padding: $spacing-xxxxl;
-  color: $color-text-muted;
-
-  p {
-    margin: 0;
-    font-size: 16px;
-  }
-}
 .settings-modal-overlay {
   position: fixed;
   top: 0;
@@ -1703,54 +1247,40 @@
   }
 }
 
-.model-tooltip {
-  position: absolute;
-  max-width: 300px;
-  z-index: 1000;
+// ==========================================
+// SEARCH COMPONENT
+// ==========================================
 
-  .model-tooltip-content {
-    background: $color-background-white;
-    border: 1px solid $color-border;
-    border-radius: $spacing-sm;
-    padding: $spacing-md;
-    box-shadow: $shadow-lg;
-    font-size: 14px;
+.search-component {
+  margin-top: $spacing-xxxxxl;
+  padding: $spacing-xxxxxl;
+  border: 1px solid $color-border;
+  border-radius: $spacing-sm;
+  background-color: $color-background-white;
 
-    h5 {
-      margin: 0 0 $spacing-sm 0;
+  .search-header {
+    margin-bottom: $spacing-xxxxl;
+
+    h2 {
+      margin: 0 0 $spacing-lg 0;
       color: $color-text-primary;
-      font-size: 16px;
-      font-weight: 600;
+      font-size: $font-size-lg;
     }
 
     p {
-      margin: 0;
+      margin: $spacing-sm 0;
       color: $color-text-secondary;
-      line-height: 1.4;
+      font-size: $font-size-base;
     }
-  }
 
-  .model-tooltip-arrow {
-    position: absolute;
-    top: 100%;
-    left: 50%;
-    transform: translateX(-50%);
-    width: 0;
-    height: 0;
-    border-left: 8px solid transparent;
-    border-right: 8px solid transparent;
-    border-top: 8px solid $color-border;
-
-    &::after {
-      content: '';
-      position: absolute;
-      top: -7px;
-      left: -7px;
-      width: 0;
-      height: 0;
-      border-left: 7px solid transparent;
-      border-right: 7px solid transparent;
-      border-top: 7px solid $color-background-white;
+    .selected-collection-info {
+      color: $color-success;
+      font-weight: 500;
+      background-color: rgba($color-success, 0.1);
+      padding: $spacing-md $spacing-lg;
+      border-radius: $spacing-sm;
+      border-left: 3px solid $color-success;
+      margin-top: $spacing-lg;
     }
   }
 }

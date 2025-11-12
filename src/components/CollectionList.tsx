@@ -27,6 +27,8 @@ interface CollectionListProps {
   onCloseUploadModal: () => void;
   onCloseBrowsing: () => void;
   onOpenSettings: () => void;
+  selectedCollection?: string;
+  onSelectCollection?: (collectionName: string) => void;
 }
 
 function CollectionList({
@@ -49,6 +51,8 @@ function CollectionList({
   onCloseUploadModal,
   onCloseBrowsing,
   onOpenSettings,
+  selectedCollection,
+  onSelectCollection,
 }: CollectionListProps) {
   const [showCreateForm, setShowCreateForm] = useState(false);
   const [newCollectionName, setNewCollectionName] = useState('');
@@ -236,6 +240,14 @@ function CollectionList({
                   {collection.points_count}
                 </div>
                 <div className="collection-actions">
+                  {onSelectCollection && (
+                    <button
+                      className={`select-btn ${selectedCollection === collection.name ? 'selected' : ''}`}
+                      onClick={() => onSelectCollection(collection.name)}
+                    >
+                      {selectedCollection === collection.name ? '✓ Selected' : 'Select'}
+                    </button>
+                  )}
                   {browsing === collection.name ? (
                     <button
                       className="stop-browse-btn"

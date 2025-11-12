@@ -1,0 +1,57 @@
+// ==========================================
+// TOOLTIP STYLES
+// ==========================================
+
+@use 'variables' as *;
+
+.model-tooltip {
+  position: absolute;
+  max-width: 300px;
+  z-index: 1000;
+
+  .model-tooltip-content {
+    background: $color-background-white;
+    border: 1px solid $color-border;
+    border-radius: $spacing-sm;
+    padding: $spacing-md;
+    box-shadow: $shadow-lg;
+    font-size: 14px;
+
+    h5 {
+      margin: 0 0 $spacing-sm 0;
+      color: $color-text-primary;
+      font-size: 16px;
+      font-weight: 600;
+    }
+
+    p {
+      margin: 0;
+      color: $color-text-secondary;
+      line-height: 1.4;
+    }
+  }
+
+  .model-tooltip-arrow {
+    position: absolute;
+    top: 100%;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 0;
+    height: 0;
+    border-left: 8px solid transparent;
+    border-right: 8px solid transparent;
+    border-top: 8px solid $color-border;
+
+    &::after {
+      content: '';
+      position: absolute;
+      top: -7px;
+      left: -7px;
+      width: 0;
+      height: 0;
+      border-left: 7px solid transparent;
+      border-right: 7px solid transparent;
+      border-top: 7px solid $color-background-white;
+    }
+  }
+}
