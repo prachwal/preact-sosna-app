@@ -179,7 +179,11 @@ export const uploadAndProcessFile = async (
   const chunks = chunkedDocument.chunks;
   console.log(`Created ${chunks.length} chunks`);
   chunks.forEach((chunk, index) => {
-    console.log(`Chunk ${index + 1}: "${chunk.substring(0, 100).replace(/\n/g, '\\n')}..." (length: ${chunk.length}, trimmed length: ${chunk.trim().length})`);
+    console.log(
+      `Chunk ${index + 1}: "${chunk.substring(0, 100).replace(/\n/g, '\\n')}..." (length: ${
+        chunk.length
+      }, trimmed length: ${chunk.trim().length})`
+    );
   });
 
   onProgress?.(20, 100, 'Creating collection...');
@@ -201,15 +205,27 @@ export const uploadAndProcessFile = async (
     try {
       // Skip empty chunks or chunks that are too short
       if (!chunk || !chunk.trim() || chunk.trim().length < 10) {
-        console.log(`Skipping chunk ${i + 1} - too short or empty (length: ${chunk?.length || 0}, trimmed: "${chunk?.trim()}")`);
+        console.log(
+          `Skipping chunk ${i + 1} - too short or empty (length: ${
+            chunk?.length || 0
+          }, trimmed: "${chunk?.trim()}")`
+        );
         continue;
       }
 
       // Clean the chunk - remove excessive whitespace and normalize
-      const cleanChunk = chunk.trim().replace(/\s+/g, ' ').replace(/[\r\n]+/g, ' ');
+      const cleanChunk = chunk
+        .trim()
+        .replace(/\s+/g, ' ')
+        .replace(/[\r\n]+/g, ' ');
 
       // Get embedding for the chunk
-      console.log(`Sending chunk ${i + 1}/${chunks.length} to API: "${cleanChunk.substring(0, 100)}..." (original length: ${chunk.length}, clean length: ${cleanChunk.length})`);
+      console.log(
+        `Sending chunk ${i + 1}/${chunks.length} to API: "${cleanChunk.substring(
+          0,
+          100
+        )}..." (original length: ${chunk.length}, clean length: ${cleanChunk.length})`
+      );
       const embeddingResponse = await fetch('http://localhost:8082/embed', {
         method: 'POST',
         headers: {
@@ -227,9 +243,11 @@ export const uploadAndProcessFile = async (
 
       // Validate vector
       if (!Array.isArray(vector) || vector.length !== 1024) {
-        throw new Error(`Invalid vector: expected 1024 dimensions, got ${vector?.length || 'undefined'}`);
+        throw new Error(
+          `Invalid vector: expected 1024 dimensions, got ${vector?.length || 'undefined'}`
+        );
       }
-      
+
       // Check for invalid values
       const hasInvalidValues = vector.some(val => !isFinite(val));
       if (hasInvalidValues) {
@@ -260,7 +278,9 @@ export const uploadAndProcessFile = async (
 
   onProgress?.(90, 100, 'Uploading to Qdrant...');
 
-  console.log(`Vectorization complete. Created ${points.length} points. Now uploading to Qdrant...`);
+  console.log(
+    `Vectorization complete. Created ${points.length} points. Now uploading to Qdrant...`
+  );
 
   // Log sample point structure for debugging
   if (points.length > 0) {
@@ -268,7 +288,7 @@ export const uploadAndProcessFile = async (
       id: points[0].id,
       vectorLength: points[0].vector.length,
       payloadKeys: Object.keys(points[0].payload),
-      firstFewVectorValues: points[0].vector.slice(0, 5)
+      firstFewVectorValues: points[0].vector.slice(0, 5),
     });
   }
 
@@ -278,14 +298,17 @@ export const uploadAndProcessFile = async (
       const uploadData = {
         points: points,
       };
-      console.log('Upload data preview:', JSON.stringify({
-        pointsCount: points.length,
-        samplePoint: {
-          id: points[0].id,
-          vectorLength: points[0].vector.length,
-          payload: points[0].payload
-        }
-      }));
+      console.log(
+        'Upload data preview:',
+        JSON.stringify({
+          pointsCount: points.length,
+          samplePoint: {
+            id: points[0].id,
+            vectorLength: points[0].vector.length,
+            payload: points[0].payload,
+          },
+        })
+      );
 
       const uploadResponse = await fetch(
         `http://localhost:6333/collections/${collectionName}/points`,

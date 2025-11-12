@@ -79,6 +79,29 @@
       }
     }
 
+    .chunk-info {
+      display: flex;
+      align-items: center;
+      gap: $spacing-xs;
+      margin-left: $spacing-lg;
+      font-size: $font-size-sm;
+      color: $color-text-secondary;
+      font-weight: 500;
+
+      .chunk-index {
+        color: $color-primary;
+        font-weight: 600;
+      }
+
+      .chunk-separator {
+        color: $color-text-muted;
+      }
+
+      .chunk-total {
+        color: $color-text-secondary;
+      }
+    }
+
     h3 {
       margin: 0;
       color: $color-text-primary;
@@ -121,6 +144,30 @@
         font-size: $font-size-base;
         line-height: 1.4;
         max-height: 300px;
+
+        .payload-grid {
+          display: grid;
+          grid-template-columns: auto 1fr;
+          gap: $spacing-lg $spacing-xxl;
+          align-items: start;
+
+          .payload-grid-item {
+            display: contents;
+
+            .payload-grid-key {
+              font-weight: 600;
+              color: $color-text-primary;
+              white-space: nowrap;
+              padding-right: $spacing-md;
+            }
+
+            .payload-grid-value {
+              color: $color-text-secondary;
+              word-break: break-word;
+              line-height: 1.4;
+            }
+          }
+        }
       }
     }
   }
@@ -245,7 +292,7 @@
 
       .progress-bar {
         height: 100%;
-        background: linear-gradient(90deg, #4CAF50, #45a049);
+        background: linear-gradient(90deg, #4caf50, #45a049);
         border-radius: 10px;
         transition: width 0.3s ease;
       }

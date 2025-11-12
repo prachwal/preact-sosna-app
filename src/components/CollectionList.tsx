@@ -38,7 +38,7 @@ function CollectionList({
   onExport,
   onCreate,
   onDelete,
-  onUpload
+  onUpload,
 }: CollectionListProps) {
   const [showCreateForm, setShowCreateForm] = useState(false);
   const [newCollectionName, setNewCollectionName] = useState('');
@@ -89,10 +89,7 @@ function CollectionList({
           >
             {showCreateForm ? 'Cancel' : 'Create Collection'}
           </button>
-          <button
-            className="upload-file-btn"
-            onClick={() => setShowUploadForm(!showUploadForm)}
-          >
+          <button className="upload-file-btn" onClick={() => setShowUploadForm(!showUploadForm)}>
             {showUploadForm ? 'Cancel Upload' : 'Upload & Process File'}
           </button>
         </div>
@@ -106,7 +103,7 @@ function CollectionList({
               id="collectionName"
               type="text"
               value={newCollectionName}
-              onInput={(e) => setNewCollectionName((e.target as HTMLInputElement).value)}
+              onInput={e => setNewCollectionName((e.target as HTMLInputElement).value)}
               placeholder="Enter collection name"
               required
             />
@@ -117,7 +114,7 @@ function CollectionList({
               id="vectorSize"
               type="number"
               value={vectorSize}
-              onInput={(e) => setVectorSize(parseInt((e.target as HTMLInputElement).value) || 1024)}
+              onInput={e => setVectorSize(parseInt((e.target as HTMLInputElement).value) || 1024)}
               min="1"
               max="4096"
             />
@@ -156,13 +153,14 @@ function CollectionList({
             <select
               id="uploadCollectionName"
               value={uploadCollectionName}
-              onChange={(e) => setUploadCollectionName((e.target as HTMLSelectElement).value)}
+              onChange={e => setUploadCollectionName((e.target as HTMLSelectElement).value)}
               required
             >
               <option value="">Select existing collection...</option>
-              {collections.map((collection) => (
+              {collections.map(collection => (
                 <option key={collection.name} value={collection.name}>
-                  {collection.name} (Vectors: {collection.vectors_count}, Points: {collection.points_count})
+                  {collection.name} (Vectors: {collection.vectors_count}, Points:{' '}
+                  {collection.points_count})
                 </option>
               ))}
             </select>
@@ -175,7 +173,7 @@ function CollectionList({
                 id="chunkSize"
                 type="number"
                 value={chunkSize}
-                onInput={(e) => setChunkSize(parseInt((e.target as HTMLInputElement).value) || 1000)}
+                onInput={e => setChunkSize(parseInt((e.target as HTMLInputElement).value) || 1000)}
                 min="100"
                 max="5000"
               />
@@ -187,7 +185,9 @@ function CollectionList({
                 id="chunkOverlap"
                 type="number"
                 value={chunkOverlap}
-                onInput={(e) => setChunkOverlap(parseInt((e.target as HTMLInputElement).value) || 200)}
+                onInput={e =>
+                  setChunkOverlap(parseInt((e.target as HTMLInputElement).value) || 200)
+                }
                 min="0"
                 max="1000"
               />
@@ -212,10 +212,11 @@ function CollectionList({
           {collections.length === 0 ? (
             <li>No collections found</li>
           ) : (
-            collections.map((collection) => (
+            collections.map(collection => (
               <li key={collection.name}>
                 <div className="collection-info">
-                  <strong>{collection.name}</strong> - Vectors: {collection.vectors_count}, Points: {collection.points_count}
+                  <strong>{collection.name}</strong> - Vectors: {collection.vectors_count}, Points:{' '}
+                  {collection.points_count}
                 </div>
                 <div className="collection-actions">
                   <button
@@ -235,7 +236,11 @@ function CollectionList({
                   <button
                     className="delete-btn"
                     onClick={() => {
-                      if (confirm(`Are you sure you want to delete collection "${collection.name}"? This action cannot be undone.`)) {
+                      if (
+                        confirm(
+                          `Are you sure you want to delete collection "${collection.name}"? This action cannot be undone.`
+                        )
+                      ) {
                         onDelete(collection.name);
                       }
                     }}

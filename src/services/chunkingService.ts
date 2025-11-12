@@ -21,7 +21,11 @@ export class ChunkingService {
     });
   }
 
-  async chunkText(text: string, chunkSize?: number, chunkOverlap?: number): Promise<ChunkedDocument> {
+  async chunkText(
+    text: string,
+    chunkSize?: number,
+    chunkOverlap?: number
+  ): Promise<ChunkedDocument> {
     console.log('Starting text chunking...');
     console.log(`Original text length: ${text.length} characters`);
 
@@ -57,7 +61,7 @@ export class ChunkingService {
   private async readFileAsText(file: File): Promise<string> {
     return new Promise((resolve, reject) => {
       const reader = new FileReader();
-      reader.onload = (e) => {
+      reader.onload = e => {
         const result = e.target?.result;
         if (typeof result === 'string') {
           resolve(result);

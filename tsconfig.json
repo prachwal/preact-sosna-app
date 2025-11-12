@@ -1,14 +1,14 @@
 {
   "compilerOptions": {
-     // File Layout
-    "rootDir": "./src",  // ✅ Poprawione
+    // File Layout
+    "rootDir": "./src", // ✅ Poprawione
     "outDir": "./dist",
 
     // Environment Settings
-    "module": "es2022",  // ✅ Zmienione z esnext
-    "target": "es2022",  // ✅ Stabilniejsze
-    "lib": ["dom", "dom.iterable", "es2022"],  // ✅ Dodane dom i es2022
-    "moduleResolution": "bundler",  // ✅ Zmienione z bundler
+    "module": "es2022", // ✅ Zmienione z esnext
+    "target": "es2022", // ✅ Stabilniejsze
+    "lib": ["dom", "dom.iterable", "es2022"], // ✅ Dodane dom i es2022
+    "moduleResolution": "bundler", // ✅ Zmienione z bundler
     "resolveJsonModule": true,
     "types": [],
 
@@ -30,7 +30,7 @@
     "noUncheckedSideEffectImports": true,
     "moduleDetection": "force",
     "skipLibCheck": true,
-    
+
     // Dekoratory
     "experimentalDecorators": true
     // ✅ USUNIĘTE "emitDecoratorMetadata" - nie potrzebujesz tego!
@@ -38,10 +38,5 @@
   "include": [
     "src/**/*" // ✅ Kompiluj tylko pliki z src/
   ],
-  "exclude": [
-    "node_modules",
-    "dist",
-    "**/*.spec.ts",
-    "**/*.test.ts"
-  ]
+  "exclude": ["node_modules", "dist", "**/*.spec.ts", "**/*.test.ts"]
 }

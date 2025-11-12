@@ -17,7 +17,12 @@ logger = logging.getLogger(__name__)
 app = Flask(__name__)
 
 # Enable CORS for all routes
-CORS(app, origins=["http://localhost:5173", "http://localhost:3000", "http://127.0.0.1:5173", "http://127.0.0.1:3000"])
+CORS(app, origins=[
+    "http://localhost:5173", 
+    "http://localhost:3000", 
+    "http://127.0.0.1:5173", 
+    "http://127.0.0.1:3000"
+    ])
 
 # Global model variable
 model = None

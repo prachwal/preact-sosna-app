@@ -110,6 +110,8 @@ function QdrantGUI() {
           onNext={navigateToNext}
           hasPrevious={hasPrevious}
           hasNext={hasNext}
+          chunkIndex={currentPointIndex}
+          totalChunks={points.length}
         />
       )}
     </div>

@@ -14,6 +14,31 @@ function PointsViewer({ collectionName, points, loading, onClose, onViewDetails 
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 10;
 
+  // Render payload in structured format for table
+  const renderPayloadForTable = (payload: Record<string, any>) => {
+    if (!payload || Object.keys(payload).length === 0) {
+      return 'No payload';
+    }
+
+    // Show fileName and chunk info in a compact format
+    const fileName = payload.fileName;
+    const chunkIndex = payload.chunkIndex;
+    const totalChunks = payload.totalChunks;
+
+    if (fileName && chunkIndex !== undefined && totalChunks) {
+      return `${fileName} (${chunkIndex + 1}/${totalChunks})`;
+    }
+
+    // Fallback to structured format if specific fields not available
+    const entries = Object.entries(payload);
+    const displayText = entries
+      .map(([key, value]) => `${key}: ${typeof value === 'object' ? JSON.stringify(value) : String(value)}`)
+      .join(', ');
+
+    // Truncate if too long
+    return displayText.length > 100 ? displayText.slice(0, 100) + '...' : displayText;
+  };
+
   // Handle URL pagination
   useEffect(() => {
     const urlParams = new URLSearchParams(window.location.search);
@@ -60,7 +85,7 @@ function PointsViewer({ collectionName, points, loading, onClose, onViewDetails 
                     <td>{point.id}</td>
                     <td className="payload-cell">
                       {point.payload ?
-                        JSON.stringify(point.payload).slice(0, 100) + (JSON.stringify(point.payload).length > 100 ? '...' : '') :
+                        renderPayloadForTable(point.payload) :
                         'No payload'
                       }
                     </td>

@@ -1,6 +1,13 @@
 import { useState, useEffect } from 'preact/hooks';
 import type { Collection, Point } from '../types/types';
-import { fetchCollections, browseCollection, exportCollection, createCollection, deleteCollection, uploadAndProcessFile } from '../services/qdrantApi';
+import {
+  fetchCollections,
+  browseCollection,
+  exportCollection,
+  createCollection,
+  deleteCollection,
+  uploadAndProcessFile,
+} from '../services/qdrantApi';
 
 export interface UseCollectionsReturn {
   // State
@@ -27,7 +34,12 @@ export interface UseCollectionsReturn {
   exportCollection: (collectionName: string) => Promise<void>;
   createCollection: (collectionName: string, vectorSize: number) => Promise<void>;
   deleteCollection: (collectionName: string) => Promise<void>;
-  uploadFile: (file: File, collectionName: string, chunkSize: number, chunkOverlap: number) => Promise<void>;
+  uploadFile: (
+    file: File,
+    collectionName: string,
+    chunkSize: number,
+    chunkOverlap: number
+  ) => Promise<void>;
   setSelectedPoint: (point: Point | null) => void;
   closePointsViewer: () => void;
 }
@@ -127,22 +139,29 @@ export function useCollections(): UseCollectionsReturn {
     }
   };
 
-  const handleUploadFile = async (file: File, collectionName: string, chunkSize: number, chunkOverlap: number) => {
+  const handleUploadFile = async (
+    file: File,
+    collectionName: string,
+    chunkSize: number,
+    chunkOverlap: number
+  ) => {
     console.log(`Starting file upload for collection: ${collectionName}`);
     setUploading(collectionName);
     setUploadProgress({ current: 0, total: 100, stage: 'Initializing...' });
     try {
       const result = await uploadAndProcessFile(
-        file, 
-        collectionName, 
-        chunkSize, 
+        file,
+        collectionName,
+        chunkSize,
         chunkOverlap,
         (current: number, total: number, stage: string) => {
           setUploadProgress({ current, total, stage });
         }
       );
       console.log('Upload result:', result);
-      alert(`File processed successfully! ${result.chunksProcessed} chunks created, ${result.vectorsCreated} vectors stored.`);
+      alert(
+        `File processed successfully! ${result.chunksProcessed} chunks created, ${result.vectorsCreated} vectors stored.`
+      );
       // Refresh collections list to show updated counts
       await fetchCollectionsData();
     } catch (err) {

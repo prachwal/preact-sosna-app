@@ -10,9 +10,11 @@ interface PointDetailsModalProps {
   onNext?: () => void;
   hasPrevious?: boolean;
   hasNext?: boolean;
+  chunkIndex?: number;
+  totalChunks?: number;
 }
 
-function PointDetailsModal({ point, onClose, onPrevious, onNext, hasPrevious, hasNext }: PointDetailsModalProps) {
+function PointDetailsModal({ point, onClose, onPrevious, onNext, hasPrevious, hasNext, chunkIndex, totalChunks }: PointDetailsModalProps) {
   // Keyboard navigation
   useEffect(() => {
     const handleKeyDown = (event: KeyboardEvent) => {
@@ -36,12 +38,21 @@ function PointDetailsModal({ point, onClose, onPrevious, onNext, hasPrevious, ha
       return <span className="no-data">No payload data</span>;
     }
 
+    // Filter out chunkIndex and totalChunks as they're displayed in the header
+    const filteredPayload = Object.fromEntries(
+      Object.entries(payload).filter(([key]) => key !== 'chunkIndex' && key !== 'totalChunks')
+    );
+
+    if (Object.keys(filteredPayload).length === 0) {
+      return <span className="no-data">No payload data</span>;
+    }
+
     return (
-      <div className="payload-structured">
-        {Object.entries(payload).map(([key, value], index) => (
-          <div key={index} className="payload-item">
-            <div className="payload-key">{key}:</div>
-            <div className="payload-value">
+      <div className="payload-grid">
+        {Object.entries(filteredPayload).map(([key, value]) => (
+          <div key={key} className="payload-grid-item">
+            <div className="payload-grid-key">{key}:</div>
+            <div className="payload-grid-value">
               {typeof value === 'object' ?
                 JSON.stringify(value, null, 2) :
                 String(value)
@@ -75,6 +86,13 @@ function PointDetailsModal({ point, onClose, onPrevious, onNext, hasPrevious, ha
               ›
             </button>
           </div>
+          {chunkIndex !== undefined && totalChunks !== undefined && (
+            <div className="chunk-info">
+              <span className="chunk-index">{chunkIndex + 1}</span>
+              <span className="chunk-separator">/</span>
+              <span className="chunk-total">{totalChunks}</span>
+            </div>
+          )}
           <h3>Point Details - ID: {point.id}</h3>
           <button className="close-modal-btn" onClick={onClose}>×</button>
         </div>
