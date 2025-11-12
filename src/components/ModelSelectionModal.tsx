@@ -95,6 +95,20 @@ function ModelSelectionModal({
     return 0;
   };
 
+  const formatPrice = (price: number | string): string => {
+    const numPrice = parsePrice(price);
+    if (numPrice === 0) return 'Free';
+
+    // Format price per 1K tokens for better readability
+    if (numPrice < 0.01) {
+      // Very small prices (likely per million tokens), convert to per 1K
+      return `$${(numPrice * 1000).toFixed(6)}/1K`;
+    } else {
+      // Normal prices (likely per 1K tokens)
+      return `$${numPrice.toFixed(4)}/1K`;
+    }
+  };
+
   // Filter and sort models
   const filteredAndSortedModels = models
     .filter(model => {
@@ -276,7 +290,7 @@ function ModelSelectionModal({
 
             <div className="range-filters">
               <div className="range-group">
-                <label>Price range ($/M token):</label>
+                <label>Price range ($/1K token):</label>
                 <div className="range-inputs">
                   <input
                     type="number"
@@ -456,7 +470,7 @@ function ModelSelectionModal({
                   <span className="context-length">Context: {model.contextLength.toLocaleString()} tokens</span>
                   {model.pricing && (
                     <span className="pricing">
-                      ${model.pricing.prompt}/M prompt, ${model.pricing.completion}/M completion
+                      {formatPrice(model.pricing.prompt)} prompt, {formatPrice(model.pricing.completion)} completion
                     </span>
                   )}
                 </div>
@@ -472,8 +486,8 @@ function ModelSelectionModal({
                 {model.capabilities && (
                   <div className="model-capabilities">
                     {model.capabilities.toolUse && <span className="capability-badge tool-use">🛠️ Tools</span>}
-                    {model.capabilities.multimodal && <span className="capability-badge multimodal">� Multimodal</span>}
-                    {model.capabilities.inputModalities?.includes('image') && <span className="capability-badge image-input">�️ Image Input</span>}
+                    {model.capabilities.multimodal && <span className="capability-badge multimodal">🎭 Multimodal</span>}
+                    {model.capabilities.inputModalities?.includes('image') && <span className="capability-badge image-input">📷 Image Input</span>}
                     {model.capabilities.outputModalities?.includes('image') && <span className="capability-badge image-output">🎨 Image Output</span>}
                   </div>
                 )}

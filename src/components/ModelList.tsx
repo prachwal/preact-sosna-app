@@ -29,7 +29,15 @@ export function ModelList({
   const formatPrice = (price: number | string): string => {
     const numPrice = parsePrice(price);
     if (numPrice === 0) return 'Free';
-    return `$${(numPrice * 1000000).toFixed(2)}/1M`;
+
+    // Format price per 1K tokens for better readability
+    if (numPrice < 0.01) {
+      // Very small prices (likely per million tokens), convert to per 1K
+      return `$${(numPrice * 1000).toFixed(6)}/1K`;
+    } else {
+      // Normal prices (likely per 1K tokens)
+      return `$${numPrice.toFixed(4)}/1K`;
+    }
   };
 
   return (
@@ -62,8 +70,8 @@ export function ModelList({
                 <span className="value">
                   {model.pricing ? (
                     <>
-                      Prompt: {formatPrice(model.pricing.prompt)} |
-                      Completion: {formatPrice(model.pricing.completion)}
+                      Input: {formatPrice(model.pricing.prompt)} |
+                      Output: {formatPrice(model.pricing.completion)}
                     </>
                   ) : (
                     'Nieznana'

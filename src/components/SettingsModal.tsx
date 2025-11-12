@@ -71,17 +71,29 @@ function SettingsModal({ isOpen, onClose }: SettingsModalProps) {
   }, [isOpen]);
 
   const validateToken = async () => {
+    console.log('[DEBUG] validateToken called');
+    console.log('[DEBUG] openRouterToken:', openRouterToken);
+    console.log('[DEBUG] openRouterToken.trim():', openRouterToken.trim());
+    console.log('[DEBUG] openRouterToken.length:', openRouterToken.length);
+
     if (!openRouterToken.trim()) {
+      console.log('[DEBUG] Token is empty, setting invalid');
       setTokenValid(false);
       return;
     }
 
     setIsValidatingToken(true);
     try {
+      // Temporarily update configProvider with current token for validation
+      console.log('[DEBUG] Temporarily updating configProvider with current token');
+      configProvider.updateConfig({ openRouterToken });
+
+      console.log('[DEBUG] Calling qdrantApi.validateToken()');
       const isValid = await qdrantApi.validateToken();
+      console.log('[DEBUG] Token validation result:', isValid);
       setTokenValid(isValid);
     } catch (error) {
-      console.error('Token validation error:', error);
+      console.error('[DEBUG] Token validation error:', error);
       setTokenValid(false);
     } finally {
       setIsValidatingToken(false);
@@ -115,9 +127,12 @@ function SettingsModal({ isOpen, onClose }: SettingsModalProps) {
   };
 
     const handleSave = async () => {
+    console.log('[DEBUG] SettingsModal.handleSave called');
+    console.log('[DEBUG] formState.openRouterToken:', formState.openRouterToken);
     setIsSaving(true);
     try {
       // Update the global configuration
+      console.log('[DEBUG] Calling configProvider.updateConfig');
       configProvider.updateConfig({
         qdrantUrl: formState.qdrantUrl,
         embeddingUrl: formState.embeddingUrl,
@@ -127,6 +142,7 @@ function SettingsModal({ isOpen, onClose }: SettingsModalProps) {
       });
 
       // Save to persistent storage
+      console.log('[DEBUG] Calling formPersistenceService.saveFormState');
       await formPersistenceService.saveFormState(formId, formState);
 
       onClose();
@@ -154,7 +170,7 @@ function SettingsModal({ isOpen, onClose }: SettingsModalProps) {
           <button className="close-button" onClick={onClose}>×</button>
         </div>
 
-        <div className="settings-modal-content">
+        <form className="settings-modal-content" onSubmit={(e) => { e.preventDefault(); handleSave(); }}>
           <div className="settings-section">
             <h4>Vector Database</h4>
             <div className="form-group">
@@ -244,7 +260,7 @@ function SettingsModal({ isOpen, onClose }: SettingsModalProps) {
           <div className="settings-info">
             <p><strong>Note:</strong> Changes will take effect after restarting the application or refreshing the page.</p>
           </div>
-        </div>
+        </form>
 
         <div className="settings-modal-actions">
           <button

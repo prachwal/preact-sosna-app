@@ -9,7 +9,7 @@ import type {
 } from './interfaces';
 
 export class OpenRouterService implements AIService {
-  private readonly apiKey: string;
+  private apiKey: string;
   private readonly baseUrl: string;
   private readonly defaultModel: string;
   private readonly logger: Logger;
@@ -176,9 +176,20 @@ export class OpenRouterService implements AIService {
   }
 
   async validateToken(): Promise<boolean> {
-    if (!this.apiKey) return false;
+    console.log('[DEBUG] OpenRouterService.validateToken called');
+    console.log('[DEBUG] this.apiKey exists:', !!this.apiKey);
+    console.log('[DEBUG] this.apiKey length:', this.apiKey ? this.apiKey.length : 0);
+    console.log('[DEBUG] this.apiKey starts with:', this.apiKey ? this.apiKey.substring(0, 10) + '...' : 'undefined');
+
+    if (!this.apiKey) {
+      console.log('[DEBUG] No API key, returning false');
+      return false;
+    }
 
     try {
+      console.log('[DEBUG] Making request to:', `${this.baseUrl}/auth/key`);
+      console.log('[DEBUG] Authorization header: Bearer', this.apiKey.substring(0, 10) + '...');
+
       const response = await fetch(`${this.baseUrl}/auth/key`, {
         method: 'GET',
         headers: {
@@ -186,14 +197,30 @@ export class OpenRouterService implements AIService {
         },
       });
 
-      return response.ok;
+      console.log('[DEBUG] Response status:', response.status);
+      console.log('[DEBUG] Response ok:', response.ok);
+
+      if (!response.ok) {
+        const errorText = await response.text();
+        console.log('[DEBUG] Response error text:', errorText);
+      }
+
+      const result = response.ok;
+      console.log('[DEBUG] Token validation result:', result);
+      return result;
     } catch (error) {
-      this.logger.error('Token validation failed:', error);
+      console.error('[DEBUG] Token validation fetch error:', error);
       return false;
     }
   }
 
-  async getAvailableModels(): Promise<ModelInfo[]> {
+  updateToken(newToken: string): void {
+    console.log('[DEBUG] OpenRouterService.updateToken called');
+    console.log('[DEBUG] Old token exists:', !!this.apiKey);
+    console.log('[DEBUG] New token exists:', !!newToken);
+    console.log('[DEBUG] New token length:', newToken.length);
+    this.apiKey = newToken;
+  }  async getAvailableModels(): Promise<ModelInfo[]> {
     try {
       const response = await fetch(`${this.baseUrl}/models`, {
         method: 'GET',

@@ -304,6 +304,17 @@ export class QdrantApi {
   }
 
   async validateToken(): Promise<boolean> {
+    console.log('[DEBUG] QdrantApi.validateToken called');
+    console.log('[DEBUG] Current config token:', configProvider.getOpenRouterToken());
+    console.log('[DEBUG] aiService type:', this.aiService.constructor.name);
+
+    // Update the token in the AI service before validation
+    const currentToken = configProvider.getOpenRouterToken();
+    if (this.aiService instanceof OpenRouterService) {
+      console.log('[DEBUG] Updating token in OpenRouterService');
+      (this.aiService as any).updateToken(currentToken);
+    }
+
     return this.aiService.validateToken();
   }
 
