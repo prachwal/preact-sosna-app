@@ -107,6 +107,7 @@ function QdrantGUI() {
         onDelete={deleteCollection}
         onUpload={uploadFile}
         onCloseUploadModal={closeUploadModal}
+        onCloseBrowsing={closePointsViewer}
       />
 
       <SearchComponent

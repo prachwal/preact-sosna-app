@@ -25,6 +25,7 @@ interface CollectionListProps {
   onDelete: (collectionName: string) => void;
   onUpload: (file: File, collectionName: string, chunkSize: number, chunkOverlap: number) => void;
   onCloseUploadModal: () => void;
+  onCloseBrowsing: () => void;
 }
 
 function CollectionList({
@@ -45,6 +46,7 @@ function CollectionList({
   onDelete,
   onUpload,
   onCloseUploadModal,
+  onCloseBrowsing,
 }: CollectionListProps) {
   const [showCreateForm, setShowCreateForm] = useState(false);
   const [newCollectionName, setNewCollectionName] = useState('');
@@ -225,13 +227,21 @@ function CollectionList({
                   {collection.points_count}
                 </div>
                 <div className="collection-actions">
-                  <button
-                    className="browse-btn"
-                    onClick={() => onBrowse(collection.name)}
-                    disabled={browsing === collection.name}
-                  >
-                    {browsing === collection.name ? 'Browsing...' : 'Browse'}
-                  </button>
+                  {browsing === collection.name ? (
+                    <button
+                      className="stop-browse-btn"
+                      onClick={onCloseBrowsing}
+                    >
+                      Stop Browsing
+                    </button>
+                  ) : (
+                    <button
+                      className="browse-btn"
+                      onClick={() => onBrowse(collection.name)}
+                    >
+                      Browse
+                    </button>
+                  )}
                   <button
                     className="export-btn"
                     onClick={() => onExport(collection.name)}

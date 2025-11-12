@@ -84,6 +84,21 @@
         }
       }
 
+      .stop-browse-btn {
+        padding: $spacing-lg $spacing-xxl;
+        background-color: $color-error;
+        color: $color-background-white;
+        border: none;
+        border-radius: $spacing-sm;
+        cursor: pointer;
+        transition: background-color $transition-fast;
+        white-space: nowrap;
+
+        &:hover {
+          background-color: darken($color-error, 10%);
+        }
+      }
+
       .export-btn {
         padding: $spacing-lg $spacing-xxl;
         background-color: $color-primary;
