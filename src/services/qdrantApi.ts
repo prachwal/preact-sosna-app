@@ -237,6 +237,14 @@ export class QdrantApi {
   ): Promise<AIResponse> {
     return this.aiService.generateStreamingResponse(prompt, options, onChunk);
   }
+
+  async validateToken(): Promise<boolean> {
+    return this.aiService.validateToken();
+  }
+
+  async getAvailableModels() {
+    return this.aiService.getAvailableModels();
+  }
 }
 
 // Export a default instance for backward compatibility

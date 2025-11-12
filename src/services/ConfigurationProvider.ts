@@ -2,6 +2,8 @@ export interface AppConfig {
   qdrantUrl: string;
   embeddingUrl: string;
   openRouterToken: string;
+  selectedModel?: string;
+  selectedProvider?: string;
 }
 
 export class ConfigurationProvider {
@@ -40,6 +42,8 @@ export class ConfigurationProvider {
       qdrantUrl: 'http://localhost:6333',
       embeddingUrl: 'http://localhost:8082',
       openRouterToken: '',
+      selectedModel: 'anthropic/claude-3-haiku',
+      selectedProvider: 'openrouter',
     };
   }
 
@@ -82,6 +86,22 @@ export class ConfigurationProvider {
 
   setOpenRouterToken(token: string): void {
     this.updateConfig({ openRouterToken: token });
+  }
+
+  getSelectedModel(): string {
+    return this.config.selectedModel || 'anthropic/claude-3-haiku';
+  }
+
+  getSelectedProvider(): string {
+    return this.config.selectedProvider || 'openrouter';
+  }
+
+  setSelectedModel(model: string): void {
+    this.updateConfig({ selectedModel: model });
+  }
+
+  setSelectedProvider(provider: string): void {
+    this.updateConfig({ selectedProvider: provider });
   }
 }
 

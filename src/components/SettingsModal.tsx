@@ -1,6 +1,9 @@
 import { h } from 'preact';
 import { useState, useEffect } from 'preact/hooks';
 import { configProvider, type AppConfig } from '../services/ConfigurationProvider';
+import ModelSelectionModal from './ModelSelectionModal';
+import type { ModelInfo } from '../services/interfaces';
+import { qdrantApi } from '../services/qdrantApi';
 
 interface SettingsModalProps {
   isOpen: boolean;
@@ -10,12 +13,62 @@ interface SettingsModalProps {
 function SettingsModal({ isOpen, onClose }: SettingsModalProps) {
   const [config, setConfig] = useState<AppConfig>(configProvider.getConfig());
   const [isSaving, setIsSaving] = useState(false);
+  const [isValidatingToken, setIsValidatingToken] = useState(false);
+  const [tokenValid, setTokenValid] = useState<boolean | null>(null);
+  const [showModelSelection, setShowModelSelection] = useState(false);
+  const [availableModels, setAvailableModels] = useState<ModelInfo[]>([]);
+  const [isLoadingModels, setIsLoadingModels] = useState(false);
 
   useEffect(() => {
     if (isOpen) {
       setConfig(configProvider.getConfig());
+      setTokenValid(null); // Reset validation state when modal opens
     }
   }, [isOpen]);
+
+  const validateToken = async () => {
+    if (!config.openRouterToken.trim()) {
+      setTokenValid(false);
+      return;
+    }
+
+    setIsValidatingToken(true);
+    try {
+      const isValid = await qdrantApi.validateToken();
+      setTokenValid(isValid);
+    } catch (error) {
+      console.error('Token validation error:', error);
+      setTokenValid(false);
+    } finally {
+      setIsValidatingToken(false);
+    }
+  };
+
+  const loadAvailableModels = async () => {
+    setIsLoadingModels(true);
+    try {
+      const models = await qdrantApi.getAvailableModels();
+      setAvailableModels(models);
+    } catch (error) {
+      console.error('Failed to load models:', error);
+      setAvailableModels([]);
+    } finally {
+      setIsLoadingModels(false);
+    }
+  };
+
+  const handleModelSelect = (model: ModelInfo) => {
+    setConfig(prev => ({
+      ...prev,
+      selectedModel: model.id,
+      selectedProvider: model.provider,
+    }));
+  };
+
+  const handleOpenModelSelection = async () => {
+    await loadAvailableModels();
+    setShowModelSelection(true);
+  };
 
   const handleSave = async () => {
     setIsSaving(true);
@@ -86,15 +139,53 @@ function SettingsModal({ isOpen, onClose }: SettingsModalProps) {
             <h4>AI Integration</h4>
             <div className="form-group">
               <label htmlFor="openRouterToken">OpenRouter API Token:</label>
-              <input
-                id="openRouterToken"
-                type="password"
-                value={config.openRouterToken}
-                onChange={(e) => handleInputChange('openRouterToken', (e.target as HTMLInputElement).value)}
-                placeholder="sk-or-v1-..."
-                className="settings-input"
-              />
+              <div className="token-input-group">
+                <input
+                  id="openRouterToken"
+                  type="password"
+                  value={config.openRouterToken}
+                  onChange={(e) => {
+                    handleInputChange('openRouterToken', (e.target as HTMLInputElement).value);
+                    setTokenValid(null); // Reset validation when token changes
+                  }}
+                  placeholder="sk-or-v1-..."
+                  className="settings-input"
+                />
+                <button
+                  type="button"
+                  onClick={validateToken}
+                  disabled={isValidatingToken || !config.openRouterToken.trim()}
+                  className={`validate-token-btn ${tokenValid === true ? 'valid' : tokenValid === false ? 'invalid' : ''}`}
+                >
+                  {isValidatingToken ? '...' : tokenValid === true ? '✓' : tokenValid === false ? '✗' : 'Validate'}
+                </button>
+              </div>
               <small>API token for OpenRouter (optional, for future AI features)</small>
+              {tokenValid === true && <small className="validation-success">✓ Token is valid</small>}
+              {tokenValid === false && <small className="validation-error">✗ Token is invalid</small>}
+            </div>
+
+            <div className="form-group">
+              <label>Selected AI Model:</label>
+              <div className="model-selection-group">
+                <div className="current-model-display">
+                  <span className="current-model">
+                    {config.selectedModel || 'No model selected'}
+                  </span>
+                  <span className="current-provider">
+                    ({config.selectedProvider || 'unknown provider'})
+                  </span>
+                </div>
+                <button
+                  type="button"
+                  onClick={handleOpenModelSelection}
+                  disabled={isLoadingModels}
+                  className="select-model-btn"
+                >
+                  {isLoadingModels ? 'Loading...' : 'Select Model'}
+                </button>
+              </div>
+              <small>Choose the AI model to use for text generation</small>
             </div>
           </div>
 
@@ -119,6 +210,15 @@ function SettingsModal({ isOpen, onClose }: SettingsModalProps) {
             {isSaving ? 'Saving...' : 'Save Settings'}
           </button>
         </div>
+
+        <ModelSelectionModal
+          isOpen={showModelSelection}
+          onClose={() => setShowModelSelection(false)}
+          onSelectModel={handleModelSelect}
+          currentModel={config.selectedModel || ''}
+          models={availableModels}
+          providerName="OpenRouter"
+        />
       </div>
     </div>
   );

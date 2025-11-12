@@ -1,5 +1,18 @@
 // Types and interfaces for vector database operations following SOLID principles
 
+export interface ModelInfo {
+  id: string;
+  name: string;
+  description: string;
+  contextLength: number;
+  pricing?: {
+    prompt: number;
+    completion: number;
+  };
+  provider: string;
+  tags?: string[];
+}
+
 export interface Collection {
   name: string;
   vectors_count: number;
@@ -109,6 +122,8 @@ export interface LoggerConfig {
 export interface AIService {
   generateResponse(prompt: string, options?: AIOptions): Promise<AIResponse>;
   generateStreamingResponse(prompt: string, options?: AIOptions, onChunk?: (chunk: string) => void): Promise<AIResponse>;
+  validateToken(): Promise<boolean>;
+  getAvailableModels(): Promise<ModelInfo[]>;
 }
 
 // AI Service configuration and types

@@ -3,7 +3,8 @@ import type {
   AIServiceConfig,
   AIResponse,
   AIOptions,
-  Logger
+  Logger,
+  ModelInfo
 } from './interfaces';
 
 export class OpenRouterService implements AIService {
@@ -161,5 +162,85 @@ export class OpenRouterService implements AIService {
       model,
       usage: usage,
     } as AIResponse;
+  }
+
+  async validateToken(): Promise<boolean> {
+    if (!this.apiKey) return false;
+
+    try {
+      const response = await fetch(`${this.baseUrl}/auth/key`, {
+        method: 'GET',
+        headers: {
+          'Authorization': `Bearer ${this.apiKey}`,
+        },
+      });
+
+      return response.ok;
+    } catch (error) {
+      this.logger.error('Token validation failed:', error);
+      return false;
+    }
+  }
+
+  async getAvailableModels(): Promise<ModelInfo[]> {
+    try {
+      const response = await fetch(`${this.baseUrl}/models`, {
+        method: 'GET',
+        headers: {
+          'Authorization': `Bearer ${this.apiKey}`,
+        },
+      });
+
+      if (!response.ok) {
+        throw new Error(`Failed to fetch models: ${response.status}`);
+      }
+
+      const data = await response.json();
+
+      return data.data.map((model: any) => ({
+        id: model.id,
+        name: model.name || model.id,
+        description: model.description || 'No description available',
+        contextLength: model.context_length || 4096,
+        pricing: model.pricing ? {
+          prompt: model.pricing.prompt,
+          completion: model.pricing.completion,
+        } : undefined,
+        provider: 'openrouter',
+        tags: model.tags || [],
+      }));
+    } catch (error) {
+      this.logger.error('Failed to fetch models:', error);
+      // Return some default models if API fails
+      return [
+        {
+          id: 'anthropic/claude-3-haiku',
+          name: 'Claude 3 Haiku',
+          description: 'Fast and efficient model by Anthropic',
+          contextLength: 200000,
+          pricing: { prompt: 0.25, completion: 1.25 },
+          provider: 'openrouter',
+          tags: ['fast', 'efficient'],
+        },
+        {
+          id: 'anthropic/claude-3-sonnet',
+          name: 'Claude 3 Sonnet',
+          description: 'Balanced model by Anthropic with good performance',
+          contextLength: 200000,
+          pricing: { prompt: 3, completion: 15 },
+          provider: 'openrouter',
+          tags: ['balanced', 'powerful'],
+        },
+        {
+          id: 'openai/gpt-4o-mini',
+          name: 'GPT-4o Mini',
+          description: 'Cost-effective GPT-4 level model by OpenAI',
+          contextLength: 128000,
+          pricing: { prompt: 0.15, completion: 0.6 },
+          provider: 'openrouter',
+          tags: ['cost-effective', 'fast'],
+        },
+      ];
+    }
   }
 }

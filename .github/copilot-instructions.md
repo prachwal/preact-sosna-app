@@ -10,8 +10,10 @@
 
 **Key Files:**
 - `src/services/qdrantApi.ts` - Main orchestrator with factory methods
-- `src/services/ConfigurationProvider.ts` - Singleton config with localStorage
+- `src/services/ConfigurationProvider.ts` - Singleton config with localStorage (includes AI model settings)
 - `src/services/openRouterService.ts` - AI service implementation (easily replaceable)
+- `src/components/SettingsModal.tsx` - Settings with token validation and model selection
+- `src/components/ModelSelectionModal.tsx` - Universal model picker for different providers
 - `src/hooks/useCollections.ts` - State management hook (400+ lines)
 - `src/services/interfaces.ts` - All service contracts and data types
 
@@ -119,9 +121,26 @@ const [showModal, setShowModal] = useState(false);
 {
   qdrantUrl: 'http://localhost:6333',
   embeddingUrl: 'http://localhost:8082',
-  openRouterToken: ''
+  openRouterToken: '',
+  selectedModel: 'anthropic/claude-3-haiku',
+  selectedProvider: 'openrouter'
 }
 ```
+
+## Settings Features
+
+**Token Validation:**
+- Visual feedback with green checkmark (✓) for valid tokens
+- Real-time validation on button click
+- Error states for invalid tokens
+
+**Model Selection:**
+- Universal modal supporting different AI providers
+- Advanced search with field-specific filtering (name, description, tags)
+- Multiple filter options: categories, pricing range, context length range
+- Sorting by name, pricing, context length, or provider
+- Model details: pricing, context length, descriptions
+- Automatic fallback to default models if API unavailable
 
 ## Common Pitfalls
 
