@@ -4,6 +4,7 @@
 
 // Import all partial stylesheets
 @use 'styles/variables';
+@use 'styles/themes';
 @use 'styles/general';
 @use 'styles/qdrant-gui';
 @use 'styles/modals';

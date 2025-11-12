@@ -11,10 +11,10 @@
 @use 'tooltips' as *;
 
 .qdrant-gui {
-  border: 1px solid $color-border;
+  border: 1px solid var(--pcs-color-border);
   border-radius: $spacing-sm;
   padding: $spacing-xxxxxl;
-  background-color: $color-background-primary;
+  background-color: var(--pcs-color-background-primary);
   width: 100%;
   box-sizing: border-box;
 
@@ -23,7 +23,7 @@
   }
 
   h2 {
-    color: $color-text-secondary;
+    color: var(--pcs-color-text-secondary);
     margin-bottom: $spacing-xxxl;
   }
 
@@ -33,7 +33,7 @@
     padding: 0;
 
     li {
-      background: $color-background-white;
+      background: var(--pcs-color-background-primary);
       margin: $spacing-md 0;
       padding: $spacing-xxxl;
       border-radius: $spacing-sm;
@@ -72,8 +72,8 @@
 
       .browse-btn {
         padding: $spacing-lg $spacing-xxl;
-        background-color: $color-success;
-        color: $color-background-white;
+        background-color: var(--pcs-color-success);
+        color: var(--pcs-color-background-primary);
         border: none;
         border-radius: $spacing-sm;
         cursor: pointer;
@@ -81,19 +81,19 @@
         white-space: nowrap;
 
         &:hover:not(:disabled) {
-          background-color: $color-success-hover;
+          background-color: var(--pcs-color-success)-hover;
         }
 
         &:disabled {
-          background-color: $color-secondary;
+          background-color: var(--pcs-color-text-secondary);
           cursor: not-allowed;
         }
       }
 
       .stop-browse-btn {
         padding: $spacing-lg $spacing-xxl;
-        background-color: $color-error;
-        color: $color-background-white;
+        background-color: var(--pcs-color-error);
+        color: var(--pcs-color-background-primary);
         border: none;
         border-radius: $spacing-sm;
         cursor: pointer;
@@ -101,14 +101,15 @@
         white-space: nowrap;
 
         &:hover {
-          background-color: color.adjust($color-error, $lightness: -10%);
+          background-color: var(--pcs-color-error);
+          filter: brightness(0.9);
         }
       }
 
       .export-btn {
         padding: $spacing-lg $spacing-xxl;
-        background-color: $color-primary;
-        color: $color-background-white;
+        background-color: var(--pcs-color-accent);
+        color: var(--pcs-color-background-primary);
         border: none;
         border-radius: $spacing-sm;
         cursor: pointer;
@@ -116,19 +117,19 @@
         white-space: nowrap;
 
         &:hover:not(:disabled) {
-          background-color: $color-primary-hover;
+          background-color: var(--pcs-color-accent)-hover;
         }
 
         &:disabled {
-          background-color: $color-secondary;
+          background-color: var(--pcs-color-text-secondary);
           cursor: not-allowed;
         }
       }
 
       .delete-btn {
         padding: $spacing-lg $spacing-xxl;
-        background-color: $color-error;
-        color: $color-background-white;
+        background-color: var(--pcs-color-error);
+        color: var(--pcs-color-background-primary);
         border: none;
         border-radius: $spacing-sm;
         cursor: pointer;
@@ -136,19 +137,19 @@
         white-space: nowrap;
 
         &:hover:not(:disabled) {
-          background-color: #cc0000;
+          background-color: var(--pcs-color-error-hover);
         }
 
         &:disabled {
-          background-color: $color-secondary;
+          background-color: var(--pcs-color-text-secondary);
           cursor: not-allowed;
         }
       }
 
       .select-btn {
         padding: $spacing-lg $spacing-xxl;
-        background-color: $color-info;
-        color: $color-background-white;
+        background-color: var(--pcs-color-info);
+        color: var(--pcs-color-background-primary);
         border: none;
         border-radius: $spacing-sm;
         cursor: pointer;
@@ -156,20 +157,20 @@
         white-space: nowrap;
 
         &:hover:not(:disabled) {
-          background-color: color.adjust($color-info, $lightness: -10%);
+          background-color: var(--pcs-color-info); filter: brightness(0.9);
         }
 
         &:disabled {
-          background-color: $color-secondary;
+          background-color: var(--pcs-color-text-secondary);
           cursor: not-allowed;
         }
 
         &.selected {
-          background-color: $color-success;
+          background-color: var(--pcs-color-success);
           font-weight: bold;
 
           &:hover:not(:disabled) {
-            background-color: color.adjust($color-success, $lightness: -10%);
+            background-color: var(--pcs-color-success); filter: brightness(0.9);
           }
         }
       }
@@ -195,8 +196,8 @@
 
     .create-collection-btn {
       padding: $spacing-lg $spacing-xxl;
-      background-color: $color-info;
-      color: $color-background-white;
+      background-color: var(--pcs-color-info);
+      color: var(--pcs-color-background-primary);
       border: none;
       border-radius: $spacing-sm;
       cursor: pointer;
@@ -204,19 +205,19 @@
       white-space: nowrap;
 
       &:hover {
-        background-color: $color-info-hover;
+        background-color: var(--pcs-color-info)-hover;
       }
     }
   }
 
   // Create Collection Form
   .create-collection-form {
-    background: $color-background-white;
+    background: var(--pcs-color-background-primary);
     padding: $spacing-xxxxxl;
     border-radius: $spacing-sm;
     box-shadow: $shadow-sm;
     margin-bottom: $spacing-xxxxxl;
-    border: 1px solid $color-border;
+    border: 1px solid var(--pcs-color-border);
 
     .form-group {
       margin-bottom: $spacing-xxxl;
@@ -225,21 +226,21 @@
         display: block;
         margin-bottom: $spacing-lg;
         font-weight: 500;
-        color: $color-text-primary;
+        color: var(--pcs-color-text-primary);
       }
 
       input {
         width: 100%;
         padding: $spacing-lg;
-        border: 1px solid $color-border;
+        border: 1px solid var(--pcs-color-border);
         border-radius: $spacing-sm;
         font-size: $font-size-base;
         transition: border-color $transition-fast;
 
         &:focus {
           outline: none;
-          border-color: $color-primary;
-          box-shadow: 0 0 0 2px rgba($color-primary, 0.2);
+          border-color: var(--pcs-color-accent);
+          box-shadow: 0 0 0 2px rgba(var(--pcs-color-accent), 0.2);
         }
 
         &[type='number'] {
@@ -261,25 +262,25 @@
         font-size: $font-size-base;
 
         &[type='submit'] {
-          background-color: $color-success;
-          color: $color-background-white;
+          background-color: var(--pcs-color-success);
+          color: var(--pcs-color-background-primary);
 
           &:hover:not(:disabled) {
-            background-color: $color-success-hover;
+            background-color: var(--pcs-color-success)-hover;
           }
 
           &:disabled {
-            background-color: $color-secondary;
+            background-color: var(--pcs-color-text-secondary);
             cursor: not-allowed;
           }
         }
 
         &[type='button'] {
-          background-color: $color-secondary;
-          color: $color-background-white;
+          background-color: var(--pcs-color-text-secondary);
+          color: var(--pcs-color-background-primary);
 
           &:hover {
-            background-color: $color-secondary-hover;
+            background-color: var(--pcs-color-text-secondary)-hover;
           }
         }
       }
@@ -288,16 +289,16 @@
 
   // Upload File Form
   .upload-file-form {
-    background: $color-background-white;
+    background: var(--pcs-color-background-primary);
     padding: $spacing-xxxxxl;
     border-radius: $spacing-sm;
     box-shadow: $shadow-sm;
     margin-bottom: $spacing-xxxxxl;
-    border: 1px solid $color-border;
+    border: 1px solid var(--pcs-color-border);
 
     h3 {
       margin: 0 0 $spacing-xxxxxl 0;
-      color: $color-text-secondary;
+      color: var(--pcs-color-text-secondary);
       font-size: $font-size-lg;
     }
 
@@ -308,21 +309,21 @@
         display: block;
         margin-bottom: $spacing-lg;
         font-weight: 500;
-        color: $color-text-primary;
+        color: var(--pcs-color-text-primary);
       }
 
       input {
         width: 100%;
         padding: $spacing-lg;
-        border: 1px solid $color-border;
+        border: 1px solid var(--pcs-color-border);
         border-radius: $spacing-sm;
         font-size: $font-size-base;
         transition: border-color $transition-fast;
 
         &:focus {
           outline: none;
-          border-color: $color-primary;
-          box-shadow: 0 0 0 2px rgba($color-primary, 0.2);
+          border-color: var(--pcs-color-accent);
+          box-shadow: 0 0 0 2px rgba(var(--pcs-color-accent), 0.2);
         }
 
         &[type='file'] {
@@ -337,23 +338,23 @@
       select {
         width: 100%;
         padding: $spacing-lg;
-        border: 1px solid $color-border;
+        border: 1px solid var(--pcs-color-border);
         border-radius: $spacing-sm;
         font-size: $font-size-base;
-        background-color: $color-background-white;
+        background-color: var(--pcs-color-background-primary);
         transition: border-color $transition-fast;
 
         &:focus {
           outline: none;
-          border-color: $color-primary;
-          box-shadow: 0 0 0 2px rgba($color-primary, 0.2);
+          border-color: var(--pcs-color-accent);
+          box-shadow: 0 0 0 2px rgba(var(--pcs-color-accent), 0.2);
         }
       }
 
       small {
         display: block;
         margin-top: $spacing-sm;
-        color: $color-text-muted;
+        color: var(--pcs-color-text-secondary);
         font-size: $font-size-sm;
       }
     }
@@ -375,10 +376,10 @@
     .file-info {
       margin-top: $spacing-lg;
       padding: $spacing-lg;
-      background-color: $color-background-secondary;
+      background-color: var(--pcs-color-background-secondary);
       border-radius: $spacing-sm;
       font-size: $font-size-sm;
-      color: $color-text-primary;
+      color: var(--pcs-color-text-primary);
     }
 
     .form-actions {
@@ -394,25 +395,25 @@
         font-size: $font-size-base;
 
         &[type='submit'] {
-          background-color: $color-primary;
-          color: $color-background-white;
+          background-color: var(--pcs-color-accent);
+          color: var(--pcs-color-background-primary);
 
           &:hover:not(:disabled) {
-            background-color: $color-primary-hover;
+            background-color: var(--pcs-color-accent)-hover;
           }
 
           &:disabled {
-            background-color: $color-secondary;
+            background-color: var(--pcs-color-text-secondary);
             cursor: not-allowed;
           }
         }
 
         &[type='button'] {
-          background-color: $color-secondary;
-          color: $color-background-white;
+          background-color: var(--pcs-color-text-secondary);
+          color: var(--pcs-color-background-primary);
 
           &:hover {
-            background-color: $color-secondary-hover;
+            background-color: var(--pcs-color-text-secondary)-hover;
           }
         }
       }
@@ -432,8 +433,8 @@
 
   .upload-file-btn {
     padding: $spacing-lg $spacing-xxl;
-    background-color: $color-primary;
-    color: $color-background-white;
+    background-color: var(--pcs-color-accent);
+    color: var(--pcs-color-background-primary);
     border: none;
     border-radius: $spacing-sm;
     cursor: pointer;
@@ -441,14 +442,14 @@
     font-size: $font-size-base;
 
     &:hover {
-      background-color: $color-primary-hover;
+      background-color: var(--pcs-color-accent)-hover;
     }
   }
 
   .settings-btn {
     padding: $spacing-lg $spacing-xxl;
-    background-color: $color-secondary;
-    color: $color-background-white;
+    background-color: var(--pcs-color-text-secondary);
+    color: var(--pcs-color-background-primary);
     border: none;
     border-radius: $spacing-sm;
     cursor: pointer;
@@ -456,17 +457,17 @@
     font-size: $font-size-base;
 
     &:hover {
-      background-color: $color-secondary-hover;
+      background-color: var(--pcs-color-text-secondary)-hover;
     }
   }
 
   // Points Viewer
   .points-viewer {
     margin-top: $spacing-xxxxxl;
-    border: 1px solid $color-border;
+    border: 1px solid var(--pcs-color-border);
     border-radius: $spacing-sm;
     padding: $spacing-xxxxxl;
-    background-color: $color-background-secondary;
+    background-color: var(--pcs-color-background-secondary);
     width: 100%;
     box-sizing: border-box;
 
@@ -476,7 +477,7 @@
 
     h3 {
       margin-bottom: $spacing-xxxl;
-      color: $color-text-primary;
+      color: var(--pcs-color-text-primary);
     }
 
     .points-table {
@@ -487,7 +488,7 @@
         width: 100%;
         min-width: $table-min-width;
         border-collapse: collapse;
-        background: $color-background-white;
+        background: var(--pcs-color-background-primary);
 
         @media (max-width: $breakpoint-tablet) {
           font-size: $font-size-base;
@@ -497,7 +498,7 @@
         td {
           padding: $spacing-xxl;
           text-align: left;
-          border-bottom: 1px solid $color-border;
+          border-bottom: 1px solid var(--pcs-color-border);
           vertical-align: top;
 
           @media (max-width: $breakpoint-tablet) {
@@ -506,7 +507,7 @@
         }
 
         th {
-          background-color: $color-background-secondary;
+          background-color: var(--pcs-color-background-secondary);
           font-weight: bold;
           position: sticky;
           top: 0;
@@ -514,7 +515,7 @@
         }
 
         tr:hover {
-          background-color: $color-background-hover;
+          background-color: var(--pcs-color-background-hover);
         }
 
         .vector-cell {
@@ -535,8 +536,8 @@
 
           .view-details-btn {
             padding: $spacing-sm $spacing-lg;
-            background-color: $color-info;
-            color: $color-background-white;
+            background-color: var(--pcs-color-info);
+            color: var(--pcs-color-background-primary);
             border: none;
             border-radius: $spacing-xs;
             cursor: pointer;
@@ -544,7 +545,7 @@
             transition: background-color $transition-fast;
 
             &:hover {
-              background-color: $color-info-hover;
+              background-color: var(--pcs-color-info)-hover;
             }
           }
         }
@@ -553,14 +554,14 @@
 
     .close-btn {
       padding: $spacing-lg $spacing-xxxxl;
-      background-color: $color-secondary;
-      color: $color-background-white;
+      background-color: var(--pcs-color-text-secondary);
+      color: var(--pcs-color-background-primary);
       border: none;
       border-radius: $spacing-sm;
       cursor: pointer;
 
       &:hover {
-        background-color: $color-secondary-hover;
+        background-color: var(--pcs-color-text-secondary)-hover;
       }
     }
   }
@@ -573,42 +574,42 @@
     gap: $spacing-xxxl;
     margin-top: $spacing-xxxxxl;
     padding: $spacing-xxxl;
-    background-color: $color-background-secondary;
+    background-color: var(--pcs-color-background-secondary);
     border-radius: $spacing-sm;
 
     .pagination-btn {
       padding: $spacing-lg $spacing-xxxxl;
-      background-color: $color-primary;
-      color: $color-background-white;
+      background-color: var(--pcs-color-accent);
+      color: var(--pcs-color-background-primary);
       border: none;
       border-radius: $spacing-sm;
       cursor: pointer;
       transition: background-color $transition-fast;
 
       &:hover:not(:disabled) {
-        background-color: $color-primary-hover;
+        background-color: var(--pcs-color-accent)-hover;
       }
 
       &:disabled {
-        background-color: $color-secondary;
+        background-color: var(--pcs-color-text-secondary);
         cursor: not-allowed;
       }
     }
 
     .pagination-info {
       font-weight: bold;
-      color: $color-text-light;
+      color: var(--pcs-color-text-secondary);
     }
   }
 
   // Status messages
   .loading {
     text-align: center;
-    color: $color-text-muted;
+    color: var(--pcs-color-text-secondary);
   }
 
   .error {
-    color: $color-error;
+    color: var(--pcs-color-error);
     text-align: center;
   }
 }
@@ -620,24 +621,24 @@
 .search-component {
   margin-top: $spacing-xxxxxl;
   padding-top: $spacing-xxxxxl;
-  border-top: 1px solid $color-border;
+  border-top: 1px solid var(--pcs-color-border);
 
   .search-header {
     margin-bottom: $spacing-xxxxxl;
 
     h2 {
-      color: $color-text-secondary;
+      color: var(--pcs-color-text-secondary);
       margin-bottom: $spacing-md;
     }
 
     p {
-      color: $color-text-muted;
+      color: var(--pcs-color-text-secondary);
       margin: 0;
     }
   }
 
   .search-controls {
-    background: $color-background-white;
+    background: var(--pcs-color-background-primary);
     padding: $spacing-xxxxxl;
     border-radius: $spacing-sm;
     box-shadow: $shadow-sm;
@@ -657,14 +658,14 @@
       .search-collection-select,
       .search-input {
         padding: $spacing-lg;
-        border: 1px solid $color-border;
+        border: 1px solid var(--pcs-color-border);
         border-radius: $spacing-sm;
         font-size: 1rem;
 
         &:focus {
           outline: none;
-          border-color: $color-primary;
-          box-shadow: 0 0 0 2px rgba($color-primary, 0.2);
+          border-color: var(--pcs-color-accent);
+          box-shadow: 0 0 0 2px rgba(var(--pcs-color-accent), 0.2);
         }
       }
 
@@ -709,24 +710,24 @@
 
         label {
           font-weight: 500;
-          color: $color-text-secondary;
+          color: var(--pcs-color-text-secondary);
         }
 
         .option-input {
           padding: $spacing-md;
-          border: 1px solid $color-border;
+          border: 1px solid var(--pcs-color-border);
           border-radius: $spacing-sm;
           font-size: 0.9rem;
           max-width: 120px;
 
           &:focus {
             outline: none;
-            border-color: $color-primary;
+            border-color: var(--pcs-color-accent);
           }
         }
 
         small {
-          color: $color-text-muted;
+          color: var(--pcs-color-text-secondary);
           font-size: 0.8rem;
         }
       }
@@ -734,19 +735,19 @@
   }
 
   .search-results {
-    background: $color-background-white;
+    background: var(--pcs-color-background-primary);
     border-radius: $spacing-sm;
     box-shadow: $shadow-sm;
     overflow: hidden;
 
     .results-header {
       padding: $spacing-xxxxxl;
-      background: $color-background-secondary;
-      border-bottom: 1px solid $color-border;
+      background: var(--pcs-color-background-secondary);
+      border-bottom: 1px solid var(--pcs-color-border);
 
       h3 {
         margin: 0;
-        color: $color-text-secondary;
+        color: var(--pcs-color-text-secondary);
       }
     }
 
@@ -756,11 +757,11 @@
 
       .result-item {
         padding: $spacing-xxxxxl;
-        border-bottom: 1px solid $color-border-light;
+        border-bottom: 1px solid var(--pcs-color-border)-light;
         transition: background-color 0.2s ease;
 
         &:hover {
-          background: $color-background-secondary;
+          background: var(--pcs-color-background-secondary);
         }
 
         &:last-child {
@@ -774,7 +775,7 @@
           margin-bottom: $spacing-lg;
 
           .result-rank {
-            background: $color-primary;
+            background: var(--pcs-color-accent);
             color: white;
             padding: $spacing-sm $spacing-md;
             border-radius: $spacing-sm;
@@ -783,7 +784,7 @@
           }
 
           .result-score {
-            color: $color-text-muted;
+            color: var(--pcs-color-text-secondary);
             font-size: 0.9rem;
             font-weight: 500;
           }
@@ -791,7 +792,7 @@
 
         .result-content {
           .result-text {
-            color: $color-text-primary;
+            color: var(--pcs-color-text-primary);
             line-height: 1.6;
             margin-bottom: $spacing-lg;
             font-size: 0.95rem;
@@ -803,7 +804,7 @@
             flex-wrap: wrap;
 
             .metadata-item {
-              color: $color-text-muted;
+              color: var(--pcs-color-text-secondary);
               font-size: 0.85rem;
               display: flex;
               align-items: center;
@@ -818,13 +819,13 @@
   .search-loading {
     text-align: center;
     padding: $spacing-xxxxxl;
-    color: $color-text-muted;
+    color: var(--pcs-color-text-secondary);
 
     .loading-spinner {
       width: 40px;
       height: 40px;
-      border: 4px solid $color-border-light;
-      border-top: 4px solid $color-primary;
+      border: 4px solid var(--pcs-color-border)-light;
+      border-top: 4px solid var(--pcs-color-accent);
       border-radius: 50%;
       animation: spin 1s linear infinite;
       margin: 0 auto $spacing-lg;
@@ -853,7 +854,7 @@
 }
 
 .settings-modal {
-  background: $color-background-white;
+  background: var(--pcs-color-background-primary);
   border-radius: $spacing-sm;
   box-shadow: $shadow-lg;
   max-width: 600px;
@@ -872,12 +873,12 @@
   justify-content: space-between;
   align-items: center;
   padding: $spacing-xl;
-  border-bottom: 1px solid $color-border;
-  background: $color-background-primary;
+  border-bottom: 1px solid var(--pcs-color-border);
+  background: var(--pcs-color-background-primary);
 
   h3 {
     margin: 0;
-    color: $color-text-primary;
+    color: var(--pcs-color-text-primary);
   }
 
   .close-button {
@@ -885,12 +886,12 @@
     border: none;
     font-size: 24px;
     cursor: pointer;
-    color: $color-text-secondary;
+    color: var(--pcs-color-text-secondary);
     padding: $spacing-xs;
     border-radius: $spacing-xs;
 
     &:hover {
-      background: $color-background-secondary;
+      background: var(--pcs-color-background-secondary);
     }
   }
 }
@@ -903,7 +904,7 @@
   margin-bottom: $spacing-xxxxl;
 
   h4 {
-    color: $color-text-primary;
+    color: var(--pcs-color-text-primary);
     margin-bottom: $spacing-lg;
     font-size: 16px;
     font-weight: 600;
@@ -916,37 +917,37 @@
       display: block;
       margin-bottom: $spacing-sm;
       font-weight: 500;
-      color: $color-text-primary;
+      color: var(--pcs-color-text-primary);
     }
 
     .settings-input {
       width: 100%;
       padding: $spacing-md;
-      border: 1px solid $color-border;
+      border: 1px solid var(--pcs-color-border);
       border-radius: $spacing-xs;
       font-size: 14px;
 
       &:focus {
         outline: none;
-        border-color: $color-primary;
-        box-shadow: 0 0 0 2px rgba($color-primary, 0.1);
+        border-color: var(--pcs-color-accent);
+        box-shadow: 0 0 0 2px rgba(var(--pcs-color-accent), 0.1);
       }
     }
 
     small {
       display: block;
       margin-top: $spacing-xs;
-      color: $color-text-muted;
+      color: var(--pcs-color-text-secondary);
       font-size: 12px;
     }
 
     .validation-success {
-      color: $color-success;
+      color: var(--pcs-color-success);
       font-weight: 500;
     }
 
     .validation-error {
-      color: $color-error;
+      color: var(--pcs-color-error);
       font-weight: 500;
     }
   }
@@ -958,16 +959,16 @@
 
   .validate-token-btn {
     padding: $spacing-md $spacing-lg;
-    border: 1px solid $color-border;
+    border: 1px solid var(--pcs-color-border);
     border-radius: $spacing-xs;
-    background: $color-background-white;
+    background: var(--pcs-color-background-primary);
     cursor: pointer;
     font-size: 14px;
     min-width: 80px;
     transition: all 0.2s ease;
 
     &:hover:not(:disabled) {
-      background: $color-background-secondary;
+      background: var(--pcs-color-background-secondary);
     }
 
     &:disabled {
@@ -976,15 +977,15 @@
     }
 
     &.valid {
-      background: $color-success;
+      background: var(--pcs-color-success);
       color: white;
-      border-color: $color-success;
+      border-color: var(--pcs-color-success);
     }
 
     &.invalid {
-      background: $color-error;
+      background: var(--pcs-color-error);
       color: white;
-      border-color: $color-error;
+      border-color: var(--pcs-color-error);
     }
   }
 }
@@ -994,7 +995,7 @@
   align-items: center;
   gap: $spacing-md;
   padding: $spacing-md;
-  background: $color-background-secondary;
+  background: var(--pcs-color-background-secondary);
   border-radius: $spacing-xs;
 
   .current-model-display {
@@ -1002,11 +1003,11 @@
 
     .current-model {
       font-weight: 500;
-      color: $color-text-primary;
+      color: var(--pcs-color-text-primary);
     }
 
     .current-provider {
-      color: $color-text-muted;
+      color: var(--pcs-color-text-secondary);
       font-size: 12px;
       margin-left: $spacing-xs;
     }
@@ -1014,7 +1015,7 @@
 
   .select-model-btn {
     padding: $spacing-sm $spacing-lg;
-    background: $color-primary;
+    background: var(--pcs-color-accent);
     color: white;
     border: none;
     border-radius: $spacing-xs;
@@ -1023,7 +1024,7 @@
     transition: background-color 0.2s ease;
 
     &:hover:not(:disabled) {
-      background: color.adjust($color-primary, $lightness: -10%);
+      background: var(--pcs-color-accent); filter: brightness(0.9);
     }
 
     &:disabled {
@@ -1038,8 +1039,8 @@
   justify-content: flex-end;
   gap: $spacing-md;
   padding: $spacing-xl;
-  border-top: 1px solid $color-border;
-  background: $color-background-primary;
+  border-top: 1px solid var(--pcs-color-border);
+  background: var(--pcs-color-background-primary);
 
   .btn {
     padding: $spacing-md $spacing-xl;
@@ -1051,21 +1052,21 @@
     transition: all 0.2s ease;
 
     &.btn-primary {
-      background: $color-primary;
+      background: var(--pcs-color-accent);
       color: white;
 
       &:hover:not(:disabled) {
-        background: color.adjust($color-primary, $lightness: -10%);
+        background: var(--pcs-color-accent); filter: brightness(0.9);
       }
     }
 
     &.btn-secondary {
-      background: $color-background-white;
-      color: $color-text-primary;
-      border: 1px solid $color-border;
+      background: var(--pcs-color-background-primary);
+      color: var(--pcs-color-text-primary);
+      border: 1px solid var(--pcs-color-border);
 
       &:hover:not(:disabled) {
-        background: $color-background-secondary;
+        background: var(--pcs-color-background-secondary);
       }
     }
 
@@ -1079,12 +1080,12 @@
 .settings-info {
   margin-top: $spacing-xl;
   padding: $spacing-lg;
-  background: $color-background-secondary;
+  background: var(--pcs-color-background-secondary);
   border-radius: $spacing-xs;
 
   p {
     margin: 0;
-    color: $color-text-secondary;
+    color: var(--pcs-color-text-secondary);
     font-size: 14px;
   }
 }
@@ -1103,7 +1104,7 @@
 }
 
 .settings-modal {
-  background: $color-background-white;
+  background: var(--pcs-color-background-primary);
   border-radius: $spacing-sm;
   box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
   max-width: 600px;
@@ -1116,12 +1117,12 @@
     justify-content: space-between;
     align-items: center;
     padding: $spacing-xxxxxl;
-    border-bottom: 1px solid $color-border;
-    background-color: $color-background-primary;
+    border-bottom: 1px solid var(--pcs-color-border);
+    background-color: var(--pcs-color-background-primary);
 
     h3 {
       margin: 0;
-      color: $color-text-primary;
+      color: var(--pcs-color-text-primary);
     }
 
     .close-button {
@@ -1129,13 +1130,13 @@
       border: none;
       font-size: 24px;
       cursor: pointer;
-      color: $color-text-muted;
+      color: var(--pcs-color-text-secondary);
       padding: $spacing-sm;
       border-radius: $spacing-sm;
 
       &:hover {
-        background-color: $color-background-hover;
-        color: $color-text-primary;
+        background-color: var(--pcs-color-background-hover);
+        color: var(--pcs-color-text-primary);
       }
     }
   }
@@ -1152,8 +1153,8 @@
 
       h4 {
         margin: 0 0 $spacing-xl 0;
-        color: $color-text-primary;
-        border-bottom: 1px solid $color-border-light;
+        color: var(--pcs-color-text-primary);
+        border-bottom: 1px solid var(--pcs-color-border)-light;
         padding-bottom: $spacing-md;
       }
 
@@ -1164,42 +1165,42 @@
           display: block;
           margin-bottom: $spacing-sm;
           font-weight: 500;
-          color: $color-text-primary;
+          color: var(--pcs-color-text-primary);
         }
 
         .settings-input {
           width: 100%;
           padding: $spacing-lg;
-          border: 1px solid $color-border;
+          border: 1px solid var(--pcs-color-border);
           border-radius: $spacing-sm;
           font-size: $font-size-base;
           transition: border-color $transition-fast;
 
           &:focus {
             outline: none;
-            border-color: $color-primary;
-            box-shadow: 0 0 0 2px rgba($color-primary, 0.2);
+            border-color: var(--pcs-color-accent);
+            box-shadow: 0 0 0 2px rgba(var(--pcs-color-accent), 0.2);
           }
         }
 
         small {
           display: block;
           margin-top: $spacing-xs;
-          color: $color-text-muted;
+          color: var(--pcs-color-text-secondary);
           font-size: 0.9em;
         }
       }
     }
 
     .settings-info {
-      background-color: $color-background-primary;
+      background-color: var(--pcs-color-background-primary);
       padding: $spacing-xl;
       border-radius: $spacing-sm;
-      border-left: 4px solid $color-info;
+      border-left: 4px solid var(--pcs-color-info);
 
       p {
         margin: 0;
-        color: $color-text-secondary;
+        color: var(--pcs-color-text-secondary);
         font-size: 0.95em;
       }
     }
@@ -1210,8 +1211,8 @@
     justify-content: flex-end;
     gap: $spacing-lg;
     padding: $spacing-xxxxxl;
-    border-top: 1px solid $color-border;
-    background-color: $color-background-primary;
+    border-top: 1px solid var(--pcs-color-border);
+    background-color: var(--pcs-color-background-primary);
 
     .btn {
       padding: $spacing-lg $spacing-xxxxl;
@@ -1222,20 +1223,20 @@
       transition: background-color $transition-fast;
 
       &.btn-secondary {
-        background-color: $color-secondary;
-        color: $color-background-white;
+        background-color: var(--pcs-color-text-secondary);
+        color: var(--pcs-color-background-primary);
 
         &:hover:not(:disabled) {
-          background-color: $color-secondary-hover;
+          background-color: var(--pcs-color-text-secondary)-hover;
         }
       }
 
       &.btn-primary {
-        background-color: $color-primary;
-        color: $color-background-white;
+        background-color: var(--pcs-color-accent);
+        color: var(--pcs-color-background-primary);
 
         &:hover:not(:disabled) {
-          background-color: $color-primary-hover;
+          background-color: var(--pcs-color-accent)-hover;
         }
       }
 
@@ -1254,32 +1255,32 @@
 .search-component {
   margin-top: $spacing-xxxxxl;
   padding: $spacing-xxxxxl;
-  border: 1px solid $color-border;
+  border: 1px solid var(--pcs-color-border);
   border-radius: $spacing-sm;
-  background-color: $color-background-white;
+  background-color: var(--pcs-color-background-primary);
 
   .search-header {
     margin-bottom: $spacing-xxxxl;
 
     h2 {
       margin: 0 0 $spacing-lg 0;
-      color: $color-text-primary;
+      color: var(--pcs-color-text-primary);
       font-size: $font-size-lg;
     }
 
     p {
       margin: $spacing-sm 0;
-      color: $color-text-secondary;
+      color: var(--pcs-color-text-secondary);
       font-size: $font-size-base;
     }
 
     .selected-collection-info {
-      color: $color-success;
+      color: var(--pcs-color-success);
       font-weight: 500;
-      background-color: rgba($color-success, 0.1);
+      background-color: rgba(var(--pcs-color-success), 0.1);
       padding: $spacing-md $spacing-lg;
       border-radius: $spacing-sm;
-      border-left: 3px solid $color-success;
+      border-left: 3px solid var(--pcs-color-success);
       margin-top: $spacing-lg;
     }
   }

@@ -10,8 +10,8 @@
   z-index: 1000;
 
   .model-tooltip-content {
-    background: $color-background-white;
-    border: 1px solid $color-border;
+    background: var(--pcs-color-background-primary);
+    border: 1px solid var(--pcs-color-border);
     border-radius: $spacing-sm;
     padding: $spacing-md;
     box-shadow: $shadow-lg;
@@ -19,14 +19,14 @@
 
     h5 {
       margin: 0 0 $spacing-sm 0;
-      color: $color-text-primary;
+      color: var(--pcs-color-text-primary);
       font-size: 16px;
       font-weight: 600;
     }
 
     p {
       margin: 0;
-      color: $color-text-secondary;
+      color: var(--pcs-color-text-secondary);
       line-height: 1.4;
     }
   }
@@ -40,7 +40,7 @@
     height: 0;
     border-left: 8px solid transparent;
     border-right: 8px solid transparent;
-    border-top: 8px solid $color-border;
+    border-top: 8px solid var(--pcs-color-border);
 
     &::after {
       content: '';
@@ -51,7 +51,7 @@
       height: 0;
       border-left: 7px solid transparent;
       border-right: 7px solid transparent;
-      border-top: 7px solid $color-background-white;
+      border-top: 7px solid var(--pcs-color-background-primary);
     }
   }
 }

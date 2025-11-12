@@ -18,20 +18,20 @@
 
     .chat-messages {
       flex: 1;
-      border: 1px solid $color-border;
+      border: 1px solid var(--pcs-color-border);
       border-radius: $spacing-sm;
       padding: $spacing-lg;
-      background: $color-background-white;
+      background: var(--pcs-color-background-primary);
       overflow-y: auto;
       min-height: 300px;
 
       .welcome-message {
         text-align: center;
-        color: $color-text-secondary;
+        color: var(--pcs-color-text-secondary);
 
         h4 {
           margin: 0 0 $spacing-md 0;
-          color: $color-text-primary;
+          color: var(--pcs-color-text-primary);
           font-size: 18px;
         }
 
@@ -50,7 +50,7 @@
           align-items: flex-end;
 
           .message-content {
-            background: $color-primary;
+            background: var(--pcs-color-accent);
             color: white;
             border-radius: $spacing-md $spacing-md 0 $spacing-md;
             padding: $spacing-md;
@@ -63,8 +63,8 @@
           align-items: flex-start;
 
           .message-content {
-            background: $color-background-secondary;
-            color: $color-text-primary;
+            background: var(--pcs-color-background-secondary);
+            color: var(--pcs-color-text-primary);
             border-radius: $spacing-md $spacing-md $spacing-md 0;
             padding: $spacing-md;
             max-width: 70%;
@@ -74,7 +74,7 @@
 
         &.loading {
           .message-content {
-            background: $color-background-secondary;
+            background: var(--pcs-color-background-secondary);
             border-radius: $spacing-md $spacing-md $spacing-md 0;
             padding: $spacing-md;
             max-width: 70%;
@@ -87,7 +87,7 @@
                 width: 8px;
                 height: 8px;
                 border-radius: 50%;
-                background: $color-text-muted;
+                background: var(--pcs-color-text-secondary);
                 animation: typing 1.4s infinite ease-in-out;
 
                 &:nth-child(1) { animation-delay: -0.32s; }
@@ -99,7 +99,7 @@
             .tool-usage-indicator {
               margin-top: $spacing-sm;
               font-size: 12px;
-              color: $color-primary;
+              color: var(--pcs-color-accent);
               font-weight: 500;
               text-align: center;
             }
@@ -108,18 +108,18 @@
 
         .message-timestamp {
           font-size: 10px;
-          color: $color-text-muted;
+          color: var(--pcs-color-text-secondary);
           margin-top: $spacing-xs;
         }
       }
     }
 
     .error-message {
-      background: #fee;
-      border: 1px solid #fcc;
+      background: var(--pcs-color-error-bg);
+      border: 1px solid var(--pcs-color-error-border);
       border-radius: $spacing-sm;
       padding: $spacing-md;
-      color: #c33;
+      color: var(--pcs-color-error-text);
       font-size: 14px;
       margin-bottom: $spacing-md;
 
@@ -130,9 +130,9 @@
 
     .tool-manager {
       margin-bottom: $spacing-md;
-      border: 1px solid $color-border;
+      border: 1px solid var(--pcs-color-border);
       border-radius: $spacing-sm;
-      background: $color-background-white;
+      background: var(--pcs-color-background-primary);
 
       .tool-manager-toggle {
         width: 100%;
@@ -143,26 +143,26 @@
         cursor: pointer;
         font-size: 14px;
         font-weight: 500;
-        color: $color-text-primary;
+        color: var(--pcs-color-text-primary);
 
         &:hover {
-          background: $color-background-secondary;
+          background: var(--pcs-color-background-secondary);
         }
 
         &:focus {
           outline: none;
-          background: $color-background-secondary;
+          background: var(--pcs-color-background-secondary);
         }
       }
 
       .tool-manager-content {
         padding: $spacing-md;
-        border-top: 1px solid $color-border;
+        border-top: 1px solid var(--pcs-color-border);
 
         h5 {
           margin: 0 0 $spacing-md 0;
           font-size: 14px;
-          color: $color-text-primary;
+          color: var(--pcs-color-text-primary);
         }
 
         .tool-item {
@@ -189,14 +189,14 @@
               strong {
                 display: block;
                 font-size: 14px;
-                color: $color-text-primary;
+                color: var(--pcs-color-text-primary);
                 margin-bottom: $spacing-xs;
               }
 
               p {
                 margin: 0;
                 font-size: 12px;
-                color: $color-text-secondary;
+                color: var(--pcs-color-text-secondary);
                 line-height: 1.4;
               }
             }
@@ -213,7 +213,7 @@
       textarea {
         flex: 1;
         padding: $spacing-md;
-        border: 1px solid $color-border;
+        border: 1px solid var(--pcs-color-border);
         border-radius: $spacing-sm;
         resize: vertical;
         min-height: 60px;
@@ -222,8 +222,8 @@
 
         &:focus {
           outline: none;
-          border-color: $color-primary;
-          box-shadow: 0 0 0 2px rgba($color-primary, 0.1);
+          border-color: var(--pcs-color-accent);
+          box-shadow: 0 0 0 2px rgba(var(--pcs-color-accent), 0.1);
         }
 
         &:disabled {
@@ -234,8 +234,8 @@
 
       .send-button {
         padding: $spacing-md $spacing-xl;
-        background: $color-primary;
-        color: $color-background-white;
+        background: var(--pcs-color-accent);
+        color: var(--pcs-color-background-primary);
         border: none;
         border-radius: $spacing-sm;
         cursor: pointer;
@@ -244,7 +244,7 @@
         white-space: nowrap;
 
         &:hover:not(:disabled) {
-          background: $color-primary-hover;
+          background: var(--pcs-color-accent)-hover;
         }
 
         &:disabled {
@@ -256,16 +256,16 @@
 
     .tool-info-container {
       margin-top: $spacing-md;
-      border-top: 1px solid $color-border;
+      border-top: 1px solid var(--pcs-color-border);
       padding-top: $spacing-md;
 
       .tool-info-toggle {
         width: 100%;
         padding: $spacing-sm $spacing-md;
-        background: rgba($color-primary, 0.1);
-        border: 1px solid rgba($color-primary, 0.3);
+        background: rgba(var(--pcs-color-accent), 0.1);
+        border: 1px solid rgba(var(--pcs-color-accent), 0.3);
         border-radius: $spacing-sm;
-        color: $color-primary;
+        color: var(--pcs-color-accent);
         cursor: pointer;
         font-size: 12px;
         font-weight: 500;
@@ -274,20 +274,20 @@
         gap: $spacing-sm;
 
         &:hover {
-          background: rgba($color-primary, 0.15);
+          background: rgba(var(--pcs-color-accent), 0.15);
         }
 
         &:focus {
           outline: none;
-          box-shadow: 0 0 0 2px rgba($color-primary, 0.2);
+          box-shadow: 0 0 0 2px rgba(var(--pcs-color-accent), 0.2);
         }
       }
 
       .tool-info-content {
         margin-top: $spacing-md;
         padding: $spacing-md;
-        background: rgba($color-background-white, 0.5);
-        border: 1px solid $color-border;
+        background: rgba(var(--pcs-color-background-primary), 0.5);
+        border: 1px solid var(--pcs-color-border);
         border-radius: $spacing-sm;
 
         .tool-call-info {
@@ -305,15 +305,15 @@
 
             .tool-name {
               font-weight: 600;
-              color: $color-text-primary;
+              color: var(--pcs-color-text-primary);
               font-size: 14px;
             }
 
             .tool-params {
               font-size: 12px;
-              color: $color-text-secondary;
+              color: var(--pcs-color-text-secondary);
               font-family: monospace;
-              background: rgba($color-background-secondary, 0.5);
+              background: rgba(var(--pcs-color-background-secondary), 0.5);
               padding: $spacing-xs $spacing-sm;
               border-radius: $spacing-xs;
               word-break: break-all;
@@ -325,8 +325,8 @@
               .search-result {
                 margin-bottom: $spacing-md;
                 padding: $spacing-sm;
-                background: $color-background-white;
-                border: 1px solid $color-border;
+                background: var(--pcs-color-background-primary);
+                border: 1px solid var(--pcs-color-border);
                 border-radius: $spacing-xs;
 
                 &:last-child {
@@ -336,48 +336,48 @@
                 .result-header {
                   font-weight: 500;
                   margin-bottom: $spacing-xs;
-                  color: $color-text-primary;
+                  color: var(--pcs-color-text-primary);
                 }
 
                 .result-text {
                   font-size: 13px;
-                  color: $color-text-primary;
+                  color: var(--pcs-color-text-primary);
                   margin-bottom: $spacing-xs;
                   line-height: 1.4;
                 }
 
                 .result-metadata {
                   font-size: 11px;
-                  color: $color-text-secondary;
+                  color: var(--pcs-color-text-secondary);
                 }
               }
 
               .document-text {
                 font-size: 13px;
-                color: $color-text-primary;
+                color: var(--pcs-color-text-primary);
                 margin: $spacing-sm 0;
                 line-height: 1.4;
                 max-height: 200px;
                 overflow-y: auto;
-                background: $color-background-white;
+                background: var(--pcs-color-background-primary);
                 padding: $spacing-sm;
-                border: 1px solid $color-border;
+                border: 1px solid var(--pcs-color-border);
                 border-radius: $spacing-xs;
               }
 
               .document-metadata {
                 font-size: 11px;
-                color: $color-text-secondary;
+                color: var(--pcs-color-text-secondary);
                 margin-top: $spacing-xs;
               }
             }
 
             .tool-error {
-              color: #c33;
+              color: var(--pcs-color-error-text);
               font-size: 12px;
-              background: #fee;
+              background: var(--pcs-color-error-bg);
               padding: $spacing-sm;
-              border: 1px solid #fcc;
+              border: 1px solid var(--pcs-color-error-border);
               border-radius: $spacing-xs;
               margin-top: $spacing-sm;
             }

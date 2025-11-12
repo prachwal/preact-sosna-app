@@ -1,0 +1,239 @@
+// ==========================================
+// THEMES - Light/Dark/System Theme Support
+// ==========================================
+
+@use 'variables' as *;
+
+// Define color tokens for different themes
+:root {
+  // Light theme colors
+  --pcs-color-background-primary: #ffffff;
+  --pcs-color-background-secondary: #f8f9fa;
+  --pcs-color-background-hover: #e9ecef;
+  --pcs-color-text-primary: #212529;
+  --pcs-color-text-secondary: #6c757d;
+  --pcs-color-border: #dee2e6;
+  --pcs-color-accent: #007bff;
+  --pcs-color-error: #dc3545;
+  --pcs-color-error-hover: #c82333;
+  --pcs-color-success: #28a745;
+  --pcs-color-success-hover: #218838;
+  --pcs-color-info: #17a2b8;
+  --pcs-color-info-hover: #138496;
+  --pcs-color-capability-tool-bg: #e3f2fd;
+  --pcs-color-capability-tool-text: #1976d2;
+  --pcs-color-capability-multimodal-bg: #f3e5f5;
+  --pcs-color-capability-multimodal-text: #7b1fa2;
+  --pcs-color-capability-image-bg: #e8f5e8;
+  --pcs-color-capability-image-text: #388e3c;
+  --pcs-color-capability-output-bg: #fff3e0;
+  --pcs-color-capability-output-text: #f57c00;
+  --pcs-color-error-bg: #fee;
+  --pcs-color-error-border: #fcc;
+  --pcs-color-error-text: #c33;
+  --pcs-color-input-background: #ffffff;
+  --pcs-color-input-text: #212529;
+  --pcs-color-input-border: #dee2e6;
+  --pcs-color-input-focus-border: #007bff;
+
+  // Syntax highlighting - Light theme
+  --pcs-syntax-bg: #f6f8fa;
+  --pcs-syntax-border: #d1d9e0;
+  --pcs-syntax-text: #24292f;
+  --pcs-syntax-comment: #6a737d;
+  --pcs-syntax-keyword: #d73a49;
+  --pcs-syntax-string: #032f62;
+  --pcs-syntax-number: #005cc5;
+  --pcs-syntax-function: #6f42c1;
+  --pcs-syntax-variable: #e36209;
+  --pcs-syntax-inline-bg: #f6f8fa;
+  --pcs-syntax-inline-text: #24292f;
+  --pcs-syntax-inline-border: #d1d9e0;
+  --pcs-syntax-deletion-bg: #da3633;
+  --pcs-syntax-deletion-text: #ffffff;
+  --pcs-syntax-addition-bg: #238636;
+  --pcs-syntax-addition-text: #ffffff;
+}
+
+// Dark theme
+[data-theme="dark"] {
+  --pcs-color-background-primary: #1a1a1a;
+  --pcs-color-background-secondary: #2d3748;
+  --pcs-color-background-hover: #4a5568;
+  --pcs-color-text-primary: #e2e8f0;
+  --pcs-color-text-secondary: #a0aec0;
+  --pcs-color-border: #4a5568;
+  --pcs-color-accent: #63b3ed;
+  --pcs-color-error: #ff6b7d;
+  --pcs-color-error-hover: #ff525b;
+  --pcs-color-success: #22c55e;
+  --pcs-color-success-hover: #16a34a;
+  --pcs-color-info: #06b6d4;
+  --pcs-color-info-hover: #0891b2;
+  --pcs-color-capability-tool-bg: #1e3a5f;
+  --pcs-color-capability-tool-text: #63b3ed;
+  --pcs-color-capability-multimodal-bg: #4a2c5a;
+  --pcs-color-capability-multimodal-text: #d946ef;
+  --pcs-color-capability-image-bg: #1f4a1f;
+  --pcs-color-capability-image-text: #22c55e;
+  --pcs-color-capability-output-bg: #5a3a1f;
+  --pcs-color-capability-output-text: #f97316;
+  --pcs-color-error-bg: #2d1b1b;
+  --pcs-color-error-border: #5c1a1a;
+  --pcs-color-error-text: #ff6b7d;
+  --pcs-color-input-background: #2d3748;
+  --pcs-color-input-text: #e2e8f0;
+  --pcs-color-input-border: #4a5568;
+  --pcs-color-input-focus-border: #63b3ed;
+
+  // Syntax highlighting - Dark theme
+  --pcs-syntax-bg: #2d3748;
+  --pcs-syntax-border: transparent;
+  --pcs-syntax-text: #e1e4e8;
+  --pcs-syntax-comment: #8b949e;
+  --pcs-syntax-keyword: #ff7b72;
+  --pcs-syntax-string: #a5c9ea;
+  --pcs-syntax-number: #79c0ff;
+  --pcs-syntax-function: #d2a8ff;
+  --pcs-syntax-variable: #f0883e;
+  --pcs-syntax-inline-bg: #edf2f7;
+  --pcs-syntax-inline-text: #2d3748;
+  --pcs-syntax-inline-border: transparent;
+  --pcs-syntax-deletion-bg: #da3633;
+  --pcs-syntax-deletion-text: #ffffff;
+  --pcs-syntax-addition-bg: #238636;
+  --pcs-syntax-addition-text: #ffffff;
+}
+
+// Light theme (explicit)
+[data-theme="light"] {
+  --pcs-color-background-primary: #ffffff;
+  --pcs-color-background-secondary: #f8f9fa;
+  --pcs-color-background-hover: #e9ecef;
+  --pcs-color-text-primary: #212529;
+  --pcs-color-text-secondary: #6c757d;
+  --pcs-color-border: #dee2e6;
+  --pcs-color-accent: #007bff;
+
+  // Syntax highlighting - Light theme
+  --pcs-syntax-bg: #f6f8fa;
+  --pcs-syntax-border: #d1d9e0;
+  --pcs-syntax-text: #24292f;
+  --pcs-syntax-comment: #6a737d;
+  --pcs-syntax-keyword: #d73a49;
+  --pcs-syntax-string: #032f62;
+  --pcs-syntax-number: #005cc5;
+  --pcs-syntax-function: #6f42c1;
+  --pcs-syntax-variable: #e36209;
+  --pcs-syntax-inline-bg: #f6f8fa;
+  --pcs-syntax-inline-text: #24292f;
+  --pcs-syntax-inline-border: #d1d9e0;
+}
+
+// System theme (respects prefers-color-scheme)
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme]) {
+    --pcs-color-background-primary: #1a1a1a;
+    --pcs-color-background-secondary: #2d3748;
+    --pcs-color-background-hover: #4a5568;
+    --pcs-color-text-primary: #e2e8f0;
+    --pcs-color-text-secondary: #a0aec0;
+    --pcs-color-border: #4a5568;
+    --pcs-color-accent: #63b3ed;
+    --pcs-color-error: #ff6b7d;
+    --pcs-color-error-hover: #ff525b;
+    --pcs-color-success: #22c55e;
+    --pcs-color-success-hover: #16a34a;
+    --pcs-color-info: #06b6d4;
+    --pcs-color-info-hover: #0891b2;
+    --pcs-color-capability-tool-bg: #1e3a5f;
+    --pcs-color-capability-tool-text: #63b3ed;
+    --pcs-color-capability-multimodal-bg: #4a2c5a;
+    --pcs-color-capability-multimodal-text: #d946ef;
+    --pcs-color-capability-image-bg: #1f4a1f;
+    --pcs-color-capability-image-text: #22c55e;
+    --pcs-color-capability-output-bg: #5a3a1f;
+    --pcs-color-capability-output-text: #f97316;
+    --pcs-color-error-bg: #2d1b1b;
+    --pcs-color-error-border: #5c1a1a;
+    --pcs-color-error-text: #ff6b7d;
+    --pcs-color-input-background: #2d3748;
+    --pcs-color-input-text: #e2e8f0;
+    --pcs-color-input-border: #4a5568;
+    --pcs-color-input-focus-border: #63b3ed;
+
+    // Syntax highlighting - Dark theme
+    --pcs-syntax-bg: #2d3748;
+    --pcs-syntax-border: transparent;
+    --pcs-syntax-text: #e1e4e8;
+    --pcs-syntax-comment: #8b949e;
+    --pcs-syntax-keyword: #ff7b72;
+    --pcs-syntax-string: #a5c9ea;
+    --pcs-syntax-number: #79c0ff;
+    --pcs-syntax-function: #d2a8ff;
+    --pcs-syntax-variable: #f0883e;
+    --pcs-syntax-inline-bg: #edf2f7;
+    --pcs-syntax-inline-text: #2d3748;
+    --pcs-syntax-inline-border: transparent;
+    --pcs-syntax-deletion-bg: #da3633;
+    --pcs-syntax-deletion-text: #ffffff;
+    --pcs-syntax-addition-bg: #238636;
+    --pcs-syntax-addition-text: #ffffff;
+  }
+}
+
+@media (prefers-color-scheme: light) {
+  :root:not([data-theme]) {
+    --pcs-color-background-primary: #ffffff;
+    --pcs-color-background-secondary: #f8f9fa;
+    --pcs-color-background-hover: #e9ecef;
+    --pcs-color-text-primary: #212529;
+    --pcs-color-text-secondary: #6c757d;
+    --pcs-color-border: #dee2e6;
+    --pcs-color-accent: #007bff;
+    --pcs-color-error: #dc3545;
+    --pcs-color-error-hover: #c82333;
+    --pcs-color-success: #28a745;
+    --pcs-color-success-hover: #218838;
+    --pcs-color-info: #17a2b8;
+    --pcs-color-info-hover: #138496;
+    --pcs-color-capability-tool-bg: #e3f2fd;
+    --pcs-color-capability-tool-text: #1976d2;
+    --pcs-color-capability-multimodal-bg: #f3e5f5;
+    --pcs-color-capability-multimodal-text: #7b1fa2;
+    --pcs-color-capability-image-bg: #e8f5e8;
+    --pcs-color-capability-image-text: #388e3c;
+    --pcs-color-capability-output-bg: #fff3e0;
+    --pcs-color-capability-output-text: #f57c00;
+    --pcs-color-error-bg: #fee;
+    --pcs-color-error-border: #fcc;
+    --pcs-color-error-text: #c33;
+    --pcs-color-input-background: #ffffff;
+    --pcs-color-input-text: #212529;
+    --pcs-color-input-border: #dee2e6;
+    --pcs-color-input-focus-border: #007bff;
+
+    // Syntax highlighting - Light theme
+    --pcs-syntax-bg: #f6f8fa;
+    --pcs-syntax-border: #d1d9e0;
+    --pcs-syntax-text: #24292f;
+    --pcs-syntax-comment: #6a737d;
+    --pcs-syntax-keyword: #d73a49;
+    --pcs-syntax-string: #032f62;
+    --pcs-syntax-number: #005cc5;
+    --pcs-syntax-function: #6f42c1;
+    --pcs-syntax-variable: #e36209;
+    --pcs-syntax-inline-bg: #f6f8fa;
+    --pcs-syntax-inline-text: #24292f;
+    --pcs-syntax-inline-border: #d1d9e0;
+    --pcs-syntax-deletion-bg: #da3633;
+    --pcs-syntax-deletion-text: #ffffff;
+    --pcs-syntax-addition-bg: #238636;
+    --pcs-syntax-addition-text: #ffffff;
+  }
+}
+
+// Theme transition for smooth switching
+* {
+  transition: background-color 0.2s ease, color 0.2s ease, border-color 0.2s ease;
+}

@@ -4,6 +4,64 @@
 
 @use 'variables' as *;
 
+// Global HTML element styles
+html {
+  font-size: 16px;
+  line-height: 1.5;
+  -webkit-text-size-adjust: 100%;
+  -moz-tab-size: 4;
+  tab-size: 4;
+  font-feature-settings: normal;
+  font-variation-settings: normal;
+}
+
+body {
+  margin: 0;
+  padding: 0;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue', sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  background-color: var(--pcs-color-background-primary);
+  color: var(--pcs-color-text-primary);
+  transition: background-color 0.2s ease, color 0.2s ease;
+}
+
+// Reset some default browser styles
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+button {
+  font-family: inherit;
+  border: none;
+  background: none;
+  cursor: pointer;
+}
+
+input,
+textarea,
+select {
+  font-family: inherit;
+  font-size: inherit;
+  background-color: var(--pcs-color-input-background) !important;
+  color: var(--pcs-color-input-text) !important;
+  border: 1px solid var(--pcs-color-input-border) !important;
+  border-radius: 4px;
+  padding: 8px 12px;
+
+  &:focus {
+    outline: none !important;
+    border-color: var(--pcs-color-input-focus-border) !important;
+    box-shadow: 0 0 0 2px rgba(var(--pcs-color-accent), 0.2) !important;
+  }
+
+  &::placeholder {
+    color: var(--pcs-color-text-secondary) !important;
+  }
+}
+
 .app {
   font-family: Arial, sans-serif;
   max-width: $max-width-app;
@@ -11,6 +69,8 @@
   padding: $spacing-xxxxxl;
   width: 100%;
   box-sizing: border-box;
+  background-color: var(--pcs-color-background-primary);
+  color: var(--pcs-color-text-primary);
 
   @media (max-width: $breakpoint-tablet) {
     padding: $spacing-xl;
@@ -23,23 +83,24 @@
   margin-bottom: $spacing-xxxxxxl;
 
   h1 {
-    color: $color-text-primary;
+    color: var(--pcs-color-text-primary);
   }
 
   .theme-toggle {
     position: absolute;
     top: $spacing-lg;
     right: $spacing-lg;
-    background: $color-background-secondary;
-    border: 1px solid $color-border;
+    background: var(--pcs-color-background-secondary);
+    border: 1px solid var(--pcs-color-border);
     border-radius: 6px;
     padding: $spacing-sm $spacing-md;
     cursor: pointer;
     font-size: 18px;
     transition: all 0.2s ease;
+    color: var(--pcs-color-text-primary);
 
     &:hover {
-      background: $color-background-hover;
+      background: var(--pcs-color-background-hover);
       transform: scale(1.05);
     }
 
@@ -62,14 +123,9 @@ pre {
   font-size: 14px;
   line-height: 1.4;
 
-  // Dark theme (default)
-  background: #2d3748;
-
-  // Light theme
-  .light-theme & {
-    background: #f6f8fa;
-    border: 1px solid #d1d9e0;
-  }
+  // Use theme variables
+  background: var(--pcs-syntax-bg);
+  border: 1px solid var(--pcs-syntax-border);
 }
 
 code {
@@ -83,16 +139,10 @@ code {
   border-radius: 3px;
   font-size: 0.85em;
 
-  // Dark theme
-  background: #edf2f7;
-  color: #2d3748;
-
-  // Light theme
-  .light-theme & {
-    background: #f6f8fa;
-    color: #24292f;
-    border: 1px solid #d1d9e0;
-  }
+  // Use theme variables
+  background: var(--pcs-syntax-inline-bg);
+  color: var(--pcs-syntax-inline-text);
+  border: 1px solid var(--pcs-syntax-inline-border);
 }
 
 // Syntax highlighting colors
@@ -101,27 +151,20 @@ code {
   overflow-x: auto;
   padding: 0;
   background: transparent;
-
-  // Dark theme (GitHub Dark inspired)
-  color: #e1e4e8;
-
-  .light-theme & {
-    // Light theme (GitHub Light inspired)
-    color: #24292f;
-  }
+  color: var(--pcs-syntax-text);
 }
 
-// Dark theme colors
+// Syntax highlighting elements
 .hljs-comment,
 .hljs-quote {
-  color: #8b949e;
+  color: var(--pcs-syntax-comment);
   font-style: italic;
 }
 
 .hljs-keyword,
 .hljs-selector-tag,
 .hljs-subst {
-  color: #ff7b72;
+  color: var(--pcs-syntax-keyword);
   font-weight: bold;
 }
 
@@ -130,18 +173,18 @@ code {
 .hljs-variable,
 .hljs-template-variable,
 .hljs-tag .hljs-attr {
-  color: #79c0ff;
+  color: var(--pcs-syntax-number);
 }
 
 .hljs-string,
 .hljs-doctag {
-  color: #a5c9ea;
+  color: var(--pcs-syntax-string);
 }
 
 .hljs-title,
 .hljs-section,
 .hljs-selector-id {
-  color: #d2a8ff;
+  color: var(--pcs-syntax-function);
   font-weight: bold;
 }
 
@@ -151,44 +194,44 @@ code {
 
 .hljs-type,
 .hljs-class .hljs-title {
-  color: #f0883e;
+  color: var(--pcs-syntax-variable);
   font-weight: bold;
 }
 
 .hljs-tag,
 .hljs-name,
 .hljs-attribute {
-  color: #7ee787;
+  color: var(--pcs-syntax-function);
   font-weight: normal;
 }
 
 .hljs-regexp,
 .hljs-link {
-  color: #f0883e;
+  color: var(--pcs-syntax-variable);
 }
 
 .hljs-symbol,
 .hljs-bullet {
-  color: #bc8cff;
+  color: var(--pcs-syntax-number);
 }
 
 .hljs-built_in,
 .hljs-builtin-name {
-  color: #ffa657;
+  color: var(--pcs-syntax-variable);
 }
 
 .hljs-meta {
-  color: #ffab70;
+  color: var(--pcs-syntax-variable);
 }
 
 .hljs-deletion {
-  background: #da3633;
-  color: #ffffff;
+  background: var(--pcs-syntax-deletion-bg);
+  color: var(--pcs-syntax-deletion-text);
 }
 
 .hljs-addition {
-  background: #238636;
-  color: #ffffff;
+  background: var(--pcs-syntax-addition-bg);
+  color: var(--pcs-syntax-addition-text);
 }
 
 .hljs-emphasis {
@@ -197,77 +240,4 @@ code {
 
 .hljs-strong {
   font-weight: bold;
-}
-
-// Light theme overrides
-.light-theme {
-  .hljs-comment,
-  .hljs-quote {
-    color: #6a737d;
-  }
-
-  .hljs-keyword,
-  .hljs-selector-tag,
-  .hljs-subst {
-    color: #d73a49;
-  }
-
-  .hljs-number,
-  .hljs-literal,
-  .hljs-variable,
-  .hljs-template-variable,
-  .hljs-tag .hljs-attr {
-    color: #005cc5;
-  }
-
-  .hljs-string,
-  .hljs-doctag {
-    color: #032f62;
-  }
-
-  .hljs-title,
-  .hljs-section,
-  .hljs-selector-id {
-    color: #6f42c1;
-  }
-
-  .hljs-type,
-  .hljs-class .hljs-title {
-    color: #e36209;
-  }
-
-  .hljs-tag,
-  .hljs-name,
-  .hljs-attribute {
-    color: #22863a;
-  }
-
-  .hljs-regexp,
-  .hljs-link {
-    color: #e36209;
-  }
-
-  .hljs-symbol,
-  .hljs-bullet {
-    color: #005cc5;
-  }
-
-  .hljs-built_in,
-  .hljs-builtin-name {
-    color: #e36209;
-  }
-
-  .hljs-meta {
-    color: #e36209;
-  }
-
-  .hljs-deletion {
-    background: #ffeef0;
-    color: #b31d28;
-  }
-
-  .hljs-addition {
-    background: #f0fff4;
-    color: #165c26;
-  }
 }

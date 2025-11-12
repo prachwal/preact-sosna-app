@@ -10,7 +10,7 @@
   left: 0;
   right: 0;
   bottom: 0;
-  background-color: $color-overlay;
+  background-color: rgba(0, 0, 0, 0.5);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -18,7 +18,7 @@
 }
 
 .modal-content {
-  background: $color-background-white;
+  background: var(--pcs-color-background-primary);
   border-radius: $spacing-sm;
   padding: $spacing-xxxxxl;
   max-width: 95vw;
@@ -39,7 +39,7 @@
     justify-content: space-between;
     align-items: center;
     margin-bottom: $spacing-xxxxxl;
-    border-bottom: 1px solid $color-border;
+    border-bottom: 1px solid var(--pcs-color-border);
     padding-bottom: $spacing-xl;
 
     .modal-navigation {
@@ -48,7 +48,7 @@
       align-items: center;
 
       .nav-btn {
-        background: $color-primary;
+        background: var(--pcs-color-accent);
         color: white;
         border: none;
         width: 32px;
@@ -63,12 +63,12 @@
         transition: all 0.2s ease;
 
         &:hover:not(:disabled) {
-          background: $color-primary-hover;
+          background: var(--pcs-color-accent)-hover;
           transform: scale(1.1);
         }
 
         &:disabled {
-          background: $color-border;
+          background: var(--pcs-color-border);
           cursor: not-allowed;
           opacity: 0.5;
         }
@@ -85,26 +85,26 @@
       gap: $spacing-xs;
       margin-left: $spacing-lg;
       font-size: $font-size-sm;
-      color: $color-text-secondary;
+      color: var(--pcs-color-text-secondary);
       font-weight: 500;
 
       .chunk-index {
-        color: $color-primary;
+        color: var(--pcs-color-accent);
         font-weight: 600;
       }
 
       .chunk-separator {
-        color: $color-text-muted;
+        color: var(--pcs-color-text-secondary);
       }
 
       .chunk-total {
-        color: $color-text-secondary;
+        color: var(--pcs-color-text-secondary);
       }
     }
 
     h3 {
       margin: 0;
-      color: $color-text-primary;
+      color: var(--pcs-color-text-primary);
       flex: 1;
       text-align: center;
     }
@@ -114,10 +114,10 @@
       border: none;
       font-size: $font-size-lg;
       cursor: pointer;
-      color: $color-text-muted;
+      color: var(--pcs-color-text-secondary);
 
       &:hover {
-        color: $color-text-primary;
+        color: var(--pcs-color-text-primary);
       }
     }
   }
@@ -128,13 +128,13 @@
     .detail-section {
       h4 {
         margin: 0 0 $spacing-xl 0;
-        color: $color-text-secondary;
-        border-bottom: 1px solid $color-border-light;
+        color: var(--pcs-color-text-secondary);
+        border-bottom: 1px solid var(--pcs-color-border)-light;
         padding-bottom: $spacing-md;
       }
 
       .detail-content {
-        background-color: $color-background-secondary;
+        background-color: var(--pcs-color-background-secondary);
         padding: $spacing-xxxl;
         border-radius: $spacing-sm;
         font-family: monospace;
@@ -156,13 +156,13 @@
 
             .payload-grid-key {
               font-weight: 600;
-              color: $color-text-primary;
+              color: var(--pcs-color-text-primary);
               white-space: nowrap;
               padding-right: $spacing-md;
             }
 
             .payload-grid-value {
-              color: $color-text-secondary;
+              color: var(--pcs-color-text-secondary);
               word-break: break-word;
               line-height: 1.4;
             }
@@ -179,13 +179,13 @@
       .detail-section {
         h4 {
           margin: 0 0 $spacing-xl 0;
-          color: $color-text-secondary;
-          border-bottom: 1px solid $color-border-light;
+          color: var(--pcs-color-text-secondary);
+          border-bottom: 1px solid var(--pcs-color-border)-light;
           padding-bottom: $spacing-md;
         }
 
         .detail-content {
-          background-color: $color-background-secondary;
+          background-color: var(--pcs-color-background-secondary);
           padding: $spacing-xxxl;
           border-radius: $spacing-sm;
           font-family: monospace;
@@ -207,7 +207,7 @@
   .modal-footer-dots {
     margin-top: $spacing-xxxxxl;
     padding-top: $spacing-xxxxxl;
-    border-top: 1px solid $color-border-light;
+    border-top: 1px solid var(--pcs-color-border)-light;
     display: flex;
     justify-content: center;
 
@@ -220,16 +220,16 @@
         width: 8px;
         height: 8px;
         border-radius: 50%;
-        background-color: $color-border;
+        background-color: var(--pcs-color-border);
         cursor: pointer;
         transition: background-color 0.2s ease;
 
         &.active {
-          background-color: $color-primary;
+          background-color: var(--pcs-color-accent);
         }
 
         &:hover {
-          background-color: $color-primary-hover;
+          background-color: var(--pcs-color-accent)-hover;
         }
       }
     }
@@ -264,7 +264,7 @@
 
     h3 {
       margin: 0;
-      color: #333;
+      color: var(--pcs-color-text-primary);
       font-size: 1.5rem;
     }
   }
@@ -277,7 +277,7 @@
 
     .progress-stage {
       font-size: 1.1rem;
-      color: #666;
+      color: var(--pcs-color-text-secondary);
       text-align: center;
       min-height: 1.5rem;
     }
@@ -285,14 +285,14 @@
     .progress-bar-container {
       width: 100%;
       height: 20px;
-      background-color: #e0e0e0;
+      background-color: var(--pcs-color-border);
       border-radius: 10px;
       overflow: hidden;
       margin: 1rem 0;
 
       .progress-bar {
         height: 100%;
-        background: linear-gradient(90deg, #4caf50, #45a049);
+        background: var(--pcs-color-success);
         border-radius: 10px;
         transition: width 0.3s ease;
       }
@@ -301,12 +301,12 @@
     .progress-percentage {
       font-size: 1.2rem;
       font-weight: bold;
-      color: #333;
+      color: var(--pcs-color-text-primary);
     }
 
     .progress-details {
       font-size: 0.9rem;
-      color: #666;
+      color: var(--pcs-color-text-secondary);
     }
 
     .progress-modal-actions {
@@ -323,11 +323,12 @@
         transition: background-color 0.2s ease;
 
         &.btn-primary {
-          background-color: #007bff;
-          color: white;
+          background-color: var(--pcs-color-accent);
+          color: var(--pcs-color-background-primary);
 
           &:hover {
-            background-color: #0056b3;
+            background-color: var(--pcs-color-accent);
+            filter: brightness(0.9);
           }
         }
       }
