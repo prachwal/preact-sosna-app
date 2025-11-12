@@ -7,17 +7,31 @@
 - `QdrantApi` orchestrates all services as the main entry point
 - Configuration managed via singleton `ConfigurationProvider` with localStorage persistence
 - Services communicate via HTTP APIs (Qdrant: 6333, Polish BERT: 8082)
+- **Refactored component architecture** with focused, single-responsibility components
+
+**Configuration Management:**
+- `ConfigurationProvider` singleton manages all service URLs and settings with localStorage persistence
+- `formPersistenceService` handles complex form states (ModelSelectionModal, SettingsModal) with versioning
+- `useCollections` hook manages collection state and automatically persists selected collection
 
 **Key Files:**
 - `src/services/qdrantApi.ts` - Main orchestrator with factory methods
 - `src/services/ConfigurationProvider.ts` - Singleton config with localStorage (includes AI model settings)
 - `src/services/openRouterService.ts` - AI service implementation (easily replaceable)
 - `src/services/tools.ts` - Tool definitions, implementations, and execution logic
-- `src/components/SettingsModal.tsx` - Settings with token validation and model selection
-- `src/components/ModelSelectionModal.tsx` - Universal model picker for different providers
-- `src/components/ChatInterface.tsx` - Chat with tool management and execution
-- `src/hooks/useCollections.ts` - State management hook (400+ lines)
+- `src/services/qdrantDatabase.ts` - Main database service delegating to specialized services
+- `src/services/qdrantOperations.ts` - CRUD operations (create, delete, upload)
+- `src/services/qdrantSearch.ts` - Search and retrieval operations
+- `src/components/ChatInterface.tsx` - Main chat component coordinating sub-components
+- `src/components/ChatMessages.tsx` - Message display and tool result rendering
+- `src/components/ChatInput.tsx` - Message input handling
+- `src/components/ToolManager.tsx` - Tool enablement/disablement UI
+- `src/components/ModelSelectionModal.tsx` - Model selection with advanced filtering
+- `src/components/ModelFilters.tsx` - Complex filtering logic for models
+- `src/components/ModelList.tsx` - Model display and selection
+- `src/hooks/useCollections.ts` - State management hook
 - `src/services/interfaces.ts` - All service contracts and data types
+- `src/types/types.ts` - Shared TypeScript interfaces and types
 
 ## Development Workflow
 
@@ -28,13 +42,15 @@ docker-compose up --build
 
 # Frontend only development
 npm run dev  # Runs on port 5173/5174 (auto-increment)
+
+# Build for production
+npm run build
 ```
 
-**Build & Deploy:**
-```bash
-npm run build  # Vite production build
-docker-compose up --build  # Full stack deployment
-```
+**Debugging:**
+- Check Docker Compose logs: `docker-compose logs [service-name]`
+- Frontend dev server with HMR: `npm run dev`
+- Build artifacts in `dist/` directory
 
 **Service URLs (configurable via settings):**
 - Qdrant: `http://localhost:6333`
@@ -42,10 +58,11 @@ docker-compose up --build  # Full stack deployment
 
 ## Build System
 
-**Vite + Preact + TypeScript:**
+**Vite + Preact + TypeScript + LangChain:**
 - Uses `@preact/preset-vite` for JSX transformation
 - TypeScript with strict mode and Preact JSX pragma
 - SCSS compilation with modular imports
+- LangChain for text splitting and document processing
 - Auto-incrementing ports (5173/5174) when conflicts occur
 
 **Docker Deployment:**
@@ -56,15 +73,42 @@ docker-compose up --build  # Full stack deployment
 
 ## Code Patterns
 
-**Service Instantiation:**
+**Service Separation:**
 ```typescript
-// Use ConfigurationProvider for URLs instead of hardcoding
-const qdrantDb = new QdrantDatabase({ logger });
-const embeddingSvc = new PolishEmbeddingService({ logger });
-const aiSvc = new OpenRouterService({ apiKey: configProvider.getOpenRouterToken(), logger });
+// QdrantDatabase delegates to specialized services
+export class QdrantDatabase implements VectorDatabase {
+  private readonly operationsService: QdrantOperations;
+  private readonly searchService: QdrantSearch;
 
-// Or use QdrantApi factory
-const api = QdrantApi.create(vectorConfig, embeddingConfig, aiConfig);
+  constructor(config?: VectorDatabaseConfig & { logger?: Logger }) {
+    this.operationsService = new QdrantOperations(this.baseUrl, this.logger);
+    this.searchService = new QdrantSearch(this.baseUrl, this.logger);
+  }
+
+  // Delegates CRUD operations
+  async createCollection(name: string, size: number) {
+    return this.operationsService.createCollection(name, size);
+  }
+
+  // Delegates search operations
+  async search(collectionName: string, vector: number[], options?: SearchOptions) {
+    return this.searchService.search(collectionName, vector, options);
+  }
+}
+```
+
+**Form State Persistence:**
+```typescript
+// Use formPersistenceService for complex form states (ModelSelectionModal, SettingsModal)
+const formId = 'model_selection_openrouter';
+const [formState, setFormState] = useState<FormState>(() =>
+  formPersistenceService.loadFormState(formId, defaultState)
+);
+
+// Auto-save on state changes
+useEffect(() => {
+  formPersistenceService.saveFormState(formId, formState);
+}, [formId, formState]);
 ```
 
 **Form State Persistence:**
@@ -169,16 +213,16 @@ export const getFullDocumentTool: Tool = {
   type: 'function',
   function: {
     name: 'get_full_document',
-    description: 'Retrieve the full content of a document by its ID from the vector database.',
+    description: 'Retrieve the full content of a document by its filename. Returns all chunks sorted by chunk index as a complete document.',
     parameters: {
       type: 'object',
       properties: {
-        document_id: {
+        file_name: {
           type: 'string',
-          description: 'The ID of the document to retrieve'
+          description: 'The filename of the document to retrieve (e.g., "transcript_OmIK2RgXt_U_clean.txt")'
         }
       },
-      required: ['document_id']
+      required: ['file_name']
     }
   }
 };
@@ -227,12 +271,28 @@ try {
 }
 ```
 
-**Component Architecture:**
-- Large, feature-rich components (ModelSelectionModal: 500+ lines)
-- Custom hooks for complex state management (`useCollections`)
-- Props drilling for shared state between components
-- Modal-heavy interface with complex form states
-- Extracted sub-components for reusability (ModelSelectionTabs, ChatInterface)
+**Component Organization:**
+```
+src/components/
+├── ChatInterface.tsx      # Main chat coordinator (245 lines)
+├── ChatMessages.tsx       # Message display (135 lines)
+├── ChatInput.tsx          # Input handling (43 lines)
+├── ToolManager.tsx        # Tool management UI (49 lines)
+├── ModelSelectionModal.tsx # Main model modal (586 lines)
+├── ModelFilters.tsx       # Filtering logic (282 lines)
+├── ModelList.tsx          # Model display (121 lines)
+└── ...                    # Other components
+```
+
+**Service Organization:**
+```
+src/services/
+├── qdrantDatabase.ts      # Main DB service with delegation
+├── qdrantOperations.ts    # CRUD operations (67 lines)
+├── qdrantSearch.ts        # Search operations (89 lines)
+├── qdrantApi.ts          # Main API orchestrator
+└── ...                   # Other services
+```
 
 ## UI Patterns
 
@@ -318,6 +378,26 @@ const [showModal, setShowModal] = useState(false);
 1. Query → `PolishEmbeddingService.embedTexts()` → query vector
 2. Query vector → `QdrantDatabase.search()` → results with scores
 
+**Document Retrieval Process:**
+1. Filename → `QdrantDatabase.getPointsByFileName()` → all chunks for file
+2. Chunks sorted by chunkIndex → combined into full text
+3. Return `DocumentData` with fileName, fullText, chunkCount, and chunks array
+
+## Configuration
+
+**Settings Persistence:**
+- All service URLs configurable via UI settings modal
+- Persisted in localStorage via `ConfigurationProvider`
+- Services automatically use updated URLs on next instantiation
+- Selected collection persists across sessions
+
+**Form State Persistence:**
+- Complex form states (ModelSelectionModal, SettingsModal) use `formPersistenceService`
+- Automatic save/load with versioning and error handling
+- Prevents data loss during navigation/modal closing
+
+**Default Configuration:**
+```typescript
 ## Configuration
 
 **Settings Persistence:**
@@ -343,6 +423,7 @@ const [showModal, setShowModal] = useState(false);
 }
 ```
 
+## Settings Features
 ## Settings Features
 
 **Token Validation:**
@@ -375,11 +456,6 @@ const [showModal, setShowModal] = useState(false);
 - **Handle tool execution errors** - wrap executeTool() calls in try-catch blocks
 - **Ensure collection is selected** - vector database tools require selected collection in ConfigurationProvider
 - **Handle async tool execution** - search and document retrieval tools are asynchronous
-
-## Testing Strategy
-
-Currently no test suite implemented. When adding tests:
-- Mock services using interfaces
-- Test components with `useCollections` hook
-- Integration tests should use Docker Compose setup</content>
+- **Use filename for document retrieval** - get_full_document tool takes file_name parameter, not document_id
+- **Service separation** - QdrantDatabase delegates to QdrantOperations and QdrantSearch for specific functionality</content>
 <parameter name="filePath">/home/prachwal/src/preact/preact-sosna-app/.github/copilot-instructions.md

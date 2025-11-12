@@ -1,7 +1,7 @@
-import { h } from 'preact';
 import { useState, useEffect, useRef } from 'preact/hooks';
 import type { ModelInfo } from '../services/interfaces';
-import { formPersistenceService, type FormState } from '../services/formPersistenceService';
+import { formPersistenceService } from '../services/formPersistenceService';
+import type { ModelSelectionFormState } from '../types/types';
 
 interface ModelSelectionModalProps {
   isOpen: boolean;
@@ -10,24 +10,6 @@ interface ModelSelectionModalProps {
   currentModel?: string;
   models: ModelInfo[];
   providerName: string;
-}
-
-interface ModelSelectionFormState extends FormState {
-  searchTerm: string;
-  selectedCategory: string;
-  sortBy: string;
-  sortOrder: 'asc' | 'desc';
-  priceRange: { min: number; max: number };
-  contextRange: { min: number; max: number };
-  searchField: string;
-  conciseMode: boolean;
-  currentPage: number;
-  pageSize: number;
-  showDebugInfo: boolean;
-  filterToolUse: boolean;
-  filterMultimodal: boolean;
-  filterImageInput: boolean;
-  filterImageOutput: boolean;
 }
 
 function ModelSelectionModal({

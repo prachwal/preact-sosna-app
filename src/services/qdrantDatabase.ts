@@ -8,16 +8,22 @@ import type {
   SearchOptions
 } from './interfaces';
 import { configProvider } from './ConfigurationProvider';
+import { QdrantOperations } from './qdrantOperations';
+import { QdrantSearch } from './qdrantSearch';
 
 export class QdrantDatabase implements VectorDatabase {
   private readonly baseUrl: string;
   private readonly logger: Logger;
+  private readonly operationsService: QdrantOperations;
+  private readonly searchService: QdrantSearch;
 
   constructor(config?: VectorDatabaseConfig & { logger?: Logger }) {
     // Use config if provided, otherwise use ConfigurationProvider
     const qdrantUrl = config?.url || configProvider.getQdrantUrl();
     this.baseUrl = qdrantUrl;
     this.logger = config?.logger || { info: console.log, warn: console.warn, error: console.error, debug: console.debug };
+    this.operationsService = new QdrantOperations(this.baseUrl, this.logger);
+    this.searchService = new QdrantSearch(this.baseUrl, this.logger);
   }
 
   async fetchCollections(): Promise<Collection[]> {
