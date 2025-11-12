@@ -1,4 +1,6 @@
 import { h } from 'preact';
+import { marked } from 'marked';
+import hljs from 'highlight.js';
 import type { ToolCall } from '../services/interfaces';
 import type { ChatMessage } from '../types/types';
 
@@ -19,6 +21,46 @@ export function ChatMessages({
   isUsingTools,
   providerName
 }: ChatMessagesProps) {
+  // Function to render message content with Markdown support
+  const renderMessageContent = (content: string) => {
+    // Configure marked for safe HTML output with syntax highlighting
+    const renderer = new marked.Renderer();
+
+    // Override code block rendering
+    renderer.code = function({ text, lang, escaped }) {
+      let highlighted = text;
+      if (lang && hljs.getLanguage(lang)) {
+        try {
+          highlighted = hljs.highlight(text, { language: lang }).value;
+        } catch (err) {
+          console.warn('Syntax highlighting failed:', err);
+        }
+      } else {
+        // Fallback to auto-detection
+        try {
+          highlighted = hljs.highlightAuto(text).value;
+        } catch (err) {
+          console.warn('Auto syntax highlighting failed:', err);
+        }
+      }
+      return `<pre><code class="hljs language-${lang || ''}">${highlighted}</code></pre>`;
+    };
+
+    // Override inline code rendering
+    renderer.codespan = function({ text }) {
+      return `<code class="inline-code">${text}</code>`;
+    };
+
+    marked.setOptions({
+      breaks: true,
+      gfm: true,
+      async: false,
+      renderer: renderer
+    });
+
+    const htmlContent = marked.parse(content) as string;
+    return { __html: htmlContent };
+  };
   return (
     <div className="chat-messages">
       {messages.length === 0 && (
@@ -30,7 +72,7 @@ export function ChatMessages({
       {messages.map(message => (
         <div key={message.id} className={`chat-message ${message.sender}`}>
           <div className="message-content">
-            {message.content}
+            <div dangerouslySetInnerHTML={renderMessageContent(message.content)} />
             {message.toolInfo && (
               <div className="tool-info-container">
                 <button

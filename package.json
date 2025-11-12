@@ -16,7 +16,9 @@
   "type": "module",
   "dependencies": {
     "@langchain/textsplitters": "^1.0.0",
+    "highlight.js": "^11.9.0",
     "langchain": "^1.0.4",
+    "marked": "^17.0.0",
     "preact": "^10.27.2",
     "typescript": "^5.9.3"
   },
