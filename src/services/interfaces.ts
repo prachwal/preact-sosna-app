@@ -139,6 +139,29 @@ export interface AIOptions {
   temperature?: number;
   maxTokens?: number;
   systemPrompt?: string;
+  tools?: Tool[];
+}
+
+export interface Tool {
+  type: 'function';
+  function: {
+    name: string;
+    description: string;
+    parameters: {
+      type: 'object';
+      properties: Record<string, any>;
+      required?: string[];
+    };
+  };
+}
+
+export interface ToolCall {
+  id: string;
+  type: 'function';
+  function: {
+    name: string;
+    arguments: string;
+  };
 }
 
 export interface AIResponse {
@@ -149,6 +172,7 @@ export interface AIResponse {
     completionTokens: number;
     totalTokens: number;
   };
+  toolCalls?: ToolCall[];
 }
 
 export interface AIServiceConfig {

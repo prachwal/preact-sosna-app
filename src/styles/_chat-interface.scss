@@ -106,6 +106,97 @@
       }
     }
 
+    .error-message {
+      background: #fee;
+      border: 1px solid #fcc;
+      border-radius: $spacing-sm;
+      padding: $spacing-md;
+      color: #c33;
+      font-size: 14px;
+      margin-bottom: $spacing-md;
+
+      p {
+        margin: 0;
+      }
+    }
+
+    .tool-manager {
+      margin-bottom: $spacing-md;
+      border: 1px solid $color-border;
+      border-radius: $spacing-sm;
+      background: $color-background-white;
+
+      .tool-manager-toggle {
+        width: 100%;
+        padding: $spacing-md;
+        background: none;
+        border: none;
+        text-align: left;
+        cursor: pointer;
+        font-size: 14px;
+        font-weight: 500;
+        color: $color-text-primary;
+
+        &:hover {
+          background: $color-background-secondary;
+        }
+
+        &:focus {
+          outline: none;
+          background: $color-background-secondary;
+        }
+      }
+
+      .tool-manager-content {
+        padding: $spacing-md;
+        border-top: 1px solid $color-border;
+
+        h5 {
+          margin: 0 0 $spacing-md 0;
+          font-size: 14px;
+          color: $color-text-primary;
+        }
+
+        .tool-item {
+          margin-bottom: $spacing-sm;
+
+          &:last-child {
+            margin-bottom: 0;
+          }
+
+          .tool-label {
+            display: flex;
+            align-items: flex-start;
+            gap: $spacing-sm;
+            cursor: pointer;
+
+            input[type="checkbox"] {
+              margin-top: 2px;
+              flex-shrink: 0;
+            }
+
+            .tool-info {
+              flex: 1;
+
+              strong {
+                display: block;
+                font-size: 14px;
+                color: $color-text-primary;
+                margin-bottom: $spacing-xs;
+              }
+
+              p {
+                margin: 0;
+                font-size: 12px;
+                color: $color-text-secondary;
+                line-height: 1.4;
+              }
+            }
+          }
+        }
+      }
+    }
+
     .chat-input-area {
       display: flex;
       gap: $spacing-md;

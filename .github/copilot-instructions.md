@@ -12,8 +12,10 @@
 - `src/services/qdrantApi.ts` - Main orchestrator with factory methods
 - `src/services/ConfigurationProvider.ts` - Singleton config with localStorage (includes AI model settings)
 - `src/services/openRouterService.ts` - AI service implementation (easily replaceable)
+- `src/services/tools.ts` - Tool definitions, implementations, and execution logic
 - `src/components/SettingsModal.tsx` - Settings with token validation and model selection
 - `src/components/ModelSelectionModal.tsx` - Universal model picker for different providers
+- `src/components/ChatInterface.tsx` - Chat with tool management and execution
 - `src/hooks/useCollections.ts` - State management hook (400+ lines)
 - `src/services/interfaces.ts` - All service contracts and data types
 
@@ -100,12 +102,76 @@ const response = await api.generateResponse("Explain vector databases", {
   maxTokens: 1000
 });
 
+// With tools
+const response = await api.generateResponse("Calculate 5!", {
+  model: "anthropic/claude-3-haiku",
+  tools: [factorialTool],
+  systemPrompt: "You are a helpful AI assistant with access to various tools."
+});
+
 // Streaming response
 const streamingResponse = await api.generateStreamingResponse(
   "Tell me a story",
   { model: "anthropic/claude-3-haiku" },
   (chunk) => console.log("Received:", chunk)
 );
+```
+
+**Tool System:**
+```typescript
+// Define tools in src/services/tools.ts
+export const factorialTool: Tool = {
+  type: 'function',
+  function: {
+    name: 'calculate_factorial',
+    description: 'Calculate the factorial of a number (n!). Only works for integers from 0 to 10.',
+    parameters: {
+      type: 'object',
+      properties: {
+        n: {
+          type: 'integer',
+          description: 'The number to calculate factorial for (0-10)',
+          minimum: 0,
+          maximum: 10
+        }
+      },
+      required: ['n']
+    }
+  }
+};
+
+// Execute tool calls
+const result = executeTool(toolCall); // Returns calculated result
+
+// Tool management in ChatInterface
+const [enabledTools, setEnabledTools] = useState<Set<string>>(new Set(availableTools.map(t => t.function.name)));
+const toggleTool = (toolName: string) => { /* toggle logic */ };
+const getEnabledTools = (): Tool[] => availableTools.filter(tool => enabledTools.has(tool.function.name));
+```
+
+**Chat Interface Patterns:**
+```typescript
+// Tool state management with localStorage persistence
+const [enabledTools, setEnabledTools] = useState<Set<string>>(new Set(availableTools.map(t => t.function.name)));
+const [showToolManager, setShowToolManager] = useState(false);
+
+// Load/save tool preferences
+useEffect(() => {
+  const stored = localStorage.getItem('chat-enabled-tools');
+  if (stored) setEnabledTools(new Set(JSON.parse(stored)));
+}, []);
+
+useEffect(() => {
+  localStorage.setItem('chat-enabled-tools', JSON.stringify(Array.from(enabledTools)));
+}, [enabledTools]);
+
+// Only pass enabled tools to AI
+const enabledToolList = getEnabledTools();
+const response = await qdrantApi.generateResponse(prompt, {
+  model: selectedModel,
+  ...(enabledToolList.length > 0 && { tools: enabledToolList }),
+  systemPrompt: "You are a helpful AI assistant with access to various tools."
+});
 ```
 
 **Error Handling:**
@@ -152,6 +218,36 @@ try {
 const [showModal, setShowModal] = useState(false);
 // Always provide onClose handler
 <Modal isOpen={showModal} onClose={() => setShowModal(false)} />
+```
+
+**Tool Management UI:**
+```tsx
+// Collapsible tool manager in ChatInterface
+<div className="tool-manager">
+  <button className="tool-manager-toggle" onClick={() => setShowToolManager(!showToolManager)}>
+    {showToolManager ? '▼' : '▶'} Tools ({enabledTools.size}/{availableTools.length})
+  </button>
+
+  {showToolManager && (
+    <div className="tool-manager-content">
+      {availableTools.map(tool => (
+        <div key={tool.function.name} className="tool-item">
+          <label className="tool-label">
+            <input
+              type="checkbox"
+              checked={enabledTools.has(tool.function.name)}
+              onChange={() => toggleTool(tool.function.name)}
+            />
+            <div className="tool-info">
+              <strong>{tool.function.name}</strong>
+              <p>{tool.function.description}</p>
+            </div>
+          </label>
+        </div>
+      ))}
+    </div>
+  )}
+</div>
 ```
 
 **Collection Selection UI:**
@@ -231,6 +327,9 @@ const [showModal, setShowModal] = useState(false);
 - **Use selectedCollection from useCollections** instead of managing collection state locally
 - **Follow tab pattern** - conditional rendering based on activeTab state
 - **Persist collection selection** via ConfigurationProvider for cross-session continuity
+- **Persist tool preferences** - use localStorage with 'chat-enabled-tools' key
+- **Filter enabled tools** - always use `getEnabledTools()` instead of passing all availableTools
+- **Handle tool execution errors** - wrap executeTool() calls in try-catch blocks
 
 ## Testing Strategy
 

@@ -4,7 +4,8 @@ import type {
   AIResponse,
   AIOptions,
   Logger,
-  ModelInfo
+  ModelInfo,
+  ToolCall
 } from './interfaces';
 
 export class OpenRouterService implements AIService {
@@ -23,7 +24,7 @@ export class OpenRouterService implements AIService {
   async generateResponse(prompt: string, options?: AIOptions): Promise<AIResponse> {
     this.logger.info(`Generating response with model: ${options?.model || this.defaultModel}`);
 
-    const requestBody = {
+    const requestBody: any = {
       model: options?.model || this.defaultModel,
       messages: [
         ...(options?.systemPrompt ? [{ role: 'system', content: options.systemPrompt }] : []),
@@ -32,6 +33,12 @@ export class OpenRouterService implements AIService {
       temperature: options?.temperature ?? 0.7,
       max_tokens: options?.maxTokens ?? 1000,
     };
+
+    // Add tools if provided
+    if (options?.tools && options.tools.length > 0) {
+      requestBody.tools = options.tools;
+      requestBody.tool_choice = 'auto';
+    }
 
     const response = await fetch(`${this.baseUrl}/chat/completions`, {
       method: 'POST',
@@ -52,11 +59,7 @@ export class OpenRouterService implements AIService {
 
     const data = await response.json();
 
-    const usage = data.usage ? {
-      promptTokens: data.usage.prompt_tokens,
-      completionTokens: data.usage.completion_tokens,
-      totalTokens: data.usage.total_tokens,
-    } : undefined;
+    const toolCalls: ToolCall[] = data.choices[0]?.message?.tool_calls || [];
 
     return {
       content: data.choices[0]?.message?.content || '',
@@ -66,6 +69,7 @@ export class OpenRouterService implements AIService {
         completionTokens: data.usage.completion_tokens,
         totalTokens: data.usage.total_tokens,
       } : undefined,
+      toolCalls: toolCalls.length > 0 ? toolCalls : undefined,
     } as AIResponse;
   }
 
