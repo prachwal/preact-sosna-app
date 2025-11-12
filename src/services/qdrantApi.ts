@@ -8,7 +8,9 @@ import type {
   EmbeddingServiceConfig,
   DocumentProcessorConfig,
   Logger,
-  LoggerConfig
+  LoggerConfig,
+  SearchResult,
+  SearchOptions
 } from './interfaces';
 import { QdrantDatabase } from './qdrantDatabase';
 import { PolishEmbeddingService } from './polishEmbeddingService';
@@ -68,6 +70,21 @@ export class QdrantApi {
 
   async deleteCollection(collectionName: string) {
     return this.vectorDatabase.deleteCollection(collectionName);
+  }
+
+  async search(collectionName: string, query: string, options?: SearchOptions): Promise<SearchResult[]> {
+    this.logger.info(`Searching collection: ${collectionName} with query: "${query}"`);
+
+    // First, embed the query text
+    const queryEmbeddings = await this.embeddingService.embedTexts([query]);
+    const queryVector = queryEmbeddings[0];
+
+    if (!queryVector) {
+      throw new Error('Failed to generate embedding for search query');
+    }
+
+    // Then search the vector database
+    return this.vectorDatabase.search(collectionName, queryVector, options);
   }
 
   // Main file processing method that orchestrates all services

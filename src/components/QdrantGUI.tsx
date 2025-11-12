@@ -3,6 +3,7 @@ import type { Point } from '../types/types';
 import CollectionList from './CollectionList';
 import PointsViewer from './PointsViewer';
 import PointDetailsModal from './PointDetailsModal';
+import SearchComponent from './SearchComponent';
 import { useCollections } from '../hooks/useCollections';
 
 function QdrantGUI() {
@@ -30,6 +31,15 @@ function QdrantGUI() {
     closeUploadModal,
     setSelectedPoint,
     closePointsViewer,
+    // Search properties
+    searchQuery,
+    searchResults,
+    searching,
+    searchOptions,
+    setSearchQuery,
+    setSearchOptions,
+    performSearch,
+    clearSearchResults,
   } = useCollections();
 
   // Navigation state
@@ -98,6 +108,19 @@ function QdrantGUI() {
         onUpload={uploadFile}
         onCloseUploadModal={closeUploadModal}
       />
+
+      <SearchComponent
+        collections={collections}
+        searchQuery={searchQuery}
+        searchResults={searchResults}
+        searching={searching}
+        searchOptions={searchOptions}
+        onSearchQueryChange={setSearchQuery}
+        onSearchOptionsChange={setSearchOptions}
+        onPerformSearch={performSearch}
+        onClearResults={clearSearchResults}
+      />
+
       {browsing && (
         <PointsViewer
           key={browsing}

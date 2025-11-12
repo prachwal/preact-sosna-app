@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'preact/hooks';
 import type { Collection, Point } from '../types/types';
+import type { SearchResult, SearchOptions } from '../services/interfaces';
 import { qdrantApi } from '../services/qdrantApi';
 
 export interface UseCollectionsReturn {
@@ -22,6 +23,11 @@ export interface UseCollectionsReturn {
   points: Point[];
   pointsLoading: boolean;
   selectedPoint: Point | null;
+  // Search state
+  searchQuery: string;
+  searchResults: SearchResult[];
+  searching: boolean;
+  searchOptions: SearchOptions;
 
   // Actions
   fetchCollections: () => Promise<void>;
@@ -38,6 +44,11 @@ export interface UseCollectionsReturn {
   closeUploadModal: () => void;
   setSelectedPoint: (point: Point | null) => void;
   closePointsViewer: () => void;
+  // Search actions
+  setSearchQuery: (query: string) => void;
+  setSearchOptions: (options: SearchOptions) => void;
+  performSearch: (collectionName: string) => Promise<void>;
+  clearSearchResults: () => void;
 }
 
 export function useCollections(): UseCollectionsReturn {
@@ -59,6 +70,14 @@ export function useCollections(): UseCollectionsReturn {
   const [points, setPoints] = useState<Point[]>([]);
   const [pointsLoading, setPointsLoading] = useState(false);
   const [selectedPoint, setSelectedPoint] = useState<Point | null>(null);
+  // Search state
+  const [searchQuery, setSearchQuery] = useState('');
+  const [searchResults, setSearchResults] = useState<SearchResult[]>([]);
+  const [searching, setSearching] = useState(false);
+  const [searchOptions, setSearchOptions] = useState<SearchOptions>({
+    limit: 10,
+    scoreThreshold: 0.0,
+  });
 
   const fetchCollectionsData = async () => {
     console.log('Fetching collections...');
@@ -185,6 +204,32 @@ export function useCollections(): UseCollectionsReturn {
     setUploadProgress(null);
   };
 
+  const performSearch = async (collectionName: string) => {
+    if (!searchQuery.trim()) {
+      setSearchResults([]);
+      return;
+    }
+
+    console.log(`Starting search in collection: ${collectionName} with query: "${searchQuery}"`);
+    setSearching(true);
+    try {
+      const results = await qdrantApi.search(collectionName, searchQuery.trim(), searchOptions);
+      setSearchResults(results);
+      console.log(`Search completed. Found ${results.length} results`);
+    } catch (err) {
+      console.error('Search failed:', err);
+      alert(`Search failed: ${err instanceof Error ? err.message : 'Unknown error'}`);
+      setSearchResults([]);
+    } finally {
+      setSearching(false);
+    }
+  };
+
+  const clearSearchResults = () => {
+    setSearchResults([]);
+    setSearchQuery('');
+  };
+
   useEffect(() => {
     fetchCollectionsData();
   }, []);
@@ -205,6 +250,11 @@ export function useCollections(): UseCollectionsReturn {
     points,
     pointsLoading,
     selectedPoint,
+    // Search state
+    searchQuery,
+    searchResults,
+    searching,
+    searchOptions,
 
     // Actions
     fetchCollections: fetchCollectionsData,
@@ -216,5 +266,10 @@ export function useCollections(): UseCollectionsReturn {
     closeUploadModal,
     setSelectedPoint,
     closePointsViewer,
+    // Search actions
+    setSearchQuery,
+    setSearchOptions,
+    performSearch,
+    clearSearchResults,
   };
 }

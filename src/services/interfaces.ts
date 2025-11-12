@@ -40,6 +40,18 @@ export interface ProgressCallback {
   (current: number, total: number, stage: string): void;
 }
 
+export interface SearchResult {
+  id: number | string;
+  score: number;
+  payload?: Record<string, any>;
+  vector?: number[];
+}
+
+export interface SearchOptions {
+  limit?: number;
+  scoreThreshold?: number;
+}
+
 // Vector Database Interface - defines operations for vector databases
 export interface VectorDatabase {
   fetchCollections(): Promise<Collection[]>;
@@ -48,6 +60,7 @@ export interface VectorDatabase {
   createCollection(collectionName: string, vectorSize?: number): Promise<void>;
   deleteCollection(collectionName: string): Promise<void>;
   uploadPoints(collectionName: string, points: Point[]): Promise<void>;
+  search(collectionName: string, vector: number[], options?: SearchOptions): Promise<SearchResult[]>;
 }
 
 // Embedding Service Interface - defines operations for text embedding

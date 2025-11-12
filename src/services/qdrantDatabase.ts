@@ -3,7 +3,9 @@ import type {
   VectorDatabaseConfig,
   Collection,
   Point,
-  Logger
+  Logger,
+  SearchResult,
+  SearchOptions
 } from './interfaces';
 
 export class QdrantDatabase implements VectorDatabase {
@@ -197,5 +199,52 @@ export class QdrantDatabase implements VectorDatabase {
     }
 
     this.logger.info(`Successfully uploaded ${points.length} points to Qdrant`);
+  }
+
+  async search(collectionName: string, vector: number[], options: SearchOptions = {}): Promise<SearchResult[]> {
+    const { limit = 10, scoreThreshold = 0.0 } = options;
+
+    this.logger.info(`Searching collection: ${collectionName} with vector of length ${vector.length}`);
+    this.logger.debug(`Search options: limit=${limit}, scoreThreshold=${scoreThreshold}`);
+
+    const url = `${this.baseUrl}/collections/${collectionName}/points/search`;
+    const searchPayload = {
+      vector: vector,
+      limit: limit,
+      score_threshold: scoreThreshold,
+      with_payload: true,
+      with_vectors: false, // We don't need vectors in search results for display
+    };
+
+    this.logger.debug('Search URL:', url);
+    this.logger.debug('Search payload:', JSON.stringify(searchPayload).slice(0, 200) + '...');
+
+    const response = await fetch(url, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(searchPayload),
+    });
+
+    this.logger.debug('Search response status:', response.status);
+
+    if (!response.ok) {
+      const errorText = await response.text();
+      this.logger.error('Qdrant search error response:', errorText);
+      throw new Error(`Search failed: ${response.status}, body: ${errorText}`);
+    }
+
+    const data = await response.json();
+    this.logger.debug('Search response data:', data);
+
+    const results: SearchResult[] = data.result?.map((item: any) => ({
+      id: item.id,
+      score: item.score,
+      payload: item.payload,
+    })) || [];
+
+    this.logger.info(`Search completed. Found ${results.length} results`);
+    return results;
   }
 }
