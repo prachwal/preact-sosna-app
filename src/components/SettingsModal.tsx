@@ -1,10 +1,13 @@
 import { h } from 'preact';
 import { useState, useEffect } from 'preact/hooks';
+import { lazy, Suspense } from 'preact/compat';
 import { configProvider, type AppConfig } from '../services/ConfigurationProvider';
-import ModelSelectionModal from './ModelSelectionModal';
 import type { ModelInfo } from '../services/interfaces';
 import { qdrantApi } from '../services/qdrantApi';
 import { formPersistenceService, type FormState } from '../services/formPersistenceService';
+
+// Lazy load modal to reduce bundle size
+const ModelSelectionModal = lazy(() => import('./ModelSelectionModal'));
 
 interface SettingsModalProps {
   isOpen: boolean;
@@ -279,14 +282,16 @@ function SettingsModal({ isOpen, onClose }: SettingsModalProps) {
           </button>
         </div>
 
-        <ModelSelectionModal
-          isOpen={showModelSelection}
-          onClose={() => setShowModelSelection(false)}
-          onSelectModel={handleModelSelect}
-          currentModel={formState.selectedModel || ''}
-          models={availableModels}
-          providerName="OpenRouter"
-        />
+        <Suspense fallback={<div>Loading...</div>}>
+          <ModelSelectionModal
+            isOpen={showModelSelection}
+            onClose={() => setShowModelSelection(false)}
+            onSelectModel={handleModelSelect}
+            currentModel={formState.selectedModel || ''}
+            models={availableModels}
+            providerName="OpenRouter"
+          />
+        </Suspense>
       </div>
     </div>
   );

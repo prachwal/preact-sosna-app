@@ -1,8 +1,16 @@
 import { defineConfig } from 'vite';
 import preact from '@preact/preset-vite';
+import path from 'path';
 
 export default defineConfig({
   plugins: [preact()],
+  css: {
+    preprocessorOptions: {
+      scss: {
+        additionalData: `@import "${path.resolve(__dirname, 'src/styles/_variables.scss')}";\n`
+      }
+    }
+  },
   build: {
     rollupOptions: {
       output: {

@@ -19,6 +19,7 @@ export interface UseCollectionsReturn {
     current: number;
     total: number;
     stage: string;
+    startTime?: number;
   } | null;
   uploadCompleted: boolean;
   uploadCompletionMessage: string | null;
@@ -68,6 +69,7 @@ export function useCollections(): UseCollectionsReturn {
     current: number;
     total: number;
     stage: string;
+    startTime?: number;
   } | null>(null);
   const [uploadCompleted, setUploadCompleted] = useState(false);
   const [uploadCompletionMessage, setUploadCompletionMessage] = useState<string | null>(null);
@@ -172,7 +174,8 @@ export function useCollections(): UseCollectionsReturn {
   ) => {
     console.log(`Starting file upload for collection: ${collectionName}`);
     setUploading(collectionName);
-    setUploadProgress({ current: 0, total: 100, stage: 'Initializing...' });
+    const startTime = Date.now();
+    setUploadProgress({ current: 0, total: 100, stage: 'Initializing...', startTime });
     setUploadCompleted(false);
     setUploadCompletionMessage(null);
     try {

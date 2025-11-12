@@ -2,7 +2,7 @@
 // TOOLTIP STYLES
 // ==========================================
 
-@use 'variables' as *;
+@import './variables';
 
 .model-tooltip {
   position: absolute;

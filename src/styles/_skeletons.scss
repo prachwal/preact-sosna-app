@@ -2,8 +2,7 @@
 // SKELETON COMPONENTS
 // ==========================================
 
-@use 'variables' as *;
-@use 'sass:color';
+@import './variables';
 
 .collection-skeleton,
 .search-result-skeleton,

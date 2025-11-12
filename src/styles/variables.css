@@ -1,0 +1,152 @@
+/* ==========================================
+   CSS CUSTOM PROPERTIES (Variables)
+   ========================================== */
+
+:root {
+  /* Colors - Themeable */
+  --pcs-color-text-primary: #333;
+  --pcs-color-text-secondary: #555;
+  --pcs-color-text-muted: #666;
+  --pcs-color-text-light: #495057;
+  --pcs-color-text-dark: #212529;
+
+  --pcs-color-border: #ddd;
+  --pcs-color-border-light: #eee;
+  --pcs-color-border-accent: #dee2e6;
+
+  --pcs-color-background-primary: #f9f9f9;
+  --pcs-color-background-secondary: #f8f9fa;
+  --pcs-color-background-hover: #f5f5f5;
+  --pcs-color-background-white: white;
+
+  --pcs-color-primary: #007bff;
+  --pcs-color-primary-hover: #0056b3;
+  --pcs-color-success: #28a745;
+  --pcs-color-success-hover: #218838;
+  --pcs-color-info: #17a2b8;
+  --pcs-color-info-hover: #138496;
+  --pcs-color-secondary: #6c757d;
+  --pcs-color-secondary-hover: #5a6268;
+  --pcs-color-error: red;
+  --pcs-color-error-hover: #cc0000;
+
+  --pcs-color-overlay: rgba(0, 0, 0, 0.5);
+  --pcs-color-shadow: rgba(0, 0, 0, 0.1);
+
+  /* Syntax highlighting colors */
+  --pcs-syntax-bg: #f8f8f8;
+  --pcs-syntax-text: #333;
+  --pcs-syntax-border: #e1e4e8;
+  --pcs-syntax-inline-bg: #f6f8fa;
+  --pcs-syntax-inline-text: #24292e;
+  --pcs-syntax-inline-border: #e1e4e8;
+
+  /* Input colors */
+  --pcs-color-input-background: white;
+  --pcs-color-input-text: #333;
+  --pcs-color-input-border: #ddd;
+  --pcs-color-input-border-focus: #007bff;
+
+  /* Accent color for highlights */
+  --pcs-color-accent: #007bff;
+  --pcs-color-accent-hover: #0056b3;
+}
+
+/* Dark theme */
+[data-theme="dark"] {
+  --pcs-color-text-primary: #e4e4e4;
+  --pcs-color-text-secondary: #c9c9c9;
+  --pcs-color-text-muted: #a3a3a3;
+  --pcs-color-text-light: #d1d1d1;
+  --pcs-color-text-dark: #f5f5f5;
+
+  --pcs-color-border: #404040;
+  --pcs-color-border-light: #525252;
+  --pcs-color-border-accent: #737373;
+
+  --pcs-color-background-primary: #1a1a1a;
+  --pcs-color-background-secondary: #262626;
+  --pcs-color-background-hover: #333333;
+  --pcs-color-background-white: #1a1a1a;
+
+  --pcs-color-primary: #3b82f6;
+  --pcs-color-primary-hover: #2563eb;
+  --pcs-color-success: #10b981;
+  --pcs-color-success-hover: #059669;
+  --pcs-color-info: #06b6d4;
+  --pcs-color-info-hover: #0891b2;
+  --pcs-color-secondary: #9ca3af;
+  --pcs-color-secondary-hover: #6b7280;
+  --pcs-color-error: #ef4444;
+  --pcs-color-error-hover: #dc2626;
+
+  --pcs-color-overlay: rgba(0, 0, 0, 0.7);
+  --pcs-color-shadow: rgba(0, 0, 0, 0.3);
+
+  /* Syntax highlighting colors for dark theme */
+  --pcs-syntax-bg: #2d3748;
+  --pcs-syntax-text: #e2e8f0;
+  --pcs-syntax-border: #4a5568;
+  --pcs-syntax-inline-bg: #2d3748;
+  --pcs-syntax-inline-text: #e2e8f0;
+  --pcs-syntax-inline-border: #4a5568;
+
+  /* Input colors for dark theme */
+  --pcs-color-input-background: #262626;
+  --pcs-color-input-text: #e4e4e4;
+  --pcs-color-input-border: #404040;
+  --pcs-color-input-border-focus: #3b82f6;
+
+  /* Accent color for dark theme */
+  --pcs-color-accent: #3b82f6;
+  --pcs-color-accent-hover: #2563eb;
+}
+
+/* System theme - automatically switches based on OS preference */
+@media (prefers-color-scheme: dark) {
+  [data-theme="system"] {
+    --pcs-color-text-primary: #e4e4e4;
+    --pcs-color-text-secondary: #c9c9c9;
+    --pcs-color-text-muted: #a3a3a3;
+    --pcs-color-text-light: #d1d1d1;
+    --pcs-color-text-dark: #f5f5f5;
+
+    --pcs-color-border: #404040;
+    --pcs-color-border-light: #525252;
+    --pcs-color-border-accent: #737373;
+
+    --pcs-color-background-primary: #1a1a1a;
+    --pcs-color-background-secondary: #262626;
+    --pcs-color-background-hover: #333333;
+    --pcs-color-background-white: #1a1a1a;
+
+    --pcs-color-primary: #3b82f6;
+    --pcs-color-primary-hover: #2563eb;
+    --pcs-color-success: #10b981;
+    --pcs-color-success-hover: #059669;
+    --pcs-color-info: #06b6d4;
+    --pcs-color-info-hover: #0891b2;
+    --pcs-color-secondary: #9ca3af;
+    --pcs-color-secondary-hover: #6b7280;
+    --pcs-color-error: #ef4444;
+    --pcs-color-error-hover: #dc2626;
+
+    --pcs-color-overlay: rgba(0, 0, 0, 0.7);
+    --pcs-color-shadow: rgba(0, 0, 0, 0.3);
+
+    --pcs-syntax-bg: #2d3748;
+    --pcs-syntax-text: #e2e8f0;
+    --pcs-syntax-border: #4a5568;
+    --pcs-syntax-inline-bg: #2d3748;
+    --pcs-syntax-inline-text: #e2e8f0;
+    --pcs-syntax-inline-border: #4a5568;
+
+    --pcs-color-input-background: #262626;
+    --pcs-color-input-text: #e4e4e4;
+    --pcs-color-input-border: #404040;
+    --pcs-color-input-border-focus: #3b82f6;
+
+    --pcs-color-accent: #3b82f6;
+    --pcs-color-accent-hover: #2563eb;
+  }
+}

@@ -2,55 +2,54 @@
 // VARIABLES
 // ==========================================
 
-@use 'sass:color';
+// Colors - Now using CSS custom properties for runtime theming
+$color-text-primary: var(--pcs-color-text-primary);
+$color-text-secondary: var(--pcs-color-text-secondary);
+$color-text-muted: var(--pcs-color-text-muted);
+$color-text-light: var(--pcs-color-text-light);
+$color-text-dark: var(--pcs-color-text-dark);
+$color-border: var(--pcs-color-border);
+$color-border-light: var(--pcs-color-border-light);
+$color-border-accent: var(--pcs-color-border-accent);
+$color-background-primary: var(--pcs-color-background-primary);
+$color-background-secondary: var(--pcs-color-background-secondary);
+$color-background-hover: var(--pcs-color-background-hover);
+$color-background-white: var(--pcs-color-background-white);
+$color-primary: var(--pcs-color-primary);
+$color-primary-hover: var(--pcs-color-primary-hover);
+$color-success: var(--pcs-color-success);
+$color-success-hover: var(--pcs-color-success-hover);
+$color-info: var(--pcs-color-info);
+$color-info-hover: var(--pcs-color-info-hover);
+$color-secondary: var(--pcs-color-secondary);
+$color-secondary-hover: var(--pcs-color-secondary-hover);
+$color-error: var(--pcs-color-error);
+$color-overlay: var(--pcs-color-overlay);
+$color-shadow: var(--pcs-color-shadow);
+$color-error-hover: var(--pcs-color-error-hover);
 
-// Colors
-$color-text-primary: #333;
-$color-text-secondary: #555;
-$color-text-muted: #666;
-$color-text-light: #495057;
-$color-text-dark: #212529;
-$color-border: #ddd;
-$color-border-light: #eee;
-$color-border-accent: #dee2e6;
-$color-background-primary: #f9f9f9;
-$color-background-secondary: #f8f9fa;
-$color-background-hover: #f5f5f5;
-$color-background-white: white;
-$color-primary: #007bff;
-$color-primary-hover: #0056b3;
-$color-success: #28a745;
-$color-success-hover: #218838;
-$color-info: #17a2b8;
-$color-info-hover: #138496;
-$color-secondary: #6c757d;
-$color-secondary-hover: #5a6268;
-$color-error: red;
-$color-overlay: rgba(0, 0, 0, 0.5);
-$color-shadow: rgba(0, 0, 0, 0.1);
-$color-error-hover: color.adjust($color-error, $lightness: -10%);
+// Spacing (converted to rem for better accessibility) - Keep as SCSS for calculations
+$spacing-xs: 0.1875rem;   // 3px
+$spacing-sm: 0.25rem;     // 4px
+$spacing-md: 0.3125rem;   // 5px
+$spacing-lg: 0.5rem;      // 8px
+$spacing-xl: 0.625rem;    // 10px
+$spacing-xxl: 0.75rem;    // 12px
+$spacing-xxxl: 0.9375rem; // 15px
+$spacing-xxxxl: 1rem;     // 16px
+$spacing-xxxxxl: 1.25rem; // 20px
+$spacing-xxxxxxl: 1.875rem; // 30px
 
-// Spacing
-$spacing-xs: 3px;
-$spacing-sm: 4px;
-$spacing-md: 5px;
-$spacing-lg: 8px;
-$spacing-xl: 10px;
-$spacing-xxl: 12px;
-$spacing-xxxl: 15px;
-$spacing-xxxxl: 16px;
-$spacing-xxxxxl: 20px;
-$spacing-xxxxxxl: 30px;
+// Layout (converted to rem) - Keep as SCSS for media queries and calculations
+$max-width-app: 87.5rem;    // 1400px
+$modal-width: 75rem;        // 1200px
+$modal-height: 37.5rem;     // 600px
+$table-min-width: 37.5rem;  // 600px
 
-// Layout
-$max-width-app: 1400px;
-$modal-width: 1200px;
-$modal-height: 600px;
-$table-min-width: 600px;
-
-// Breakpoints
-$breakpoint-tablet: 768px;
+// Breakpoints - Keep as SCSS for media queries
 $breakpoint-mobile: 480px;
+$breakpoint-tablet: 768px;
+$breakpoint-desktop: 1024px;
 
 // Font sizes
 $font-size-xs: 12px;
@@ -61,9 +60,9 @@ $font-size-lg: 24px;
 // Transitions
 $transition-fast: 0.2s;
 
-// Shadows
-$shadow-sm: 0 1px 3px $color-shadow;
-$shadow-lg: 0 4px 6px $color-shadow;
+// Shadows - Using CSS custom properties
+$shadow-sm: 0 1px 3px var(--pcs-color-shadow);
+$shadow-lg: 0 4px 6px var(--pcs-color-shadow);
 
 // Z-index
 $z-index-modal: 1000;

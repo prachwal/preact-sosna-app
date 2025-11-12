@@ -1,8 +1,11 @@
 import { h } from 'preact';
 import { useState } from 'preact/hooks';
+import { lazy, Suspense } from 'preact/compat';
 import type { Collection } from '../types/types';
-import ProgressModal from './ProgressModal';
 import { CollectionSkeleton } from './SkeletonComponents';
+
+// Lazy load modal to reduce bundle size
+const ProgressModal = lazy(() => import('./ProgressModal'));
 
 interface CollectionListProps {
   collections: Collection[];
@@ -63,6 +66,8 @@ function CollectionList({
   const [uploadCollectionName, setUploadCollectionName] = useState('');
   const [chunkSize, setChunkSize] = useState(1000);
   const [chunkOverlap, setChunkOverlap] = useState(200);
+  const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
+  const [collectionToDelete, setCollectionToDelete] = useState<Collection | null>(null);
   const handleCreateSubmit = (e: Event) => {
     e.preventDefault();
     if (newCollectionName.trim()) {
@@ -232,7 +237,26 @@ function CollectionList({
       {!loading && !error && (
         <ul className="collections-list">
           {collections.length === 0 ? (
-            <li>No collections found</li>
+            <li className="empty-state">
+              <div className="empty-state-content">
+                <div className="empty-state-icon">📚</div>
+                <h3>No collections found</h3>
+                <p>Get started by creating your first collection to store and search your documents.</p>
+                <button 
+                  className="btn btn-primary create-first-btn"
+                  onClick={() => {
+                    // Focus on the create collection form
+                    const createForm = document.querySelector('.create-collection-form input[type="text"]') as HTMLInputElement;
+                    if (createForm) {
+                      createForm.focus();
+                      createForm.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                    }
+                  }}
+                >
+                  Create Your First Collection
+                </button>
+              </div>
+            </li>
           ) : (
             collections.map(collection => (
               <li key={collection.name}>
@@ -274,13 +298,8 @@ function CollectionList({
                   <button
                     className="delete-btn"
                     onClick={() => {
-                      if (
-                        confirm(
-                          `Are you sure you want to delete collection "${collection.name}"? This action cannot be undone.`
-                        )
-                      ) {
-                        onDelete(collection.name);
-                      }
+                      setCollectionToDelete(collection);
+                      setShowDeleteConfirm(true);
                     }}
                     disabled={deleting === collection.name}
                   >
@@ -292,13 +311,65 @@ function CollectionList({
           )}
         </ul>
       )}
-      <ProgressModal
-        isOpen={(uploading !== null && uploadProgress !== null) || uploadCompleted}
-        progress={uploadProgress || { current: 100, total: 100, stage: 'Completed' }}
-        isCompleted={uploadCompleted}
-        {...(uploadCompletionMessage && { completionMessage: uploadCompletionMessage })}
-        onClose={onCloseUploadModal}
-      />
+
+      {/* Delete Confirmation Modal */}
+      {showDeleteConfirm && collectionToDelete && (
+        <div className="delete-confirm-overlay">
+          <div className="delete-confirm-modal">
+            <div className="delete-confirm-header">
+              <h3>Delete Collection</h3>
+            </div>
+            <div className="delete-confirm-content">
+              <div className="delete-warning">
+                <div className="warning-icon">⚠️</div>
+                <p>Are you sure you want to delete this collection? This action cannot be undone.</p>
+              </div>
+              <div className="collection-preview">
+                <h4>Collection Details:</h4>
+                <div className="preview-details">
+                  <strong>Name:</strong> {collectionToDelete.name}<br />
+                  <strong>Vectors:</strong> {collectionToDelete.vectors_count}<br />
+                  <strong>Points:</strong> {collectionToDelete.points_count}
+                </div>
+              </div>
+            </div>
+            <div className="delete-confirm-actions">
+              <button
+                className="btn btn-secondary"
+                onClick={() => {
+                  setShowDeleteConfirm(false);
+                  setCollectionToDelete(null);
+                }}
+              >
+                Cancel
+              </button>
+              <button
+                className="btn btn-danger"
+                onClick={() => {
+                  if (collectionToDelete) {
+                    onDelete(collectionToDelete.name);
+                  }
+                  setShowDeleteConfirm(false);
+                  setCollectionToDelete(null);
+                }}
+                disabled={deleting === collectionToDelete.name}
+              >
+                {deleting === collectionToDelete.name ? 'Deleting...' : 'Delete Collection'}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      <Suspense fallback={<div>Loading...</div>}>
+        <ProgressModal
+          isOpen={(uploading !== null && uploadProgress !== null) || uploadCompleted}
+          progress={uploadProgress || { current: 100, total: 100, stage: 'Completed' }}
+          isCompleted={uploadCompleted}
+          {...(uploadCompletionMessage && { completionMessage: uploadCompletionMessage })}
+          onClose={onCloseUploadModal}
+        />
+      </Suspense>
     </div>
   );
 }

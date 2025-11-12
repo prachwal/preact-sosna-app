@@ -50,6 +50,6 @@ def get_transcript(video_id):
         return None
 
 if __name__ == "__main__":
-    video_id = "OmIK2RgXt_U"
+    video_id = "UTrMFI-MEUc"
     print(f"🎥 Downloading transcript for video: {video_id}")
     transcript = get_transcript(video_id)

@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'preact/hooks';
+import { useState, useEffect, useCallback, useMemo } from 'preact/hooks';
 import { qdrantApi } from '../services/qdrantApi';
 import { configProvider } from '../services/ConfigurationProvider';
 import { availableTools, executeTool } from '../services/tools';
@@ -41,7 +41,7 @@ function ChatInterface({ providerName }: ChatInterfaceProps) {
     localStorage.setItem('chat-enabled-tools', JSON.stringify(Array.from(enabledTools)));
   }, [enabledTools]);
 
-  const toggleToolInfo = (messageId: string) => {
+  const toggleToolInfo = useCallback((messageId: string) => {
     setExpandedToolInfos(prev => {
       const newSet = new Set(prev);
       if (newSet.has(messageId)) {
@@ -51,9 +51,9 @@ function ChatInterface({ providerName }: ChatInterfaceProps) {
       }
       return newSet;
     });
-  };
+  }, []);
 
-  const toggleTool = (toolName: string) => {
+  const toggleTool = useCallback((toolName: string) => {
     setEnabledTools(prev => {
       const newSet = new Set(prev);
       if (newSet.has(toolName)) {
@@ -63,13 +63,13 @@ function ChatInterface({ providerName }: ChatInterfaceProps) {
       }
       return newSet;
     });
-  };
+  }, []);
 
-  const getEnabledTools = (): Tool[] => {
+  const getEnabledTools = useMemo((): Tool[] => {
     return availableTools.filter(tool => enabledTools.has(tool.function.name));
-  };
+  }, [enabledTools]);
 
-  const handleSendMessage = async () => {
+  const handleSendMessage = useCallback(async () => {
     if (!inputValue.trim() || isLoading) return;
 
     const userMessage: ChatMessage = {
@@ -93,7 +93,7 @@ function ChatInterface({ providerName }: ChatInterfaceProps) {
       if (lowerInput.includes('jakie masz narzędzia') ||
           lowerInput.includes('what tools do you have') ||
           lowerInput.includes('available tools')) {
-        const enabledToolList = getEnabledTools();
+        const enabledToolList = getEnabledTools;
         const toolDescriptions = enabledToolList.map(tool =>
           `- ${tool.function.name}: ${tool.function.description}`
         ).join('\n');
@@ -108,7 +108,7 @@ function ChatInterface({ providerName }: ChatInterfaceProps) {
         return;
       }
 
-      const enabledToolList = getEnabledTools();
+      const enabledToolList = getEnabledTools;
 
       // Tool call loop
       let conversationMessages: any[] = [
@@ -207,7 +207,7 @@ function ChatInterface({ providerName }: ChatInterfaceProps) {
     } finally {
       setIsLoading(false);
     }
-  };
+  }, [inputValue, isLoading, getEnabledTools]);
 
   return (
     <div className="chat-tab">

@@ -2,8 +2,7 @@
 // FORMS AND MODALS
 // ==========================================
 
-@use 'variables' as *;
-@use 'sass:color';
+@import './variables';
 
 // Settings Modal Styles
 .settings-modal-overlay {

@@ -2,7 +2,7 @@
 // MODEL SELECTION MODAL STYLES
 // ==========================================
 
-@use 'variables' as *;
+@import './variables';
 
 .model-selection-modal-overlay {
   position: fixed;

@@ -2,6 +2,8 @@ import { useState, useEffect } from 'preact/hooks';
 import QdrantGUI from './components/QdrantGUI';
 import { ErrorBoundary } from './components/ErrorBoundary';
 import { ToastContainer } from './utils/toast';
+import { AppProvider } from './contexts/AppContext';
+import { useCollections } from './hooks/useCollections';
 import './App.scss';
 
 // Theme detection and management
@@ -44,6 +46,13 @@ if (typeof document !== 'undefined') {
 
 function App() {
   const [theme, setTheme] = useState<Theme>(getStoredTheme);
+
+  // Global collection state management
+  const {
+    collections,
+    selectedCollection,
+    selectCollection,
+  } = useCollections();
 
   useEffect(() => {
     applyTheme(theme);
@@ -97,7 +106,13 @@ function App() {
         </button>
       </header>
       <ErrorBoundary>
-        <QdrantGUI />
+        <AppProvider
+          selectedCollection={selectedCollection}
+          setSelectedCollection={selectCollection}
+          collections={collections}
+        >
+          <QdrantGUI />
+        </AppProvider>
       </ErrorBoundary>
       <ToastContainer />
     </div>

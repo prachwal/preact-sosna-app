@@ -6,6 +6,7 @@ interface ProgressModalProps {
     current: number;
     total: number;
     stage: string;
+    startTime?: number;
   };
   isCompleted?: boolean;
   completionMessage?: string;
@@ -16,6 +17,27 @@ function ProgressModal({ isOpen, progress, isCompleted = false, completionMessag
   if (!isOpen) return null;
 
   const percentage = Math.round((progress.current / progress.total) * 100);
+
+  // Calculate ETA
+  const calculateETA = () => {
+    if (!progress.startTime || progress.current === 0 || isCompleted) return null;
+    
+    const elapsed = Date.now() - progress.startTime;
+    const progressRatio = progress.current / progress.total;
+    const totalEstimated = elapsed / progressRatio;
+    const remaining = totalEstimated - elapsed;
+    
+    if (remaining < 1000) return 'Almost done...';
+    
+    const seconds = Math.round(remaining / 1000);
+    if (seconds < 60) return `${seconds}s remaining`;
+    
+    const minutes = Math.floor(seconds / 60);
+    const remainingSeconds = seconds % 60;
+    return `${minutes}m ${remainingSeconds}s remaining`;
+  };
+
+  const eta = calculateETA();
 
   return (
     <div className="progress-modal-overlay">
@@ -39,6 +61,11 @@ function ProgressModal({ isOpen, progress, isCompleted = false, completionMessag
           <div className="progress-details">
             {progress.current} / {progress.total}
           </div>
+          {eta && !isCompleted && (
+            <div className="progress-eta">
+              {eta}
+            </div>
+          )}
           {isCompleted && onClose && (
             <div className="progress-modal-actions">
               <button className="btn btn-primary" onClick={onClose}>

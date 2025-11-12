@@ -2,17 +2,14 @@
 // QDRANT GUI COMPONENTS
 // ==========================================
 
-@use 'variables' as *;
-@use 'sass:color';
-
 // Import component-specific styles
-@use 'model-selection-modal' as *;
-@use 'chat-interface' as *;
-@use 'tooltips' as *;
-@use 'collections' as *;
-@use 'search' as *;
-@use 'forms' as *;
-@use 'skeletons' as *;
+@import 'model-selection-modal';
+@import 'chat-interface';
+@import 'tooltips';
+@import 'collections';
+@import 'search';
+@import 'forms';
+@import 'skeletons';
 
 .qdrant-gui {
   border: 1px solid var(--pcs-color-border);

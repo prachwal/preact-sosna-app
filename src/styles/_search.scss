@@ -2,8 +2,7 @@
 // SEARCH COMPONENT
 // ==========================================
 
-@use 'variables' as *;
-@use 'sass:color';
+@import './variables';
 
 .search-component {
   margin-top: $spacing-xxxxxl;

@@ -2,7 +2,7 @@
 // CHAT INTERFACE STYLES
 // ==========================================
 
-@use 'variables' as *;
+@import './variables';
 
 .chat-tab {
   padding: $spacing-xl;
@@ -23,7 +23,7 @@
       padding: $spacing-lg;
       background: var(--pcs-color-background-primary);
       overflow-y: auto;
-      min-height: 300px;
+      min-height: 18.75rem; // 300px
 
       .welcome-message {
         text-align: center;
@@ -32,12 +32,12 @@
         h4 {
           margin: 0 0 $spacing-md 0;
           color: var(--pcs-color-text-primary);
-          font-size: 18px;
+          font-size: 1.125rem; // 18px
         }
 
         p {
           margin: 0;
-          font-size: 14px;
+          font-size: 0.875rem; // 14px
         }
       }
 
@@ -84,8 +84,8 @@
               gap: $spacing-xs;
 
               span {
-                width: 8px;
-                height: 8px;
+                width: 0.5rem; // 8px
+                height: 0.5rem; // 8px
                 border-radius: 50%;
                 background: var(--pcs-color-text-secondary);
                 animation: typing 1.4s infinite ease-in-out;
@@ -98,7 +98,7 @@
 
             .tool-usage-indicator {
               margin-top: $spacing-sm;
-              font-size: 12px;
+              font-size: 0.75rem; // 12px
               color: var(--pcs-color-accent);
               font-weight: 500;
               text-align: center;
@@ -107,7 +107,7 @@
         }
 
         .message-timestamp {
-          font-size: 10px;
+          font-size: 0.625rem; // 10px
           color: var(--pcs-color-text-secondary);
           margin-top: $spacing-xs;
         }
@@ -120,7 +120,7 @@
       border-radius: $spacing-sm;
       padding: $spacing-md;
       color: var(--pcs-color-error-text);
-      font-size: 14px;
+      font-size: 0.875rem; // 14px
       margin-bottom: $spacing-md;
 
       p {
@@ -141,7 +141,7 @@
         border: none;
         text-align: left;
         cursor: pointer;
-        font-size: 14px;
+        font-size: 0.875rem; // 14px
         font-weight: 500;
         color: var(--pcs-color-text-primary);
 
@@ -161,7 +161,7 @@
 
         h5 {
           margin: 0 0 $spacing-md 0;
-          font-size: 14px;
+          font-size: 0.875rem; // 14px
           color: var(--pcs-color-text-primary);
         }
 
@@ -179,7 +179,7 @@
             cursor: pointer;
 
             input[type="checkbox"] {
-              margin-top: 2px;
+              margin-top: 0.125rem; // 2px
               flex-shrink: 0;
             }
 
@@ -188,14 +188,14 @@
 
               strong {
                 display: block;
-                font-size: 14px;
+                font-size: 0.875rem; // 14px
                 color: var(--pcs-color-text-primary);
                 margin-bottom: $spacing-xs;
               }
 
               p {
                 margin: 0;
-                font-size: 12px;
+                font-size: 0.75rem; // 12px
                 color: var(--pcs-color-text-secondary);
                 line-height: 1.4;
               }
@@ -216,9 +216,9 @@
         border: 1px solid var(--pcs-color-border);
         border-radius: $spacing-sm;
         resize: vertical;
-        min-height: 60px;
+        min-height: 3.75rem; // 60px
         font-family: inherit;
-        font-size: 14px;
+        font-size: 0.875rem; // 14px
 
         &:focus {
           outline: none;

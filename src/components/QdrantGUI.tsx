@@ -1,16 +1,25 @@
 import { useState } from 'preact/hooks';
-import type { Point } from '../types/types';
+import { lazy, Suspense } from 'preact/compat';
 import CollectionList from './CollectionList';
-import PointsViewer from './PointsViewer';
-import PointDetailsModal from './PointDetailsModal';
-import SearchComponent from './SearchComponent';
-import SettingsModal from './SettingsModal';
 import ModelSelectionTabs from './ModelSelectionTabs';
-import ChatInterface from './ChatInterface';
+import DocumentExplorer from './DocumentExplorer';
 import { useCollections } from '../hooks/useCollections';
+import { usePointNavigation } from '../hooks/usePointNavigation';
+import { useAppContext } from '../contexts/AppContext';
+
+// Lazy load tabs for code splitting
+const SearchTab = lazy(() => import('./SearchTab'));
+const ChatTab = lazy(() => import('./ChatTab'));
+
+// Lazy load modals to reduce initial bundle size
+const SettingsModal = lazy(() => import('./SettingsModal'));
 
 function QdrantGUI() {
   console.log('QdrantGUI component rendered');
+
+  // Get global state from context
+  const { selectedCollection, setSelectedCollection, collections: contextCollections } = useAppContext();
+
   const {
     collections,
     loading,
@@ -25,15 +34,12 @@ function QdrantGUI() {
     uploadCompletionMessage,
     points,
     pointsLoading,
-    selectedPoint,
-    selectedCollection,
     browseCollection,
     exportCollection,
     createCollection,
     deleteCollection,
     uploadFile,
     closeUploadModal,
-    setSelectedPoint,
     closePointsViewer,
     selectCollection,
     // Search properties
@@ -47,59 +53,32 @@ function QdrantGUI() {
     clearSearchResults,
   } = useCollections();
 
-  // Navigation state
-  const [currentPointIndex, setCurrentPointIndex] = useState<number>(-1);
   // Settings modal state
   const [showSettings, setShowSettings] = useState(false);
   // Tab state
   const [activeTab, setActiveTab] = useState<'search' | 'chat'>('search');
 
-  // Navigation functions
-  const navigateToPoint = (point: Point | null) => {
-    if (point && points.length > 0) {
-      const index = points.findIndex(p => p.id === point.id);
-      setCurrentPointIndex(index);
-    } else {
-      setCurrentPointIndex(-1);
-    }
-    setSelectedPoint(point);
-  };
-
-  const navigateToPrevious = () => {
-    if (currentPointIndex > 0) {
-      const newIndex = currentPointIndex - 1;
-      const point = points[newIndex];
-      if (point) {
-        setCurrentPointIndex(newIndex);
-        setSelectedPoint(point);
-      }
-    }
-  };
-
-  const navigateToNext = () => {
-    if (currentPointIndex < points.length - 1) {
-      const newIndex = currentPointIndex + 1;
-      const point = points[newIndex];
-      if (point) {
-        setCurrentPointIndex(newIndex);
-        setSelectedPoint(point);
-      }
-    }
-  };
+  // Point navigation logic
+  const {
+    currentPointIndex,
+    selectedPoint,
+    navigateToPoint,
+    navigateToPrevious,
+    navigateToNext,
+    closePointNavigation,
+    hasPrevious,
+    hasNext,
+  } = usePointNavigation(points);
 
   const handleClosePointsViewer = () => {
-    setCurrentPointIndex(-1);
-    setSelectedPoint(null);
+    closePointNavigation();
     closePointsViewer();
   };
-
-  const hasPrevious = currentPointIndex > 0;
-  const hasNext = currentPointIndex < points.length - 1;
 
   return (
     <div className="qdrant-gui">
       <CollectionList
-        collections={collections}
+        collections={contextCollections}
         loading={loading}
         error={error}
         browsing={browsing}
@@ -119,7 +98,7 @@ function QdrantGUI() {
         onCloseBrowsing={closePointsViewer}
         onOpenSettings={() => setShowSettings(true)}
         selectedCollection={selectedCollection}
-        onSelectCollection={selectCollection}
+        onSelectCollection={setSelectedCollection}
       />
 
       <ModelSelectionTabs
@@ -128,51 +107,50 @@ function QdrantGUI() {
       />
 
       {activeTab === 'search' && (
-        <SearchComponent
-          collections={collections}
-          searchQuery={searchQuery}
-          searchResults={searchResults}
-          searching={searching}
-          searchOptions={searchOptions}
-          selectedCollection={selectedCollection}
-          onSearchQueryChange={setSearchQuery}
-          onSearchOptionsChange={setSearchOptions}
-          onPerformSearch={performSearch}
-          onClearResults={clearSearchResults}
-        />
+        <Suspense fallback={<div>Loading search...</div>}>
+          <SearchTab
+            collections={contextCollections}
+            searchQuery={searchQuery}
+            searchResults={searchResults}
+            searching={searching}
+            searchOptions={searchOptions}
+            selectedCollection={selectedCollection}
+            onSearchQueryChange={setSearchQuery}
+            onSearchOptionsChange={setSearchOptions}
+            onPerformSearch={performSearch}
+            onClearResults={clearSearchResults}
+          />
+        </Suspense>
       )}
 
       {activeTab === 'chat' && (
-        <ChatInterface providerName="OpenRouter" />
+        <Suspense fallback={<div>Loading chat...</div>}>
+          <ChatTab />
+        </Suspense>
       )}
 
-      {browsing && (
-        <PointsViewer
-          key={browsing}
-          collectionName={browsing}
-          points={points}
-          loading={pointsLoading}
-          onClose={handleClosePointsViewer}
-          onViewDetails={navigateToPoint}
-        />
-      )}
-      {selectedPoint && (
-        <PointDetailsModal
-          point={selectedPoint}
-          onClose={() => setSelectedPoint(null)}
-          onPrevious={navigateToPrevious}
-          onNext={navigateToNext}
-          hasPrevious={hasPrevious}
-          hasNext={hasNext}
-          chunkIndex={currentPointIndex}
-          totalChunks={points.length}
-        />
-      )}
-
-      <SettingsModal
-        isOpen={showSettings}
-        onClose={() => setShowSettings(false)}
+      <DocumentExplorer
+        browsing={browsing}
+        points={points}
+        pointsLoading={pointsLoading}
+        selectedPoint={selectedPoint}
+        currentPointIndex={currentPointIndex}
+        totalPoints={points.length}
+        hasPrevious={hasPrevious}
+        hasNext={hasNext}
+        onClosePointsViewer={handleClosePointsViewer}
+        onViewPointDetails={navigateToPoint}
+        onNavigatePrevious={navigateToPrevious}
+        onNavigateNext={navigateToNext}
+        onClosePointDetails={() => navigateToPoint(null)}
       />
+
+      <Suspense fallback={<div>Loading...</div>}>
+        <SettingsModal
+          isOpen={showSettings}
+          onClose={() => setShowSettings(false)}
+        />
+      </Suspense>
     </div>
   );
 }

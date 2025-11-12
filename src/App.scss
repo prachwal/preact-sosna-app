@@ -3,9 +3,12 @@
 // ==========================================
 
 // Import all partial stylesheets
-@use 'styles/variables';
-@use 'styles/themes';
-@use 'styles/general';
-@use 'styles/qdrant-gui';
-@use 'styles/modals';
-@use 'styles/utilities';
+@import 'styles/themes';
+@import 'styles/general';
+@import 'styles/qdrant-gui';
+@import 'styles/modals';
+@import 'styles/utilities';
+
+// Import CSS custom properties last
+@import 'styles/variables.css';
+
