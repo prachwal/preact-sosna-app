@@ -1,13 +1,6 @@
 import { useState, useEffect } from 'preact/hooks';
 import type { Collection, Point } from '../types/types';
-import {
-  fetchCollections,
-  browseCollection,
-  exportCollection,
-  createCollection,
-  deleteCollection,
-  uploadAndProcessFile,
-} from '../services/qdrantApi';
+import { qdrantApi } from '../services/qdrantApi';
 
 export interface UseCollectionsReturn {
   // State
@@ -24,6 +17,8 @@ export interface UseCollectionsReturn {
     total: number;
     stage: string;
   } | null;
+  uploadCompleted: boolean;
+  uploadCompletionMessage: string | null;
   points: Point[];
   pointsLoading: boolean;
   selectedPoint: Point | null;
@@ -40,6 +35,7 @@ export interface UseCollectionsReturn {
     chunkSize: number,
     chunkOverlap: number
   ) => Promise<void>;
+  closeUploadModal: () => void;
   setSelectedPoint: (point: Point | null) => void;
   closePointsViewer: () => void;
 }
@@ -58,6 +54,8 @@ export function useCollections(): UseCollectionsReturn {
     total: number;
     stage: string;
   } | null>(null);
+  const [uploadCompleted, setUploadCompleted] = useState(false);
+  const [uploadCompletionMessage, setUploadCompletionMessage] = useState<string | null>(null);
   const [points, setPoints] = useState<Point[]>([]);
   const [pointsLoading, setPointsLoading] = useState(false);
   const [selectedPoint, setSelectedPoint] = useState<Point | null>(null);
@@ -65,7 +63,7 @@ export function useCollections(): UseCollectionsReturn {
   const fetchCollectionsData = async () => {
     console.log('Fetching collections...');
     try {
-      const collections = await fetchCollections();
+      const collections = await qdrantApi.fetchCollections();
       setCollections(collections);
     } catch (err) {
       console.error('Error fetching collections:', err);
@@ -80,7 +78,7 @@ export function useCollections(): UseCollectionsReturn {
     setBrowsing(collectionName);
     setPointsLoading(true);
     try {
-      const points = await browseCollection(collectionName);
+      const points = await qdrantApi.browseCollection(collectionName);
       setPoints(points);
     } catch (err) {
       console.error('Browse failed:', err);
@@ -94,7 +92,7 @@ export function useCollections(): UseCollectionsReturn {
     console.log(`Starting export for collection: ${collectionName}`);
     setExporting(collectionName);
     try {
-      await exportCollection(collectionName);
+      await qdrantApi.exportCollection(collectionName);
     } catch (err) {
       console.error('Export failed:', err);
       alert(`Export failed: ${err instanceof Error ? err.message : 'Unknown error'}`);
@@ -108,7 +106,7 @@ export function useCollections(): UseCollectionsReturn {
     console.log(`Creating collection: ${collectionName}`);
     setCreating(collectionName);
     try {
-      await createCollection(collectionName, vectorSize);
+      await qdrantApi.createCollection(collectionName, vectorSize);
       // Refresh collections list
       await fetchCollectionsData();
     } catch (err) {
@@ -123,7 +121,7 @@ export function useCollections(): UseCollectionsReturn {
     console.log(`Deleting collection: ${collectionName}`);
     setDeleting(collectionName);
     try {
-      await deleteCollection(collectionName);
+      await qdrantApi.deleteCollection(collectionName);
       // Refresh collections list
       await fetchCollectionsData();
       // Close points viewer if the deleted collection was being browsed
@@ -148,8 +146,10 @@ export function useCollections(): UseCollectionsReturn {
     console.log(`Starting file upload for collection: ${collectionName}`);
     setUploading(collectionName);
     setUploadProgress({ current: 0, total: 100, stage: 'Initializing...' });
+    setUploadCompleted(false);
+    setUploadCompletionMessage(null);
     try {
-      const result = await uploadAndProcessFile(
+      const result = await qdrantApi.uploadAndProcessFile(
         file,
         collectionName,
         chunkSize,
@@ -159,7 +159,9 @@ export function useCollections(): UseCollectionsReturn {
         }
       );
       console.log('Upload result:', result);
-      alert(
+      setUploadProgress({ current: 100, total: 100, stage: 'Completed' });
+      setUploadCompleted(true);
+      setUploadCompletionMessage(
         `File processed successfully! ${result.chunksProcessed} chunks created, ${result.vectorsCreated} vectors stored.`
       );
       // Refresh collections list to show updated counts
@@ -169,13 +171,18 @@ export function useCollections(): UseCollectionsReturn {
       alert(`Upload failed: ${err instanceof Error ? err.message : 'Unknown error'}`);
     } finally {
       setUploading(null);
-      setUploadProgress(null);
     }
   };
 
   const closePointsViewer = () => {
     setBrowsing(null);
     setPoints([]);
+  };
+
+  const closeUploadModal = () => {
+    setUploadCompleted(false);
+    setUploadCompletionMessage(null);
+    setUploadProgress(null);
   };
 
   useEffect(() => {
@@ -193,6 +200,8 @@ export function useCollections(): UseCollectionsReturn {
     deleting,
     uploading,
     uploadProgress,
+    uploadCompleted,
+    uploadCompletionMessage,
     points,
     pointsLoading,
     selectedPoint,
@@ -204,6 +213,7 @@ export function useCollections(): UseCollectionsReturn {
     createCollection: handleCreateCollection,
     deleteCollection: handleDeleteCollection,
     uploadFile: handleUploadFile,
+    closeUploadModal,
     setSelectedPoint,
     closePointsViewer,
   };

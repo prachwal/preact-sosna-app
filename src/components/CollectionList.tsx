@@ -17,11 +17,14 @@ interface CollectionListProps {
     total: number;
     stage: string;
   } | null;
+  uploadCompleted: boolean;
+  uploadCompletionMessage: string | null;
   onBrowse: (collectionName: string) => void;
   onExport: (collectionName: string) => void;
   onCreate: (collectionName: string, vectorSize: number) => void;
   onDelete: (collectionName: string) => void;
   onUpload: (file: File, collectionName: string, chunkSize: number, chunkOverlap: number) => void;
+  onCloseUploadModal: () => void;
 }
 
 function CollectionList({
@@ -34,11 +37,14 @@ function CollectionList({
   deleting,
   uploading,
   uploadProgress,
+  uploadCompleted,
+  uploadCompletionMessage,
   onBrowse,
   onExport,
   onCreate,
   onDelete,
   onUpload,
+  onCloseUploadModal,
 }: CollectionListProps) {
   const [showCreateForm, setShowCreateForm] = useState(false);
   const [newCollectionName, setNewCollectionName] = useState('');
@@ -255,8 +261,11 @@ function CollectionList({
         </ul>
       )}
       <ProgressModal
-        isOpen={uploading !== null && uploadProgress !== null}
-        progress={uploadProgress!}
+        isOpen={(uploading !== null && uploadProgress !== null) || uploadCompleted}
+        progress={uploadProgress || { current: 100, total: 100, stage: 'Completed' }}
+        isCompleted={uploadCompleted}
+        {...(uploadCompletionMessage && { completionMessage: uploadCompletionMessage })}
+        onClose={onCloseUploadModal}
       />
     </div>
   );

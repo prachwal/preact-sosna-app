@@ -17,6 +17,8 @@ function QdrantGUI() {
     deleting,
     uploading,
     uploadProgress,
+    uploadCompleted,
+    uploadCompletionMessage,
     points,
     pointsLoading,
     selectedPoint,
@@ -25,6 +27,7 @@ function QdrantGUI() {
     createCollection,
     deleteCollection,
     uploadFile,
+    closeUploadModal,
     setSelectedPoint,
     closePointsViewer,
   } = useCollections();
@@ -86,11 +89,14 @@ function QdrantGUI() {
         deleting={deleting}
         uploading={uploading}
         uploadProgress={uploadProgress}
+        uploadCompleted={uploadCompleted}
+        uploadCompletionMessage={uploadCompletionMessage}
         onBrowse={browseCollection}
         onExport={exportCollection}
         onCreate={createCollection}
         onDelete={deleteCollection}
         onUpload={uploadFile}
+        onCloseUploadModal={closeUploadModal}
       />
       {browsing && (
         <PointsViewer

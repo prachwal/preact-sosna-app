@@ -1,0 +1,93 @@
+// Types and interfaces for vector database operations following SOLID principles
+
+export interface Collection {
+  name: string;
+  vectors_count: number;
+  points_count: number;
+  status: string;
+  config: {
+    params: {
+      vectors: {
+        size: number;
+        distance: string;
+      };
+    };
+  };
+}
+
+export interface Point {
+  id: number | string;
+  vector?: number[];
+  payload?: Record<string, any>;
+}
+
+export interface ChunkedDocument {
+  chunks: string[];
+  metadata?: {
+    totalChunks: number;
+    originalLength: number;
+  };
+}
+
+export interface UploadResult {
+  success: boolean;
+  chunksProcessed: number;
+  vectorsCreated: number;
+  collectionName: string;
+}
+
+export interface ProgressCallback {
+  (current: number, total: number, stage: string): void;
+}
+
+// Vector Database Interface - defines operations for vector databases
+export interface VectorDatabase {
+  fetchCollections(): Promise<Collection[]>;
+  browseCollection(collectionName: string): Promise<Point[]>;
+  exportCollection(collectionName: string): Promise<void>;
+  createCollection(collectionName: string, vectorSize?: number): Promise<void>;
+  deleteCollection(collectionName: string): Promise<void>;
+  uploadPoints(collectionName: string, points: Point[]): Promise<void>;
+}
+
+// Embedding Service Interface - defines operations for text embedding
+export interface EmbeddingService {
+  embedTexts(texts: string[]): Promise<number[][]>;
+}
+
+// Document Processor Interface - defines operations for document processing
+export interface DocumentProcessor {
+  processFile(
+    file: File,
+    chunkSize: number,
+    chunkOverlap: number,
+    onProgress?: ProgressCallback
+  ): Promise<ChunkedDocument>;
+}
+
+// Configuration interfaces
+export interface VectorDatabaseConfig {
+  url: string;
+}
+
+export interface EmbeddingServiceConfig {
+  url: string;
+}
+
+export interface DocumentProcessorConfig {
+  // Add configuration options as needed
+}
+
+// Logger Interface - defines logging operations
+export interface Logger {
+  info(message: string, ...args: any[]): void;
+  warn(message: string, ...args: any[]): void;
+  error(message: string, ...args: any[]): void;
+  debug(message: string, ...args: any[]): void;
+}
+
+// Logger Configuration
+export interface LoggerConfig {
+  level?: 'debug' | 'info' | 'warn' | 'error';
+  prefix?: string;
+}
