@@ -14,6 +14,11 @@ interface ChatMessage {
   content: string;
   sender: 'user' | 'ai';
   timestamp: Date;
+  toolInfo?: {
+    toolCalls: ToolCall[];
+    results: any[];
+    errors: string[];
+  };
 }
 
 function ChatInterface({ providerName }: ChatInterfaceProps) {
@@ -23,6 +28,8 @@ function ChatInterface({ providerName }: ChatInterfaceProps) {
   const [error, setError] = useState<string | null>(null);
   const [enabledTools, setEnabledTools] = useState<Set<string>>(new Set(availableTools.map(t => t.function.name)));
   const [showToolManager, setShowToolManager] = useState(false);
+  const [expandedToolInfos, setExpandedToolInfos] = useState<Set<string>>(new Set());
+  const [isUsingTools, setIsUsingTools] = useState(false);
 
   // Load enabled tools from localStorage
   useEffect(() => {
@@ -42,6 +49,18 @@ function ChatInterface({ providerName }: ChatInterfaceProps) {
   useEffect(() => {
     localStorage.setItem('chat-enabled-tools', JSON.stringify(Array.from(enabledTools)));
   }, [enabledTools]);
+
+  const toggleToolInfo = (messageId: string) => {
+    setExpandedToolInfos(prev => {
+      const newSet = new Set(prev);
+      if (newSet.has(messageId)) {
+        newSet.delete(messageId);
+      } else {
+        newSet.add(messageId);
+      }
+      return newSet;
+    });
+  };
 
   const toggleTool = (toolName: string) => {
     setEnabledTools(prev => {
@@ -73,6 +92,7 @@ function ChatInterface({ providerName }: ChatInterfaceProps) {
     setInputValue('');
     setIsLoading(true);
     setError(null);
+    setIsUsingTools(false);
 
     try {
       const selectedModel = configProvider.getSelectedModel();
@@ -98,33 +118,86 @@ function ChatInterface({ providerName }: ChatInterfaceProps) {
       }
 
       const enabledToolList = getEnabledTools();
-      const response = await qdrantApi.generateResponse(inputValue.trim(), {
-        model: selectedModel,
-        temperature: 0.7,
-        maxTokens: 1000,
-        ...(enabledToolList.length > 0 && { tools: enabledToolList }),
-        systemPrompt: `You are a helpful AI assistant with access to various tools. When asked about available tools, list them clearly. Use tools when appropriate to help users with calculations and other tasks.`
-      });
 
-      let aiContent = response.content;
+      // Tool call loop
+      let conversationMessages: any[] = [
+        { role: 'system', content: `You are a helpful AI assistant with access to various tools. When asked about available tools, list them clearly. Use tools when appropriate to help users with calculations and other tasks. You can use multiple tools in sequence if needed.` },
+        { role: 'user', content: inputValue.trim() }
+      ];
 
-      // Handle tool calls
-      if (response.toolCalls && response.toolCalls.length > 0) {
+      let finalResponse = '';
+      let allToolCalls: ToolCall[] = [];
+      let allToolResults: any[] = [];
+      let allToolErrors: string[] = [];
+
+      while (true) {
+        const response = await qdrantApi.generateResponse('', {
+          model: selectedModel,
+          temperature: 0.7,
+          maxTokens: 1000,
+          ...(enabledToolList.length > 0 && { tools: enabledToolList }),
+          messages: conversationMessages
+        });
+
+        finalResponse = response.content;
+
+        // If no tool calls, we're done
+        if (!response.toolCalls || response.toolCalls.length === 0) {
+          break;
+        }
+
+        // Execute tool calls and add to conversation
+        setIsUsingTools(true);
+
         for (const toolCall of response.toolCalls) {
           try {
-            const result = executeTool(toolCall);
-            aiContent += `\n\nWykonałem narzędzie ${toolCall.function.name}: ${result}`;
+            const result = await executeTool(toolCall);
+            allToolResults.push(result);
+            allToolCalls.push(toolCall);
+
+            // Add tool call and result to conversation
+            conversationMessages.push({
+              role: 'assistant',
+              content: response.content,
+              tool_calls: response.toolCalls
+            });
+            conversationMessages.push({
+              role: 'tool',
+              tool_call_id: toolCall.id,
+              content: JSON.stringify(result)
+            });
           } catch (toolError) {
-            aiContent += `\n\nBłąd wykonania narzędzia ${toolCall.function.name}: ${toolError instanceof Error ? toolError.message : 'Nieznany błąd'}`;
+            const errorMsg = `Error executing ${toolCall.function.name}: ${toolError instanceof Error ? toolError.message : 'Unknown error'}`;
+            allToolErrors.push(errorMsg);
+            allToolCalls.push(toolCall);
+
+            // Add tool call and error to conversation
+            conversationMessages.push({
+              role: 'assistant',
+              content: response.content,
+              tool_calls: response.toolCalls
+            });
+            conversationMessages.push({
+              role: 'tool',
+              tool_call_id: toolCall.id,
+              content: JSON.stringify({ error: errorMsg })
+            });
           }
         }
       }
 
       const aiMessage: ChatMessage = {
         id: (Date.now() + 1).toString(),
-        content: aiContent,
+        content: finalResponse,
         sender: 'ai',
         timestamp: new Date(),
+        ...(allToolCalls.length > 0 && {
+          toolInfo: {
+            toolCalls: allToolCalls,
+            results: allToolResults,
+            errors: allToolErrors
+          }
+        })
       };
 
       setMessages(prev => [...prev, aiMessage]);
@@ -166,6 +239,83 @@ function ChatInterface({ providerName }: ChatInterfaceProps) {
             <div key={message.id} className={`chat-message ${message.sender}`}>
               <div className="message-content">
                 {message.content}
+                {message.toolInfo && (
+                  <div className="tool-info-container">
+                    <button
+                      className="tool-info-toggle"
+                      onClick={() => toggleToolInfo(message.id)}
+                    >
+                      {expandedToolInfos.has(message.id) ? '▼' : '▶'} Wykorzystane narzędzia ({message.toolInfo.toolCalls.length})
+                    </button>
+                    {expandedToolInfos.has(message.id) && (
+                      <div className="tool-info-content">
+                        {message.toolInfo.toolCalls.map((toolCall, index) => (
+                          <div key={index} className="tool-call-info">
+                            <div className="tool-call-header">
+                              <span className="tool-name">🔧 {toolCall.function.name}</span>
+                              <span className="tool-params">📝 Parametry: {toolCall.function.arguments}</span>
+                            </div>
+                            <div className="tool-result">
+                              {message.toolInfo!.results[index] && (
+                                <div className="tool-success">
+                                  {toolCall.function.name === 'search_vector_database' && (
+                                    <div>
+                                      📊 Znaleziono {message.toolInfo!.results[index].length} wyników:
+                                      {message.toolInfo!.results[index].map((item: any, resultIndex: number) => (
+                                        <div key={resultIndex} className="search-result">
+                                          <div className="result-header">
+                                            {resultIndex + 1}. <strong>ID: {item.id}</strong> (score: {item.score.toFixed(3)})
+                                          </div>
+                                          <div className="result-text">
+                                            📄 Tekst: {item.text.substring(0, 200)}{item.text.length > 200 ? '...' : ''}
+                                          </div>
+                                          <div className="result-metadata">
+                                            📋 Metadane: {item.metadata.fileName || 'brak'}, chunk {item.metadata.chunkIndex}/{item.metadata.totalChunks}
+                                          </div>
+                                        </div>
+                                      ))}
+                                    </div>
+                                  )}
+                                  {toolCall.function.name === 'get_full_document' && (
+                                    <div>
+                                      📄 Pobrano dokument: {message.toolInfo!.results[index].fileName}
+                                      <div className="document-text">
+                                        📝 Pełny tekst ({message.toolInfo!.results[index].chunkCount} chunków): {message.toolInfo!.results[index].fullText.substring(0, 500)}{message.toolInfo!.results[index].fullText.length > 500 ? '...' : ''}
+                                      </div>
+                                      <div className="document-chunks">
+                                        🔍 Szczegóły chunków:
+                                        {message.toolInfo!.results[index].chunks.slice(0, 3).map((chunk: any, chunkIndex: number) => (
+                                          <div key={chunkIndex} className="chunk-info">
+                                            <div className="chunk-text">
+                                              📄 Chunk {chunk.chunkIndex}: {chunk.text.substring(0, 100)}{chunk.text.length > 100 ? '...' : ''}
+                                            </div>
+                                          </div>
+                                        ))}
+                                        {message.toolInfo!.results[index].chunks.length > 3 && (
+                                          <div>... i {message.toolInfo!.results[index].chunks.length - 3} więcej chunków</div>
+                                        )}
+                                      </div>
+                                    </div>
+                                  )}
+                                  {toolCall.function.name === 'calculate_factorial' && (
+                                    <div>
+                                      🧮 Wynik: {message.toolInfo!.results[index]}
+                                    </div>
+                                  )}
+                                </div>
+                              )}
+                              {message.toolInfo!.errors[index] && (
+                                <div className="tool-error">
+                                  ❌ {message.toolInfo!.errors[index]}
+                                </div>
+                              )}
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+                )}
               </div>
               <div className="message-timestamp">
                 {message.timestamp.toLocaleTimeString()}
@@ -180,6 +330,11 @@ function ChatInterface({ providerName }: ChatInterfaceProps) {
                   <span></span>
                   <span></span>
                 </div>
+                {isUsingTools && (
+                  <div className="tool-usage-indicator">
+                    🔧 AI używa narzędzi...
+                  </div>
+                )}
               </div>
             </div>
           )}

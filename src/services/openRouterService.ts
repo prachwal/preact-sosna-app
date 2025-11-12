@@ -24,12 +24,19 @@ export class OpenRouterService implements AIService {
   async generateResponse(prompt: string, options?: AIOptions): Promise<AIResponse> {
     this.logger.info(`Generating response with model: ${options?.model || this.defaultModel}`);
 
-    const requestBody: any = {
-      model: options?.model || this.defaultModel,
-      messages: [
+    let messages: any[];
+    if (options?.messages) {
+      messages = options.messages;
+    } else {
+      messages = [
         ...(options?.systemPrompt ? [{ role: 'system', content: options.systemPrompt }] : []),
         { role: 'user', content: prompt }
-      ],
+      ];
+    }
+
+    const requestBody: any = {
+      model: options?.model || this.defaultModel,
+      messages: messages,
       temperature: options?.temperature ?? 0.7,
       max_tokens: options?.maxTokens ?? 1000,
     };

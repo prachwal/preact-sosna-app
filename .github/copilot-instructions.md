@@ -140,6 +140,49 @@ export const factorialTool: Tool = {
   }
 };
 
+export const searchVectorDatabaseTool: Tool = {
+  type: 'function',
+  function: {
+    name: 'search_vector_database',
+    description: 'Search the vector database using semantic search. Provide a natural language query to find relevant documents.',
+    parameters: {
+      type: 'object',
+      properties: {
+        query: {
+          type: 'string',
+          description: 'The search query in natural language'
+        },
+        limit: {
+          type: 'integer',
+          description: 'Maximum number of results to return (default: 5)',
+          minimum: 1,
+          maximum: 20,
+          default: 5
+        }
+      },
+      required: ['query']
+    }
+  }
+};
+
+export const getFullDocumentTool: Tool = {
+  type: 'function',
+  function: {
+    name: 'get_full_document',
+    description: 'Retrieve the full content of a document by its ID from the vector database.',
+    parameters: {
+      type: 'object',
+      properties: {
+        document_id: {
+          type: 'string',
+          description: 'The ID of the document to retrieve'
+        }
+      },
+      required: ['document_id']
+    }
+  }
+};
+
 // Execute tool calls
 const result = executeTool(toolCall); // Returns calculated result
 
@@ -330,6 +373,8 @@ const [showModal, setShowModal] = useState(false);
 - **Persist tool preferences** - use localStorage with 'chat-enabled-tools' key
 - **Filter enabled tools** - always use `getEnabledTools()` instead of passing all availableTools
 - **Handle tool execution errors** - wrap executeTool() calls in try-catch blocks
+- **Ensure collection is selected** - vector database tools require selected collection in ConfigurationProvider
+- **Handle async tool execution** - search and document retrieval tools are asynchronous
 
 ## Testing Strategy
 

@@ -49,6 +49,20 @@ export interface ChunkedDocument {
   };
 }
 
+export interface DocumentChunk {
+  id: number | string;
+  text: string;
+  chunkIndex: number;
+  metadata?: Record<string, any>;
+}
+
+export interface DocumentData {
+  fileName: string;
+  fullText: string;
+  chunkCount: number;
+  chunks: DocumentChunk[];
+}
+
 export interface UploadResult {
   success: boolean;
   chunksProcessed: number;
@@ -81,6 +95,8 @@ export interface VectorDatabase {
   deleteCollection(collectionName: string): Promise<void>;
   uploadPoints(collectionName: string, points: Point[]): Promise<void>;
   search(collectionName: string, vector: number[], options?: SearchOptions): Promise<SearchResult[]>;
+  getPointById(collectionName: string, pointId: string | number): Promise<Point | null>;
+  getPointsByFileName(collectionName: string, fileName: string): Promise<Point[]>;
 }
 
 // Embedding Service Interface - defines operations for text embedding
@@ -140,6 +156,7 @@ export interface AIOptions {
   maxTokens?: number;
   systemPrompt?: string;
   tools?: Tool[];
+  messages?: any[]; // For conversation history
 }
 
 export interface Tool {

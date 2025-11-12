@@ -250,4 +250,79 @@ export class QdrantDatabase implements VectorDatabase {
     this.logger.info(`Search completed. Found ${results.length} results`);
     return results;
   }
+
+  async getPointById(collectionName: string, pointId: string | number): Promise<Point | null> {
+    this.logger.info(`Getting point by ID: ${pointId} from collection: ${collectionName}`);
+
+    const url = `${this.baseUrl}/collections/${collectionName}/points/${pointId}`;
+
+    this.logger.debug('Point URL:', url);
+
+    const response = await fetch(url, {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    });
+
+    this.logger.debug('Response status:', response.status);
+
+    if (!response.ok) {
+      if (response.status === 404) {
+        this.logger.debug('Point not found');
+        return null;
+      }
+      const errorText = await response.text();
+      this.logger.error('Qdrant get point error response:', errorText);
+      throw new Error(`Failed to get point: ${response.status}, body: ${errorText}`);
+    }
+
+    const data = await response.json();
+    this.logger.debug('Point data:', data);
+
+    return data.result;
+  }
+
+  async getPointsByFileName(collectionName: string, fileName: string): Promise<Point[]> {
+    this.logger.info(`Getting points by filename: ${fileName} from collection: ${collectionName}`);
+
+    const url = `${this.baseUrl}/collections/${collectionName}/points/scroll`;
+    const scrollPayload = {
+      filter: {
+        must: [
+          {
+            key: "fileName",
+            match: { value: fileName }
+          }
+        ]
+      },
+      limit: 1000, // Assuming files won't have more than 1000 chunks
+      with_payload: true,
+      with_vectors: false,
+    };
+
+    this.logger.debug('Scroll URL:', url);
+    this.logger.debug('Scroll payload:', scrollPayload);
+
+    const response = await fetch(url, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(scrollPayload),
+    });
+
+    this.logger.debug('Scroll response status:', response.status);
+
+    if (!response.ok) {
+      const errorText = await response.text();
+      this.logger.error('Qdrant scroll error response:', errorText);
+      throw new Error(`Failed to get points by filename: ${response.status}, body: ${errorText}`);
+    }
+
+    const data = await response.json();
+    this.logger.debug('Scroll response data:', data);
+
+    return data.result?.points || [];
+  }
 }

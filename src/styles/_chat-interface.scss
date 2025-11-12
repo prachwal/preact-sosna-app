@@ -95,6 +95,14 @@
                 &:nth-child(3) { animation-delay: 0s; }
               }
             }
+
+            .tool-usage-indicator {
+              margin-top: $spacing-sm;
+              font-size: 12px;
+              color: $color-primary;
+              font-weight: 500;
+              text-align: center;
+            }
           }
         }
 
@@ -242,6 +250,138 @@
         &:disabled {
           opacity: 0.6;
           cursor: not-allowed;
+        }
+      }
+    }
+
+    .tool-info-container {
+      margin-top: $spacing-md;
+      border-top: 1px solid $color-border;
+      padding-top: $spacing-md;
+
+      .tool-info-toggle {
+        width: 100%;
+        padding: $spacing-sm $spacing-md;
+        background: rgba($color-primary, 0.1);
+        border: 1px solid rgba($color-primary, 0.3);
+        border-radius: $spacing-sm;
+        color: $color-primary;
+        cursor: pointer;
+        font-size: 12px;
+        font-weight: 500;
+        display: flex;
+        align-items: center;
+        gap: $spacing-sm;
+
+        &:hover {
+          background: rgba($color-primary, 0.15);
+        }
+
+        &:focus {
+          outline: none;
+          box-shadow: 0 0 0 2px rgba($color-primary, 0.2);
+        }
+      }
+
+      .tool-info-content {
+        margin-top: $spacing-md;
+        padding: $spacing-md;
+        background: rgba($color-background-white, 0.5);
+        border: 1px solid $color-border;
+        border-radius: $spacing-sm;
+
+        .tool-call-info {
+          margin-bottom: $spacing-lg;
+
+          &:last-child {
+            margin-bottom: 0;
+          }
+
+          .tool-call-header {
+            display: flex;
+            flex-direction: column;
+            gap: $spacing-xs;
+            margin-bottom: $spacing-sm;
+
+            .tool-name {
+              font-weight: 600;
+              color: $color-text-primary;
+              font-size: 14px;
+            }
+
+            .tool-params {
+              font-size: 12px;
+              color: $color-text-secondary;
+              font-family: monospace;
+              background: rgba($color-background-secondary, 0.5);
+              padding: $spacing-xs $spacing-sm;
+              border-radius: $spacing-xs;
+              word-break: break-all;
+            }
+          }
+
+          .tool-result {
+            .tool-success {
+              .search-result {
+                margin-bottom: $spacing-md;
+                padding: $spacing-sm;
+                background: $color-background-white;
+                border: 1px solid $color-border;
+                border-radius: $spacing-xs;
+
+                &:last-child {
+                  margin-bottom: 0;
+                }
+
+                .result-header {
+                  font-weight: 500;
+                  margin-bottom: $spacing-xs;
+                  color: $color-text-primary;
+                }
+
+                .result-text {
+                  font-size: 13px;
+                  color: $color-text-primary;
+                  margin-bottom: $spacing-xs;
+                  line-height: 1.4;
+                }
+
+                .result-metadata {
+                  font-size: 11px;
+                  color: $color-text-secondary;
+                }
+              }
+
+              .document-text {
+                font-size: 13px;
+                color: $color-text-primary;
+                margin: $spacing-sm 0;
+                line-height: 1.4;
+                max-height: 200px;
+                overflow-y: auto;
+                background: $color-background-white;
+                padding: $spacing-sm;
+                border: 1px solid $color-border;
+                border-radius: $spacing-xs;
+              }
+
+              .document-metadata {
+                font-size: 11px;
+                color: $color-text-secondary;
+                margin-top: $spacing-xs;
+              }
+            }
+
+            .tool-error {
+              color: #c33;
+              font-size: 12px;
+              background: #fee;
+              padding: $spacing-sm;
+              border: 1px solid #fcc;
+              border-radius: $spacing-xs;
+              margin-top: $spacing-sm;
+            }
+          }
         }
       }
     }

@@ -13,8 +13,10 @@ import type {
   LoggerConfig,
   SearchResult,
   SearchOptions,
-  AIResponse,
-  AIOptions
+  Point,
+  DocumentData,
+  AIOptions,
+  AIResponse
 } from './interfaces';
 import { QdrantDatabase } from './qdrantDatabase';
 import { PolishEmbeddingService } from './polishEmbeddingService';
@@ -99,6 +101,69 @@ export class QdrantApi {
 
     // Then search the vector database
     return this.vectorDatabase.search(collectionName, queryVector, options);
+  }
+
+  // Search in selected collection (for AI tools)
+  async searchSelectedCollection(query: string, limit: number = 5): Promise<SearchResult[]> {
+    const selectedCollection = configProvider.getSelectedCollection();
+    if (!selectedCollection) {
+      throw new Error('No collection selected. Please select a collection first.');
+    }
+
+    this.logger.info(`AI searching selected collection: ${selectedCollection} with query: "${query}"`);
+    return this.search(selectedCollection, query, { limit });
+  }
+
+  // Get full document by ID from selected collection
+  async getDocumentById(pointId: string | number): Promise<Point | null> {
+    const selectedCollection = configProvider.getSelectedCollection();
+    if (!selectedCollection) {
+      throw new Error('No collection selected. Please select a collection first.');
+    }
+
+    this.logger.info(`Getting document by ID: ${pointId} from collection: ${selectedCollection}`);
+    return this.vectorDatabase.getPointById(selectedCollection, pointId);
+  }
+
+  // Get full document by filename from selected collection
+  async getDocumentByFileName(fileName: string): Promise<DocumentData> {
+    this.logger.info(`Getting document by filename: ${fileName}`);
+
+    const collectionName = configProvider.getSelectedCollection();
+    if (!collectionName) {
+      throw new Error('No collection selected');
+    }
+
+    const points = await this.vectorDatabase.getPointsByFileName(collectionName, fileName);
+
+    if (points.length === 0) {
+      throw new Error(`Document with filename "${fileName}" not found`);
+    }
+
+    // Sort points by chunkIndex
+    points.sort((a: Point, b: Point) => {
+      const indexA = a.payload?.chunkIndex as number || 0;
+      const indexB = b.payload?.chunkIndex as number || 0;
+      return indexA - indexB;
+    });
+
+    // Combine all chunks into full text
+    const fullText = points.map((point: Point) => point.payload?.text as string || '').join('');
+
+    const documentData: DocumentData = {
+      fileName: fileName,
+      fullText: fullText,
+      chunkCount: points.length,
+      chunks: points.map((point: Point) => ({
+        id: point.id,
+        text: point.payload?.text as string || '',
+        chunkIndex: point.payload?.chunkIndex as number || 0,
+        metadata: point.payload?.metadata || {}
+      }))
+    };
+
+    this.logger.info(`Retrieved document with ${points.length} chunks`);
+    return documentData;
   }
 
   // Main file processing method that orchestrates all services
