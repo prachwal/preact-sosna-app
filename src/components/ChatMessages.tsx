@@ -1,6 +1,7 @@
 import { h } from 'preact';
 import { marked } from 'marked';
 import hljs from 'highlight.js';
+import DOMPurify from 'dompurify';
 import type { ToolCall } from '../services/interfaces';
 import type { ChatMessage } from '../types/types';
 
@@ -59,7 +60,12 @@ export function ChatMessages({
     });
 
     const htmlContent = marked.parse(content) as string;
-    return { __html: htmlContent };
+    // Sanitize HTML to prevent XSS attacks
+    const sanitizedContent = DOMPurify.sanitize(htmlContent, {
+      ALLOWED_TAGS: ['p', 'br', 'strong', 'em', 'u', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'ul', 'ol', 'li', 'a', 'code', 'pre', 'blockquote'],
+      ALLOWED_ATTR: ['href', 'class', 'target', 'rel']
+    });
+    return { __html: sanitizedContent };
   };
   return (
     <div className="chat-messages">

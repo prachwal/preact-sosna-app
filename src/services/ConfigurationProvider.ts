@@ -1,3 +1,7 @@
+import { encryptToken, decryptToken, isTokenEncrypted } from '../utils/encryption';
+import { validateUrl, getUrlSecurityWarning } from '../utils/validation';
+import { logger } from '../utils/logger';
+
 export interface AppConfig {
   qdrantUrl: string;
   embeddingUrl: string;
@@ -25,26 +29,34 @@ export class ConfigurationProvider {
 
   private loadFromLocalStorage(): AppConfig {
     try {
-      console.log('[DEBUG] ConfigurationProvider.loadFromLocalStorage called');
+      logger.debug('ConfigurationProvider.loadFromLocalStorage called');
       const stored = localStorage.getItem('app-config');
-      console.log('[DEBUG] stored value:', stored);
+      logger.debug('stored value:', stored);
       if (stored) {
         const parsed = JSON.parse(stored);
-        console.log('[DEBUG] parsed config:', parsed);
+        logger.debug('parsed config:', parsed);
+        
+        // Decrypt token if it's encrypted
+        let openRouterToken = parsed.openRouterToken || '';
+        if (openRouterToken && isTokenEncrypted(openRouterToken)) {
+          logger.debug('Decrypting stored token');
+          openRouterToken = decryptToken(openRouterToken);
+        }
+        
         const result = {
           qdrantUrl: parsed.qdrantUrl || 'http://localhost:6333',
           embeddingUrl: parsed.embeddingUrl || 'http://localhost:8082',
-          openRouterToken: parsed.openRouterToken || '',
+          openRouterToken,
           selectedModel: parsed.selectedModel,
           selectedProvider: parsed.selectedProvider,
           selectedCollection: parsed.selectedCollection,
         };
-        console.log('[DEBUG] returning loaded config:', result);
+        logger.debug('returning loaded config:', { ...result, openRouterToken: result.openRouterToken ? '[REDACTED]' : '' });
         return result;
       }
-      console.log('[DEBUG] no stored config, returning defaults');
+      logger.debug('no stored config, returning defaults');
     } catch (error) {
-      console.warn('Failed to load config from localStorage:', error);
+      logger.warn('Failed to load config from localStorage:', error);
     }
 
     // Default configuration
@@ -56,18 +68,25 @@ export class ConfigurationProvider {
       selectedProvider: 'openrouter',
       selectedCollection: '',
     };
-    console.log('[DEBUG] returning default config:', defaults);
+    logger.debug('returning default config');
     return defaults;
   }
 
   private saveToLocalStorage(): void {
     try {
-      console.log('[DEBUG] ConfigurationProvider.saveToLocalStorage called');
-      console.log('[DEBUG] saving config:', this.config);
-      localStorage.setItem('app-config', JSON.stringify(this.config));
-      console.log('[DEBUG] config saved to localStorage');
+      logger.debug('ConfigurationProvider.saveToLocalStorage called');
+      
+      // Encrypt token before saving
+      const configToSave = {
+        ...this.config,
+        openRouterToken: this.config.openRouterToken ? encryptToken(this.config.openRouterToken) : ''
+      };
+      
+      logger.debug('saving config (token encrypted)');
+      localStorage.setItem('app-config', JSON.stringify(configToSave));
+      logger.debug('config saved to localStorage');
     } catch (error) {
-      console.warn('Failed to save config to localStorage:', error);
+      logger.warn('Failed to save config to localStorage:', error);
     }
   }
 
@@ -76,11 +95,32 @@ export class ConfigurationProvider {
   }
 
   updateConfig(newConfig: Partial<AppConfig>): void {
-    console.log('[DEBUG] ConfigurationProvider.updateConfig called');
-    console.log('[DEBUG] newConfig:', newConfig);
-    console.log('[DEBUG] old config:', this.config);
+    logger.debug('ConfigurationProvider.updateConfig called');
+    logger.debug('newConfig:', { ...newConfig, openRouterToken: newConfig.openRouterToken ? '[REDACTED]' : undefined });
+    
+    // Validate URLs if provided
+    if (newConfig.qdrantUrl && !validateUrl(newConfig.qdrantUrl)) {
+      logger.error('Invalid Qdrant URL:', newConfig.qdrantUrl);
+      throw new Error('Invalid Qdrant URL format');
+    }
+    if (newConfig.embeddingUrl && !validateUrl(newConfig.embeddingUrl)) {
+      logger.error('Invalid Embedding URL:', newConfig.embeddingUrl);
+      throw new Error('Invalid Embedding URL format');
+    }
+    
+    // Check for security warnings
+    if (newConfig.qdrantUrl) {
+      const warning = getUrlSecurityWarning(newConfig.qdrantUrl);
+      if (warning) logger.warn('Qdrant URL:', warning);
+    }
+    if (newConfig.embeddingUrl) {
+      const warning = getUrlSecurityWarning(newConfig.embeddingUrl);
+      if (warning) logger.warn('Embedding URL:', warning);
+    }
+    
+    logger.debug('old config:', { ...this.config, openRouterToken: this.config.openRouterToken ? '[REDACTED]' : '' });
     this.config = { ...this.config, ...newConfig };
-    console.log('[DEBUG] new config after merge:', this.config);
+    logger.debug('new config after merge');
     this.saveToLocalStorage();
   }
 
@@ -93,8 +133,7 @@ export class ConfigurationProvider {
   }
 
   getOpenRouterToken(): string {
-    console.log('[DEBUG] ConfigurationProvider.getOpenRouterToken called');
-    console.log('[DEBUG] returning:', this.config.openRouterToken);
+    logger.debug('ConfigurationProvider.getOpenRouterToken called');
     return this.config.openRouterToken;
   }
 
