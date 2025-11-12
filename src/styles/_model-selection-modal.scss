@@ -226,6 +226,39 @@
   }
 
   .category-filters {
+    .capabilities-row {
+      margin-bottom: $spacing-lg;
+
+      .capabilities-section {
+        label {
+          display: block;
+          margin-bottom: $spacing-sm;
+          font-weight: 500;
+          color: $color-text-primary;
+          font-size: 14px;
+        }
+
+        .capability-filters {
+          display: flex;
+          flex-wrap: wrap;
+          gap: $spacing-md;
+
+          .capability-filter {
+            display: flex;
+            align-items: center;
+            gap: $spacing-xs;
+            font-size: 14px;
+            color: $color-text-primary;
+            cursor: pointer;
+
+            input[type="checkbox"] {
+              margin: 0;
+            }
+          }
+        }
+      }
+    }
+
     .category-filters-row {
       display: flex;
       justify-content: space-between;
@@ -269,6 +302,37 @@
             border-color: $color-primary;
             background: $color-primary;
             color: white;
+          }
+        }
+      }
+    }
+
+    .capabilities-section {
+      flex: 1;
+
+      label {
+        display: block;
+        margin-bottom: $spacing-sm;
+        font-weight: 500;
+        color: $color-text-primary;
+        font-size: 14px;
+      }
+
+      .capability-filters {
+        display: flex;
+        flex-wrap: wrap;
+        gap: $spacing-md;
+
+        .capability-filter {
+          display: flex;
+          align-items: center;
+          gap: $spacing-xs;
+          font-size: 14px;
+          color: $color-text-primary;
+          cursor: pointer;
+
+          input[type="checkbox"] {
+            margin: 0;
           }
         }
       }
@@ -379,6 +443,43 @@
       border-radius: $spacing-sm;
       font-size: 10px;
       font-weight: 500;
+    }
+  }
+
+  .model-capabilities {
+    margin-top: $spacing-sm;
+    display: flex;
+    flex-wrap: wrap;
+    gap: $spacing-xs;
+
+    .capability-badge {
+      padding: $spacing-xs $spacing-sm;
+      border-radius: $spacing-sm;
+      font-size: 10px;
+      font-weight: 500;
+      display: inline-flex;
+      align-items: center;
+      gap: $spacing-xs;
+
+      &.tool-use {
+        background: #e3f2fd;
+        color: #1976d2;
+      }
+
+      &.multimodal {
+        background: #f3e5f5;
+        color: #7b1fa2;
+      }
+
+      &.image-input {
+        background: #e8f5e8;
+        color: #388e3c;
+      }
+
+      &.image-output {
+        background: #fff3e0;
+        color: #f57c00;
+      }
     }
   }
 }

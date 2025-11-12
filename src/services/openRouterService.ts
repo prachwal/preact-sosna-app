@@ -208,6 +208,14 @@ export class OpenRouterService implements AIService {
         } : undefined,
         provider: 'openrouter',
         tags: model.tags || [],
+        capabilities: {
+          toolUse: model.supported_parameters?.includes('tools') || false,
+          multimodal: (model.architecture?.input_modalities?.includes('image') ||
+                      model.architecture?.output_modalities?.includes('image')) || false,
+          inputModalities: model.architecture?.input_modalities || ['text'],
+          outputModalities: model.architecture?.output_modalities || ['text'],
+          supportedParameters: model.supported_parameters || [],
+        },
       }));
     } catch (error) {
       this.logger.error('Failed to fetch models:', error);
@@ -221,6 +229,13 @@ export class OpenRouterService implements AIService {
           pricing: { prompt: 0.25, completion: 1.25 },
           provider: 'openrouter',
           tags: ['fast', 'efficient'],
+          capabilities: {
+            toolUse: true,
+            multimodal: true,
+            inputModalities: ['text', 'image'],
+            outputModalities: ['text'],
+            supportedParameters: ['tools', 'temperature', 'max_tokens'],
+          },
         },
         {
           id: 'anthropic/claude-3-sonnet',
@@ -230,6 +245,13 @@ export class OpenRouterService implements AIService {
           pricing: { prompt: 3, completion: 15 },
           provider: 'openrouter',
           tags: ['balanced', 'powerful'],
+          capabilities: {
+            toolUse: true,
+            multimodal: true,
+            inputModalities: ['text', 'image'],
+            outputModalities: ['text'],
+            supportedParameters: ['tools', 'temperature', 'max_tokens'],
+          },
         },
         {
           id: 'openai/gpt-4o-mini',
@@ -239,6 +261,13 @@ export class OpenRouterService implements AIService {
           pricing: { prompt: 0.15, completion: 0.6 },
           provider: 'openrouter',
           tags: ['cost-effective', 'fast'],
+          capabilities: {
+            toolUse: true,
+            multimodal: true,
+            inputModalities: ['text', 'image'],
+            outputModalities: ['text'],
+            supportedParameters: ['tools', 'temperature', 'max_tokens'],
+          },
         },
       ];
     }

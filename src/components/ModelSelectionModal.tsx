@@ -24,6 +24,10 @@ interface ModelSelectionFormState extends FormState {
   currentPage: number;
   pageSize: number;
   showDebugInfo: boolean;
+  filterToolUse: boolean;
+  filterMultimodal: boolean;
+  filterImageInput: boolean;
+  filterImageOutput: boolean;
 }
 
 function ModelSelectionModal({
@@ -47,7 +51,11 @@ function ModelSelectionModal({
     conciseMode: false,
     currentPage: 1,
     pageSize: 10,
-    showDebugInfo: false
+    showDebugInfo: false,
+    filterToolUse: false,
+    filterMultimodal: false,
+    filterImageInput: false,
+    filterImageOutput: false
   };
 
   const [formState, setFormState] = useState<ModelSelectionFormState>(() =>
@@ -71,7 +79,11 @@ function ModelSelectionModal({
     conciseMode,
     currentPage,
     pageSize,
-    showDebugInfo
+    showDebugInfo,
+    filterToolUse,
+    filterMultimodal,
+    filterImageInput,
+    filterImageOutput
   } = formState;
 
   // Save form state whenever it changes
@@ -140,7 +152,14 @@ function ModelSelectionModal({
       const matchesContext = model.contextLength >= contextRange.min &&
                             model.contextLength <= contextRange.max;
 
-      return matchesSearch && matchesCategory && matchesPrice && matchesContext;
+      // Capabilities filters
+      const matchesToolUse = !filterToolUse || (model.capabilities?.toolUse === true);
+      const matchesMultimodal = !filterMultimodal || (model.capabilities?.multimodal === true);
+      const matchesImageInput = !filterImageInput || (model.capabilities?.inputModalities?.includes('image') === true);
+      const matchesImageOutput = !filterImageOutput || (model.capabilities?.outputModalities?.includes('image') === true);
+
+      return matchesSearch && matchesCategory && matchesPrice && matchesContext &&
+             matchesToolUse && matchesMultimodal && matchesImageInput && matchesImageOutput;
     })
     .sort((a, b) => {
       let comparison = 0;
@@ -338,6 +357,46 @@ function ModelSelectionModal({
             </div>
 
             <div className="category-filters">
+              <div className="capabilities-row">
+                <div className="capabilities-section">
+                  <label>Capabilities:</label>
+                  <div className="capability-filters">
+                    <label className="capability-filter">
+                      <input
+                        type="checkbox"
+                        checked={filterToolUse}
+                        onChange={(e) => setFormState(prev => ({ ...prev, filterToolUse: (e.target as HTMLInputElement).checked }))}
+                      />
+                      🛠️ Tools
+                    </label>
+                    <label className="capability-filter">
+                      <input
+                        type="checkbox"
+                        checked={filterMultimodal}
+                        onChange={(e) => setFormState(prev => ({ ...prev, filterMultimodal: (e.target as HTMLInputElement).checked }))}
+                      />
+                      📸 Multimodal
+                    </label>
+                    <label className="capability-filter">
+                      <input
+                        type="checkbox"
+                        checked={filterImageInput}
+                        onChange={(e) => setFormState(prev => ({ ...prev, filterImageInput: (e.target as HTMLInputElement).checked }))}
+                      />
+                      🖼️ Image Input
+                    </label>
+                    <label className="capability-filter">
+                      <input
+                        type="checkbox"
+                        checked={filterImageOutput}
+                        onChange={(e) => setFormState(prev => ({ ...prev, filterImageOutput: (e.target as HTMLInputElement).checked }))}
+                      />
+                      🎨 Image Output
+                    </label>
+                  </div>
+                </div>
+              </div>
+
               <div className="category-filters-row">
                 <div className="categories-section">
                   <label>Categories:</label>
@@ -381,6 +440,7 @@ function ModelSelectionModal({
                 Search Term: "{searchTerm}" | Field: {searchField} | Category: {selectedCategory}<br/>
                 Price Range: {priceRange.min} - {priceRange.max} (display: {priceRange.min / 1000000} - {priceRange.max / 1000000})<br/>
                 Context: {contextRange.min} - {contextRange.max}<br/>
+                Capabilities: ToolUse={filterToolUse ? 'yes' : 'no'} Multimodal={filterMultimodal ? 'yes' : 'no'} ImageIn={filterImageInput ? 'yes' : 'no'} ImageOut={filterImageOutput ? 'yes' : 'no'}<br/>
                 Sort: {sortBy} ({sortOrder}) | Concise: {conciseMode ? 'yes' : 'no'}<br/>
                 Total Models: {models.length} | Filtered: {filteredAndSortedModels.length} | Page: {currentPage} | Page Size: {pageSize}
                 <br/>
@@ -424,6 +484,15 @@ function ModelSelectionModal({
                     {model.tags.map((tag: string) => (
                       <span key={tag} className="model-tag">{tag}</span>
                     ))}
+                  </div>
+                )}
+
+                {model.capabilities && (
+                  <div className="model-capabilities">
+                    {model.capabilities.toolUse && <span className="capability-badge tool-use">🛠️ Tools</span>}
+                    {model.capabilities.multimodal && <span className="capability-badge multimodal">� Multimodal</span>}
+                    {model.capabilities.inputModalities?.includes('image') && <span className="capability-badge image-input">�️ Image Input</span>}
+                    {model.capabilities.outputModalities?.includes('image') && <span className="capability-badge image-output">🎨 Image Output</span>}
                   </div>
                 )}
               </div>

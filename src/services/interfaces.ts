@@ -11,6 +11,13 @@ export interface ModelInfo {
   };
   provider: string;
   tags?: string[];
+  capabilities?: {
+    toolUse?: boolean;
+    multimodal?: boolean;
+    inputModalities?: string[];
+    outputModalities?: string[];
+    supportedParameters?: string[];
+  };
 }
 
 export interface Collection {
